@@ -45,9 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DetectDevices.cs" />
+    <Compile Include="Example01.cs" />
+    <Compile Include="Example02.cs" />
     <Compile Include="ExampleBase.cs" />
-    <Compile Include="ScalePlayer.cs" />
+    <Compile Include="Example06.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

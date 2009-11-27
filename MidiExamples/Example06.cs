@@ -6,10 +6,10 @@ using Midi;
 
 namespace MidiExamples
 {
-    public class ScalePlayer : ExampleBase
+    public class Example06 : ExampleBase
     {
-        public ScalePlayer()
-            : base("ScalePlayer.cs", "Plays a scale from each MIDI key pressed.")
+        public Example06()
+            : base("Example06.cs", "Plays a scale from each MIDI key pressed.")
         { }
         
         class Drummer

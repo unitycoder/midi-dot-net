@@ -37,8 +37,9 @@ namespace MidiExamples
         /// </summary>
         static Dictionary<ConsoleKey, ExampleBase> examples = new Dictionary<ConsoleKey, ExampleBase>
         {
-            { ConsoleKey.A, new DetectDevices()},
-            { ConsoleKey.B, new ScalePlayer()}
+            { ConsoleKey.A, new Example01()},
+            { ConsoleKey.B, new Example02()},
+            { ConsoleKey.C, new Example06()}
         };
 
         static void Main(string[] args)
