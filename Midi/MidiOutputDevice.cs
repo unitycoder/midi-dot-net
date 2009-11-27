@@ -23,13 +23,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Threading;
-using System.Threading;
 
 namespace Midi
 {
@@ -178,7 +173,7 @@ namespace Midi
         /// Sends a Program Change message to this MIDI output device.
         /// </summary>
         /// <param name="channel">The channel 0..15.</param>
-        /// <param name="note">The preset to choose 0..127.</param>
+        /// <param name="preset">The preset to choose 0..127.</param>
         public void sendProgramChangeMessage(int channel, int preset)
         {
             lock (this)
@@ -236,7 +231,7 @@ namespace Midi
         /// <summary>
         /// Private Constructor, only called by the getter for the InstalledDevices property.
         /// </summary>
-        /// <param name="id">Position of this device in the list of all devices.</param>
+        /// <param name="deviceId">Position of this device in the list of all devices.</param>
         /// <param name="caps">Win32 Struct with device metadata</param>
         private MidiOutputDevice(UIntPtr deviceId, MidiWin32Wrapper.MIDIOUTCAPS caps)
             : base(caps.szPname)

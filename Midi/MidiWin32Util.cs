@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Midi
 {
@@ -192,7 +189,7 @@ namespace Midi
         /// </summary>
         /// <param name="hmo">The handle returned by midiOpenOpen.</param>
         /// <param name="channel">The channel 0..15.</param>
-        /// <param name="note">The preset to choose 0..127.</param>
+        /// <param name="preset">The preset to choose 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
         public static UInt32 sendProgramChangeMessage(MidiWin32Wrapper.HMIDIOUT hmo,
                                                       int channel, int preset)
@@ -215,7 +212,7 @@ namespace Midi
         /// </summary>
         /// <param name="hmo">The handle returned by midiOpenOpen.</param>
         /// <param name="channel">The channel 0..15.</param>
-        /// <param name="velocity">The pitch bend value, 0..16383, 8192 is centered.</param>
+        /// <param name="value">The pitch bend value, 0..16383, 8192 is centered.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
         public static UInt32 sendPitchBendMessage(MidiWin32Wrapper.HMIDIOUT hmo,
                                                   int channel, int value)
@@ -291,8 +288,8 @@ namespace Midi
         /// <param name="dwParam1">The dwParam1 arg passed to MidiInProc.</param>
         /// <param name="dwParam2">The dwParam2 arg passed to MidiInProc.</param>
         /// <param name="channel">Filled in with the channel, 0-15.</param>
-        /// <param name="note">Filled in with the control, 0-119.</param>
-        /// <param name="velocity">Filled in with the value, 0-127.</param>
+        /// <param name="control">Filled in with the control, 0-119.</param>
+        /// <param name="value">Filled in with the value, 0-127.</param>
         /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
         public static void DecodeControlChangeMessage(UIntPtr dwParam1, UIntPtr dwParam2,
                                out Byte channel, out Byte control, out Byte value, out UInt32 timestamp)
@@ -323,7 +320,7 @@ namespace Midi
         /// <param name="dwParam1">The dwParam1 arg passed to MidiInProc.</param>
         /// <param name="dwParam2">The dwParam2 arg passed to MidiInProc.</param>
         /// <param name="channel">Filled in with the channel, 0-15.</param>
-        /// <param name="note">Filled in with the preset, 0-127</param>
+        /// <param name="preset">Filled in with the preset, 0-127</param>
         /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
         public static void DecodeProgramChangeMessage(UIntPtr dwParam1, UIntPtr dwParam2,
                                out Byte channel, out Byte preset, out UInt32 timestamp)
@@ -353,7 +350,7 @@ namespace Midi
         /// <param name="dwParam1">The dwParam1 arg passed to MidiInProc.</param>
         /// <param name="dwParam2">The dwParam2 arg passed to MidiInProc.</param>
         /// <param name="channel">Filled in with the channel, 0-15.</param>
-        /// <param name="note">Filled in with the pitch bend value, 0..16383, 8192 is centered.</param>
+        /// <param name="value">Filled in with the pitch bend value, 0..16383, 8192 is centered.</param>
         /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
         public static void DecodePitchBendMessage(UIntPtr dwParam1, UIntPtr dwParam2,
                                out Byte channel, out UInt16 value, out UInt32 timestamp)
