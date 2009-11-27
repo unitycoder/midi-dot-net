@@ -108,23 +108,16 @@ namespace MidiExamples
 
         public override void Run()
         {
-            // Make sure there is at least one output device available.  On most Windows systems this will always be
-            // true because the Microsoft software MIDI synthesizer shows up as an output device.
-            if (OutputDevice.InstalledDevices.Count == 0)
+            // Utility function prompts user to choose an output device (or if there is only one, returns that one).
+            OutputDevice outputDevice = ExampleUtil.ChooseOutputDeviceFromConsole();
+            if (outputDevice == null)
             {
                 Console.WriteLine("No output devices, so can't run this example.");
-                Console.WriteLine("Press any key to continue.");
-                Console.ReadKey();
+                ExampleUtil.PressAnyKeyToContinue();
                 return;
             }
-
-            // Just pick the first output device.  In a real app, you would examine the elements of
-            // MidiOutputDevice.InstalledDevices, and probably present the user with a choice.
-            OutputDevice outputDevice = OutputDevice.InstalledDevices[0];
-            Console.WriteLine("Opening the first output device ({0})...", outputDevice.Name);
             outputDevice.Open();
 
-            Console.WriteLine();
             Console.WriteLine("Press alphabetic keys (with and without SHIFT) to play MIDI percussion sounds.");
             Console.WriteLine("Press Escape when finished.");
             Console.WriteLine();
