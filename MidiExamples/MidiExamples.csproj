@@ -8,7 +8,7 @@
     <ProjectGuid>{1A5F8ED9-D70D-4FF3-8153-72D9859FA89E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MidiConsoleDemo</RootNamespace>
+    <RootNamespace>MidiExamples</RootNamespace>
     <AssemblyName>MidiConsoleDemo</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -45,6 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DetectDevices.cs" />
+    <Compile Include="ExampleBase.cs" />
+    <Compile Include="ScalePlayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
