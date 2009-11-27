@@ -39,7 +39,8 @@ namespace MidiExamples
         {
             { ConsoleKey.A, new Example01()},
             { ConsoleKey.B, new Example02()},
-            { ConsoleKey.C, new Example06()}
+            { ConsoleKey.C, new Example03()},
+            { ConsoleKey.D, new Example06()}
         };
 
         static void Main(string[] args)
