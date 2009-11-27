@@ -66,8 +66,7 @@ namespace MidiExamples
 
             // All done.
             Console.WriteLine();
-            Console.WriteLine("Press any key to continue.");
-            Console.ReadKey();
+            ExampleUtil.PressAnyKeyToContinue();
         }
     }
 }
