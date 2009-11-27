@@ -27,28 +27,28 @@ namespace Midi
     /// <summary>
     /// Exception thrown when an operation on a MIDI device cannot be satisfied.
     /// </summary>
-    public class MidiDeviceException : System.ApplicationException
+    public class DeviceException : System.ApplicationException
     {
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public MidiDeviceException() { }
+        public DeviceException() { }
 
         /// <summary>
         /// Constructs exception with a specific error message.
         /// </summary>
         /// <param name="message"></param>
-        public MidiDeviceException(string message) { }
+        public DeviceException(string message) { }
 
         /// <summary>
         /// Consructs exception with error message and inner exception.
         /// </summary>
-        public MidiDeviceException(string message, System.Exception inner) { }
+        public DeviceException(string message, System.Exception inner) { }
 
         /// <summary>
         /// Constructor needed for serialization.
         /// </summary>
-        protected MidiDeviceException(System.Runtime.Serialization.SerializationInfo info,
+        protected DeviceException(System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) { }
     }
 }

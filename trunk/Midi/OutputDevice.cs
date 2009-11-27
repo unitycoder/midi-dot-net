@@ -36,14 +36,14 @@ namespace Midi
     /// 
     /// All methods on this class are threadsafe.  The open/close state for a specific instance is guarded by locking
     /// the MidiOutputDevice instance.  To perform multiple operations with the device open or closed, lock the instance.
-    public class MidiOutputDevice : MidiDevice
+    public class OutputDevice : DeviceBase
     {
         #region Public Methods and Properties
 
         /// <summary>
         /// Global list of devices installed on this system.
         /// </summary>
-        public static ReadOnlyCollection<MidiOutputDevice> InstalledDevices
+        public static ReadOnlyCollection<OutputDevice> InstalledDevices
         {
             get
             {
@@ -53,7 +53,7 @@ namespace Midi
                     {
                         installedDevices = MakeDeviceList();
                     }
-                    return new ReadOnlyCollection<MidiOutputDevice>(installedDevices);
+                    return new ReadOnlyCollection<OutputDevice>(installedDevices);
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace Midi
             lock (this)
             {
                 CheckNotOpen();
-                CheckReturnCode(MidiWin32Wrapper.midiOutOpen(out handle, deviceId, null, (UIntPtr)0));
+                CheckReturnCode(Win32Wrapper.midiOutOpen(out handle, deviceId, null, (UIntPtr)0));
                 isOpen = true;
             }
         }
@@ -93,7 +93,7 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(MidiWin32Wrapper.midiOutClose(handle));
+                CheckReturnCode(Win32Wrapper.midiOutClose(handle));
                 isOpen = false;
             }
         }
@@ -106,7 +106,7 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(MidiWin32Wrapper.midiOutReset(handle));
+                CheckReturnCode(Win32Wrapper.midiOutReset(handle));
             }
         }
 
@@ -121,7 +121,7 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(MidiWin32Util.sendNoteOnMessage(handle, channel, note, velocity));
+                CheckReturnCode(Win32Util.sendNoteOnMessage(handle, channel, note, velocity));
             }
         }
 
@@ -136,7 +136,7 @@ namespace Midi
             lock(this)
             {
                 CheckOpen();
-                CheckReturnCode(MidiWin32Util.sendNoteOffMessage(handle, channel, note, velocity));
+                CheckReturnCode(Win32Util.sendNoteOffMessage(handle, channel, note, velocity));
             }
         }
 
@@ -151,7 +151,7 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(MidiWin32Util.sendControlChangeMessage(handle, channel, control, value));
+                CheckReturnCode(Win32Util.sendControlChangeMessage(handle, channel, control, value));
             }
         }
 
@@ -165,7 +165,7 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(MidiWin32Util.sendPitchBendMessage(handle, channel, value));
+                CheckReturnCode(Win32Util.sendPitchBendMessage(handle, channel, value));
             }
         }
 
@@ -179,7 +179,7 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(MidiWin32Util.sendProgramChangeMessage(handle, channel, preset));
+                CheckReturnCode(Win32Util.sendProgramChangeMessage(handle, channel, preset));
             }
         }
 
@@ -194,15 +194,15 @@ namespace Midi
         /// <param name="rc"></param>
         private static void CheckReturnCode(UInt32 rc)
         {
-            if (rc != MidiWin32Wrapper.MMSYSERR_NOERROR)
+            if (rc != Win32Wrapper.MMSYSERR_NOERROR)
             {
                 StringBuilder errorMsg = new StringBuilder(128);
-                rc = MidiWin32Wrapper.midiOutGetErrorText(rc, errorMsg);
-                if (rc != MidiWin32Wrapper.MMSYSERR_NOERROR)
+                rc = Win32Wrapper.midiOutGetErrorText(rc, errorMsg);
+                if (rc != Win32Wrapper.MMSYSERR_NOERROR)
                 {
-                    throw new MidiDeviceException();
+                    throw new DeviceException();
                 }
-                throw new MidiDeviceException(errorMsg.ToString());
+                throw new DeviceException(errorMsg.ToString());
             }
         }
 
@@ -213,7 +213,7 @@ namespace Midi
         {
             if (!isOpen)
             {
-                throw new MidiDeviceException("device not open");
+                throw new DeviceException("device not open");
             }
         }
 
@@ -224,7 +224,7 @@ namespace Midi
         {
             if (isOpen)
             {
-                throw new MidiDeviceException("device open");
+                throw new DeviceException("device open");
             }
         }
 
@@ -233,7 +233,7 @@ namespace Midi
         /// </summary>
         /// <param name="deviceId">Position of this device in the list of all devices.</param>
         /// <param name="caps">Win32 Struct with device metadata</param>
-        private MidiOutputDevice(UIntPtr deviceId, MidiWin32Wrapper.MIDIOUTCAPS caps)
+        private OutputDevice(UIntPtr deviceId, Win32Wrapper.MIDIOUTCAPS caps)
             : base(caps.szPname)
         {
             this.deviceId = deviceId;
@@ -245,15 +245,15 @@ namespace Midi
         /// Private method for constructing the array of MidiOutputDevices by calling the Win32 api.
         /// </summary>
         /// <returns></returns>
-        private static MidiOutputDevice[] MakeDeviceList()
+        private static OutputDevice[] MakeDeviceList()
         {
-            uint outDevs = MidiWin32Wrapper.midiOutGetNumDevs();
-            MidiOutputDevice[] result = new MidiOutputDevice[outDevs];
+            uint outDevs = Win32Wrapper.midiOutGetNumDevs();
+            OutputDevice[] result = new OutputDevice[outDevs];
             for (uint deviceId = 0; deviceId < outDevs; deviceId++)
             {
-                MidiWin32Wrapper.MIDIOUTCAPS caps = new MidiWin32Wrapper.MIDIOUTCAPS();
-                MidiWin32Wrapper.midiOutGetDevCaps((UIntPtr)deviceId, out caps);
-                result[deviceId] = new MidiOutputDevice((UIntPtr)deviceId, caps);
+                Win32Wrapper.MIDIOUTCAPS caps = new Win32Wrapper.MIDIOUTCAPS();
+                Win32Wrapper.midiOutGetDevCaps((UIntPtr)deviceId, out caps);
+                result[deviceId] = new OutputDevice((UIntPtr)deviceId, caps);
             }
             return result;
         }
@@ -264,16 +264,16 @@ namespace Midi
 
         // Access to the global state is guarded by lock(staticLock).
         private static Object staticLock = new Object();
-        private static MidiOutputDevice[] installedDevices = null;
+        private static OutputDevice[] installedDevices = null;
 
         // The fields initialized in the constructor never change after construction,
         // so they don't need to be guarded by a lock.
         private UIntPtr deviceId;
-        private MidiWin32Wrapper.MIDIOUTCAPS caps;
+        private Win32Wrapper.MIDIOUTCAPS caps;
 
         // Access to the Open/Close state is guarded by lock(this).
         private bool isOpen;
-        private MidiWin32Wrapper.HMIDIOUT handle;
+        private Win32Wrapper.HMIDIOUT handle;
 
         #endregion
     }

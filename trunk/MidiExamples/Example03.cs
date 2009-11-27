@@ -110,7 +110,7 @@ namespace MidiExamples
         {
             // Make sure there is at least one output device available.  On most Windows systems this will always be
             // true because the Microsoft software MIDI synthesizer shows up as an output device.
-            if (MidiOutputDevice.InstalledDevices.Count == 0)
+            if (OutputDevice.InstalledDevices.Count == 0)
             {
                 Console.WriteLine("No output devices, so can't run this example.");
                 Console.WriteLine("Press any key to continue.");
@@ -120,7 +120,7 @@ namespace MidiExamples
 
             // Just pick the first output device.  In a real app, you would examine the elements of
             // MidiOutputDevice.InstalledDevices, and probably present the user with a choice.
-            MidiOutputDevice outputDevice = MidiOutputDevice.InstalledDevices[0];
+            OutputDevice outputDevice = OutputDevice.InstalledDevices[0];
             Console.WriteLine("Opening the first output device ({0})...", outputDevice.Name);
             outputDevice.Open();
 
