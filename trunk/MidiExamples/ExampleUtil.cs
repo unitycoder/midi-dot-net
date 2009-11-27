@@ -84,5 +84,47 @@ namespace MidiExamples
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey(true);
         }
+
+        private static Dictionary<ConsoleKey, int> mockKeys = new Dictionary<ConsoleKey,int>
+        {
+            {ConsoleKey.Q,        53},
+            {ConsoleKey.D2,       54},
+            {ConsoleKey.W,        55},
+            {ConsoleKey.D3,       56},
+            {ConsoleKey.E,        57},
+            {ConsoleKey.D4,       58},
+            {ConsoleKey.R,        59},
+            {ConsoleKey.T,        60},
+            {ConsoleKey.D6,       61},
+            {ConsoleKey.Y,        62},
+            {ConsoleKey.D7,       63},
+            {ConsoleKey.U,        64},
+            {ConsoleKey.I,        65},
+            {ConsoleKey.D9,       66},
+            {ConsoleKey.O,        67},
+            {ConsoleKey.D0,       68},
+            {ConsoleKey.P,        69},
+            {ConsoleKey.Subtract, 70},
+            {ConsoleKey.Oem4,     71},
+            {ConsoleKey.Oem6,     72}
+        };
+
+        /// <summary>
+        /// If the specified key is one of the computer keys used for mock MIDI input, returns true
+        /// and sets note to the value.
+        /// </summary>
+        /// <param name="key">The computer key pressed.</param>
+        /// <param name="note">The note it mocks.</param>
+        /// <returns></returns>
+        public static bool IsMockNote(ConsoleKey key, out int note)
+        {
+            if (mockKeys.ContainsKey(key))
+            {
+                note = mockKeys[key];
+                return true;
+            }
+            note = 0;
+            return false;
+        }
     }
 }
