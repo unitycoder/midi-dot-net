@@ -36,14 +36,14 @@ namespace MidiExamples
         public override void Run()
         {
             // Print a table of the input device names, or "No input devices" if there are none.
-            if (MidiInputDevice.InstalledDevices.Count == 0)
+            if (InputDevice.InstalledDevices.Count == 0)
             {
                 Console.WriteLine("No input devices.");
             }
             else
             {
                 Console.WriteLine("Input Devices:");
-                foreach (MidiInputDevice device in MidiInputDevice.InstalledDevices)
+                foreach (InputDevice device in InputDevice.InstalledDevices)
                 {
                     Console.WriteLine("  {0}", device.Name);
                 }
@@ -51,14 +51,14 @@ namespace MidiExamples
             Console.WriteLine();
 
             // Print a table of the output device names, or "No output devices" if there are none.
-            if (MidiOutputDevice.InstalledDevices.Count == 0)
+            if (OutputDevice.InstalledDevices.Count == 0)
             {
                 Console.WriteLine("No output devices.");
             }
             else
             {
                 Console.WriteLine("Output Devices:");
-                foreach (MidiOutputDevice device in MidiOutputDevice.InstalledDevices)
+                foreach (OutputDevice device in OutputDevice.InstalledDevices)
                 {
                     Console.WriteLine("  {0}", device.Name);
                 }

@@ -32,13 +32,13 @@ namespace Midi
     /// <summary>
     /// A clock for scheduling MIDI messages in a rate-adjustable, pausable timeline.
     /// </summary>
-    public class MidiClock
+    public class Clock
     {
         /// <summary>
         /// Constructs a midi clock with a given beats-per-minute.
         /// </summary>
         /// <param name="beatsPerMinute">The initial beats-per-minute, which can be changed later.</param>
-        public MidiClock(float beatsPerMinute)
+        public Clock(float beatsPerMinute)
         {
             if (beatsPerMinute <= 0)
             {
@@ -58,7 +58,7 @@ namespace Midi
             this.threadLock = new object();
             this.threadLock = new Object();
             this.threadShouldExit = false;
-            this.threadMessageQueue = new MidiMessageQueue();
+            this.threadMessageQueue = new MessageQueue();
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace Midi
         /// Schedules a single message based on its beatTime.
         /// </summary>
         /// <param name="message">The message to schedule.</param>
-        public void Schedule(MidiMessage message)
+        public void Schedule(Message message)
         {
             lock (threadLock)
             {
@@ -237,20 +237,20 @@ namespace Midi
         /// </summary>
         /// <param name="messages">The message to send</param>
         /// <param name="beatTimeDelta">The delta to apply (or zero).</param>
-        public void Schedule(List<MidiMessage> messages, float beatTimeDelta)
+        public void Schedule(List<Message> messages, float beatTimeDelta)
         {
             lock (threadLock)
             {
                 if (beatTimeDelta == 0)
                 {
-                    foreach (MidiMessage message in messages)
+                    foreach (Message message in messages)
                     {
                         threadMessageQueue.AddMessage(message);
                     }
                 }
                 else
                 {
-                    foreach (MidiMessage message in messages)
+                    foreach (Message message in messages)
                     {
                         threadMessageQueue.AddMessage(message.MakeTimeShiftedCopy(beatTimeDelta));
                     }
@@ -295,13 +295,13 @@ namespace Midi
                         }
                         else
                         {
-                            List<MidiMessage> timeslice = threadMessageQueue.PopEarliest();
-                            foreach (MidiMessage message in timeslice)
+                            List<Message> timeslice = threadMessageQueue.PopEarliest();
+                            foreach (Message message in timeslice)
                             {
-                                MidiMessage[] moreMessages = message.SendNow();
+                                Message[] moreMessages = message.SendNow();
                                 if (moreMessages != null)
                                 {
-                                    foreach (MidiMessage message2 in moreMessages)
+                                    foreach (Message message2 in moreMessages)
                                     {
                                         threadMessageQueue.AddMessage(message2);
                                     }
@@ -328,7 +328,7 @@ namespace Midi
         // Thread state is guarded by lock(threadLock).
         private Object threadLock;
         private bool threadShouldExit;
-        private MidiMessageQueue threadMessageQueue;
+        private MessageQueue threadMessageQueue;
 
         /// <summary>
         /// Thread-local, set to true in the scheduler thread, false in all other threads.

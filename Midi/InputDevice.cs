@@ -33,7 +33,7 @@ namespace Midi
     /// </summary>
     /// The client cannot create instances of this class, but can retrieve a collection of installed devices through
     /// the static InstalledDevices property.
-    public class MidiInputDevice : MidiDevice
+    public class InputDevice : DeviceBase
     {
         #region Public Methods and Properties
 
@@ -95,7 +95,7 @@ namespace Midi
         /// <summary>
         /// Global list of input devices installed on this system.
         /// </summary>
-        public static ReadOnlyCollection<MidiInputDevice> InstalledDevices
+        public static ReadOnlyCollection<InputDevice> InstalledDevices
         {
             get
             {
@@ -105,7 +105,7 @@ namespace Midi
                     {
                         installedDevices = MakeDeviceList();
                     }
-                    return new ReadOnlyCollection<MidiInputDevice>(installedDevices);
+                    return new ReadOnlyCollection<InputDevice>(installedDevices);
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace Midi
             lock (this)
             {
                 CheckNotOpen();
-                CheckReturnCode(MidiWin32Wrapper.midiInOpen(out handle, deviceId, new MidiWin32Wrapper.MidiInProc(InputCallback),
+                CheckReturnCode(Win32Wrapper.midiInOpen(out handle, deviceId, new Win32Wrapper.MidiInProc(InputCallback),
                     (UIntPtr)0));
                 this.timeDelegate = timeDelegate;
                 isOpen = true;
@@ -163,7 +163,7 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(MidiWin32Wrapper.midiInClose(handle));
+                CheckReturnCode(Win32Wrapper.midiInClose(handle));
                 isOpen = false;
             }
         }
@@ -199,7 +199,7 @@ namespace Midi
              {
                  CheckOpen();
                  CheckNotReceiving();
-                 CheckReturnCode(MidiWin32Wrapper.midiInStart(handle));
+                 CheckReturnCode(Win32Wrapper.midiInStart(handle));
                  isReceiving = true;
              }
          }
@@ -216,7 +216,7 @@ namespace Midi
              lock (this)
              {
                  CheckReceiving();
-                 CheckReturnCode(MidiWin32Wrapper.midiInStop(handle));
+                 CheckReturnCode(Win32Wrapper.midiInStop(handle));
                  isReceiving = false;
              }
          }
@@ -232,15 +232,15 @@ namespace Midi
         /// <param name="rc"></param>
         private static void CheckReturnCode(UInt32 rc)
         {
-            if (rc != MidiWin32Wrapper.MMSYSERR_NOERROR)
+            if (rc != Win32Wrapper.MMSYSERR_NOERROR)
             {
                 StringBuilder errorMsg = new StringBuilder(128);
-                rc = MidiWin32Wrapper.midiInGetErrorText(rc, errorMsg);
-                if (rc != MidiWin32Wrapper.MMSYSERR_NOERROR)
+                rc = Win32Wrapper.midiInGetErrorText(rc, errorMsg);
+                if (rc != Win32Wrapper.MMSYSERR_NOERROR)
                 {
-                    throw new MidiDeviceException();
+                    throw new DeviceException();
                 }
-                throw new MidiDeviceException(errorMsg.ToString());
+                throw new DeviceException(errorMsg.ToString());
             }
         }
 
@@ -251,7 +251,7 @@ namespace Midi
         {
             if (!isOpen)
             {
-                throw new MidiDeviceException("device not open");
+                throw new DeviceException("device not open");
             }
         }
 
@@ -262,7 +262,7 @@ namespace Midi
         {
             if (isOpen)
             {
-                throw new MidiDeviceException("device open");
+                throw new DeviceException("device open");
             }
         }
 
@@ -273,7 +273,7 @@ namespace Midi
         {
             if (!isReceiving)
             {
-                throw new MidiDeviceException("device not receiving");
+                throw new DeviceException("device not receiving");
             }
         }
 
@@ -284,7 +284,7 @@ namespace Midi
         {
             if (isReceiving)
             {
-                throw new MidiDeviceException("device receiving");
+                throw new DeviceException("device receiving");
             }
         }
 
@@ -293,7 +293,7 @@ namespace Midi
         /// </summary>
         /// <param name="deviceId">Position of this device in the list of all devices.</param>
         /// <param name="caps">Win32 Struct with device metadata</param>
-        private MidiInputDevice(UIntPtr deviceId, MidiWin32Wrapper.MIDIINCAPS caps)
+        private InputDevice(UIntPtr deviceId, Win32Wrapper.MIDIINCAPS caps)
             : base(caps.szPname)
         {
             this.deviceId = deviceId;
@@ -306,15 +306,15 @@ namespace Midi
         /// Private method for constructing the array of MidiInputDevices by calling the Win32 api.
         /// </summary>
         /// <returns></returns>
-        private static MidiInputDevice[] MakeDeviceList()
+        private static InputDevice[] MakeDeviceList()
         {
-            uint inDevs = MidiWin32Wrapper.midiInGetNumDevs();
-            MidiInputDevice[] result = new MidiInputDevice[inDevs];
+            uint inDevs = Win32Wrapper.midiInGetNumDevs();
+            InputDevice[] result = new InputDevice[inDevs];
             for (uint deviceId = 0; deviceId < inDevs; deviceId++)
             {
-                MidiWin32Wrapper.MIDIINCAPS caps = new MidiWin32Wrapper.MIDIINCAPS();
-                MidiWin32Wrapper.midiInGetDevCaps((UIntPtr)deviceId, out caps);
-                result[deviceId] = new MidiInputDevice((UIntPtr)deviceId, caps);
+                Win32Wrapper.MIDIINCAPS caps = new Win32Wrapper.MIDIINCAPS();
+                Win32Wrapper.midiInGetDevCaps((UIntPtr)deviceId, out caps);
+                result[deviceId] = new InputDevice((UIntPtr)deviceId, caps);
             }
             return result;
         }
@@ -322,12 +322,12 @@ namespace Midi
         /// <summary>
         /// The input callback for midiOutOpen.
         /// </summary>
-        private void InputCallback(MidiWin32Wrapper.HMIDIIN hMidiIn, UInt32 wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2)
+        private void InputCallback(Win32Wrapper.HMIDIIN hMidiIn, UInt32 wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2)
         {
             isInsideInputHandler = true;
             try
             {
-                if (wMsg == MidiWin32Wrapper.MIM_DATA)
+                if (wMsg == Win32Wrapper.MIM_DATA)
                 {
                     Byte channel;
                     Byte note;
@@ -337,51 +337,51 @@ namespace Midi
                     Byte preset;
                     UInt16 bendValue;
                     UInt32 win32Timestamp;
-                    if (MidiWin32Util.IsNoteOnMessage(dwParam1, dwParam2))
+                    if (Win32Util.IsNoteOnMessage(dwParam1, dwParam2))
                     {
                         if (NoteOn != null)
                         {
-                            MidiWin32Util.DecodeNoteMessage(dwParam1, dwParam2, out channel, out note,
+                            Win32Util.DecodeNoteMessage(dwParam1, dwParam2, out channel, out note,
                                 out velocity, out win32Timestamp);
                             NoteOn(new NoteOnMessage(this, channel, note, velocity,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }
-                    else if (MidiWin32Util.IsNoteOffMessage(dwParam1, dwParam2))
+                    else if (Win32Util.IsNoteOffMessage(dwParam1, dwParam2))
                     {
                         if (NoteOff != null)
                         {
-                            MidiWin32Util.DecodeNoteMessage(dwParam1, dwParam2, out channel, out note,
+                            Win32Util.DecodeNoteMessage(dwParam1, dwParam2, out channel, out note,
                                 out velocity, out win32Timestamp);
                             NoteOff(new NoteOffMessage(this, channel, note, velocity,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }
-                    else if (MidiWin32Util.IsControlChangeMessage(dwParam1, dwParam2))
+                    else if (Win32Util.IsControlChangeMessage(dwParam1, dwParam2))
                     {
                         if (ControlChange != null)
                         {
-                            MidiWin32Util.DecodeControlChangeMessage(dwParam1, dwParam2, out channel,
+                            Win32Util.DecodeControlChangeMessage(dwParam1, dwParam2, out channel,
                                 out control, out controlValue, out win32Timestamp);
                             ControlChange(new ControlChangeMessage(this, channel, control, controlValue,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }
-                    else if (MidiWin32Util.IsProgramChangeMessage(dwParam1, dwParam2))
+                    else if (Win32Util.IsProgramChangeMessage(dwParam1, dwParam2))
                     {
                         if (ProgramChange != null)
                         {
-                            MidiWin32Util.DecodeProgramChangeMessage(dwParam1, dwParam2, out channel,
+                            Win32Util.DecodeProgramChangeMessage(dwParam1, dwParam2, out channel,
                                 out preset, out win32Timestamp);
                             ProgramChange(new ProgramChangeMessage(this, channel, preset,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }
-                    else if (MidiWin32Util.IsPitchBendMessage(dwParam1, dwParam2))
+                    else if (Win32Util.IsPitchBendMessage(dwParam1, dwParam2))
                     {
                         if (PitchBend != null)
                         {
-                            MidiWin32Util.DecodePitchBendMessage(dwParam1, dwParam2, out channel,
+                            Win32Util.DecodePitchBendMessage(dwParam1, dwParam2, out channel,
                                 out bendValue, out win32Timestamp);
                             PitchBend(new PitchBendMessage(this, channel, bendValue,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
@@ -405,18 +405,18 @@ namespace Midi
 
         // Access to the global state is guarded by lock(staticLock).
         private static Object staticLock = new Object();
-        private static MidiInputDevice[] installedDevices = null;
+        private static InputDevice[] installedDevices = null;
 
         // The fields initialized in the constructor never change after construction,
         // so they don't need to be guarded by a lock.
         private UIntPtr deviceId;
-        private MidiWin32Wrapper.MIDIINCAPS caps;
+        private Win32Wrapper.MIDIINCAPS caps;
 
         // Access to the Open/Close state is guarded by lock(this).
         private bool isOpen;
         private bool isReceiving;
         private TimeDelegate timeDelegate;
-        private MidiWin32Wrapper.HMIDIIN handle;
+        private Win32Wrapper.HMIDIIN handle;
 
         /// <summary>
         /// Thread-local, set to true when called by an input handler, false in all other threads.

@@ -42,7 +42,7 @@ namespace Midi
     ///
     /// Some of the C functions are not typesafe when wrapped, so those wrappers are made private and typesafe
     /// variants are provided.
-    class MidiWin32Wrapper
+    class Win32Wrapper
     {
         #region Constants
 

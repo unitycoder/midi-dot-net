@@ -30,7 +30,7 @@ namespace Midi
     /// <summary>
     /// Utility functions for the MidiWin32Wrapper API.
     /// </summary>
-    class MidiWin32Util
+    class Win32Util
     {
         /// <summary>
         /// Human-readable strings for the MOD_* constants.
@@ -38,13 +38,13 @@ namespace Midi
         public static Dictionary<UInt32, string> technologyNames
             = new Dictionary<UInt32, string>()
         {
-            {MidiWin32Wrapper.MOD_MIDIPORT,  "Hardware MIDI port"},
-            {MidiWin32Wrapper.MOD_SYNTH,     "Synthesizer"},
-            {MidiWin32Wrapper.MOD_SQSYNTH,   "Square wave synthesizer"},
-            {MidiWin32Wrapper.MOD_FMSYNTH,   "FM synthesizer"},
-            {MidiWin32Wrapper.MOD_MAPPER,    "Microsoft MIDI mapper"},
-            {MidiWin32Wrapper.MOD_WAVETABLE, "Hardware wavetable synthesizer"},
-            {MidiWin32Wrapper.MOD_SWSYNTH,   "Software synthesizer"}
+            {Win32Wrapper.MOD_MIDIPORT,  "Hardware MIDI port"},
+            {Win32Wrapper.MOD_SYNTH,     "Synthesizer"},
+            {Win32Wrapper.MOD_SQSYNTH,   "Square wave synthesizer"},
+            {Win32Wrapper.MOD_FMSYNTH,   "FM synthesizer"},
+            {Win32Wrapper.MOD_MAPPER,    "Microsoft MIDI mapper"},
+            {Win32Wrapper.MOD_WAVETABLE, "Hardware wavetable synthesizer"},
+            {Win32Wrapper.MOD_SWSYNTH,   "Software synthesizer"}
         };
 
         /// <summary>
@@ -70,10 +70,10 @@ namespace Midi
         public static Dictionary<UInt32, string> extraFeatureNames
             = new Dictionary<UInt32, string>()
         {
-            {MidiWin32Wrapper.MIDICAPS_VOLUME,   "Volume control"},
-            {MidiWin32Wrapper.MIDICAPS_LRVOLUME, "Separate L/R volume control"},
-            {MidiWin32Wrapper.MIDICAPS_CACHE,    "Patch caching"},
-            {MidiWin32Wrapper.MIDICAPS_STREAM,   "Direct stream support"}
+            {Win32Wrapper.MIDICAPS_VOLUME,   "Volume control"},
+            {Win32Wrapper.MIDICAPS_LRVOLUME, "Separate L/R volume control"},
+            {Win32Wrapper.MIDICAPS_CACHE,    "Patch caching"},
+            {Win32Wrapper.MIDICAPS_STREAM,   "Direct stream support"}
         };
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Midi
         /// <param name="note">The note 0..127 (middle C is 60).</param>
         /// <param name="velocity">The velocity 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendNoteOnMessage(MidiWin32Wrapper.HMIDIOUT hmo,
+        public static UInt32 sendNoteOnMessage(Win32Wrapper.HMIDIOUT hmo,
                                                int channel, int note, int velocity)
         {
             #region Preconditions
@@ -125,7 +125,7 @@ namespace Midi
                 throw new ArgumentOutOfRangeException("Velocity is out of range.");
             }
             #endregion
-            return MidiWin32Wrapper.midiOutShortMsg(hmo, (UInt32)(0x90 | (channel) | (note << 8) | (velocity << 16)));
+            return Win32Wrapper.midiOutShortMsg(hmo, (UInt32)(0x90 | (channel) | (note << 8) | (velocity << 16)));
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Midi
         /// <param name="note">The note 0..127 (middle C is 60).</param>
         /// <param name="velocity">The velocity 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendNoteOffMessage(MidiWin32Wrapper.HMIDIOUT hmo,
+        public static UInt32 sendNoteOffMessage(Win32Wrapper.HMIDIOUT hmo,
                                                 int channel, int note, int velocity)
         {
             #region Preconditions
@@ -153,7 +153,7 @@ namespace Midi
                 throw new ArgumentOutOfRangeException("Velocity is out of range.");
             }
             #endregion
-            return MidiWin32Wrapper.midiOutShortMsg(hmo, (UInt32)(0x80 | (channel) | (note << 8) | (velocity << 16)));
+            return Win32Wrapper.midiOutShortMsg(hmo, (UInt32)(0x80 | (channel) | (note << 8) | (velocity << 16)));
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace Midi
         /// <param name="control">The controller 0..119.</param>
         /// <param name="value">The new value 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendControlChangeMessage(MidiWin32Wrapper.HMIDIOUT hmo,
+        public static UInt32 sendControlChangeMessage(Win32Wrapper.HMIDIOUT hmo,
                                                       int channel, int control, int value)
         {
             #region Preconditions
@@ -181,7 +181,7 @@ namespace Midi
                 throw new ArgumentOutOfRangeException("Value is out of range.");
             }
             #endregion
-            return MidiWin32Wrapper.midiOutShortMsg(hmo, (UInt32)(0xB0 | (channel) | (control << 8) | (value << 16)));
+            return Win32Wrapper.midiOutShortMsg(hmo, (UInt32)(0xB0 | (channel) | (control << 8) | (value << 16)));
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Midi
         /// <param name="channel">The channel 0..15.</param>
         /// <param name="preset">The preset to choose 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendProgramChangeMessage(MidiWin32Wrapper.HMIDIOUT hmo,
+        public static UInt32 sendProgramChangeMessage(Win32Wrapper.HMIDIOUT hmo,
                                                       int channel, int preset)
         {
             #region Preconditions
@@ -204,7 +204,7 @@ namespace Midi
                 throw new ArgumentOutOfRangeException("Preset is out of range.");
             }
             #endregion
-            return MidiWin32Wrapper.midiOutShortMsg(hmo, (UInt32)(0xC0 | (channel) | (preset << 8)));
+            return Win32Wrapper.midiOutShortMsg(hmo, (UInt32)(0xC0 | (channel) | (preset << 8)));
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace Midi
         /// <param name="channel">The channel 0..15.</param>
         /// <param name="value">The pitch bend value, 0..16383, 8192 is centered.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendPitchBendMessage(MidiWin32Wrapper.HMIDIOUT hmo,
+        public static UInt32 sendPitchBendMessage(Win32Wrapper.HMIDIOUT hmo,
                                                   int channel, int value)
         {
             #region Preconditions
@@ -227,7 +227,7 @@ namespace Midi
                 throw new ArgumentOutOfRangeException("Value is out of range.");
             }
             #endregion
-            return MidiWin32Wrapper.midiOutShortMsg(hmo, (UInt32)(0xE0 | (channel) | ((value & 0x7f) << 8) | ((value & 0x3f80) << 9)));
+            return Win32Wrapper.midiOutShortMsg(hmo, (UInt32)(0xE0 | (channel) | ((value & 0x7f) << 8) | ((value & 0x3f80) << 9)));
         }
 
         /// <summary>
