@@ -106,9 +106,9 @@ namespace MidiExamples
             {
                 Console.Clear();
                 Console.WriteLine("BPM = {0}, Playing = {1}", clock.BeatsPerMinute, clock.IsRunning);
-                Console.WriteLine("'Q' = Quit, '[' = slower, ']' = faster, 'P' = Toggle Play");
+                Console.WriteLine("Escape = Quit, '[' = slower, ']' = faster, 'P' = Toggle Play");
                 ConsoleKey key = Console.ReadKey(true).Key;
-                if (key == ConsoleKey.Q)
+                if (key == ConsoleKey.Escape)
                 {
                     done = true;
                 }
