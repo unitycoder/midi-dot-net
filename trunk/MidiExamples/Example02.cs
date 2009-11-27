@@ -36,7 +36,8 @@ namespace MidiExamples
 
         public override void Run()
         {
-            Console.WriteLine("Making sure there is at least one output device available...");
+            // Make sure there is at least one output device available.  On most Windows systems this will always be
+            // true because the Microsoft software MIDI synthesizer shows up as an output device.
             if (MidiOutputDevice.InstalledDevices.Count == 0)
             {
                 Console.WriteLine("No output devices, so can't run this example.");
@@ -45,11 +46,15 @@ namespace MidiExamples
                 return;
             }
 
+            // Just pick the first output device.  In a real app, you would examine the elements of
+            // MidiOutputDevice.InstalledDevices, and probably present the user with a choice.
             MidiOutputDevice outputDevice = MidiOutputDevice.InstalledDevices[0];
             Console.WriteLine("Opening the first output device ({0})...", outputDevice.Name);
             outputDevice.Open();
 
-            Console.WriteLine("Playing arpeggiated C major chord (without releasing the notes)...");
+            Console.WriteLine("Playing arpeggiated C major chord and bending it...");
+
+            // Play C, E, G in half second intervals.
             outputDevice.sendNoteOnMessage(0, 60, 80);
             Thread.Sleep(500);
             outputDevice.sendNoteOnMessage(0, 64, 80);
@@ -57,28 +62,29 @@ namespace MidiExamples
             outputDevice.sendNoteOnMessage(0, 67, 80);
             Thread.Sleep(500);
 
-            Console.WriteLine("Now applying the sustain pedal...");
+            // Now apply the sustain pedal.
             outputDevice.sendControlChangeMessage(0, 64, 127);
 
-            Console.WriteLine("Now releasing the C chord notes, but they should keep ringing because of the sustain pedal.");
+            // Now release the C chord notes, but they should keep ringing because of the sustain pedal.
             outputDevice.sendNoteOffMessage(0, 60, 80);
             outputDevice.sendNoteOffMessage(0, 64, 80);
             outputDevice.sendNoteOffMessage(0, 67, 80);
 
-            Console.WriteLine("Now bending the pitches down.");
+            // Now bend the pitches down.
             for (int i = 0; i < 17; ++i)
             {
                 outputDevice.sendPitchBendMessage(0, 8192 - i * 450);
                 Thread.Sleep(200);
             }
 
-            Console.WriteLine("Now releasing the sustain pedal, which should silence the notes...");
+            // Now release the sustain pedal, which should silence the notes.
             outputDevice.sendControlChangeMessage(0, 64, 0);
             Thread.Sleep(1000);
 
-            Console.WriteLine("Closing the output device...");
+            // Close the output device.
             outputDevice.Close();
 
+            // All done.
             Console.WriteLine();
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();

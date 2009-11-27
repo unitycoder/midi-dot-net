@@ -35,6 +35,7 @@ namespace MidiExamples
 
         public override void Run()
         {
+            // Print a table of the input device names, or "No input devices" if there are none.
             if (MidiInputDevice.InstalledDevices.Count == 0)
             {
                 Console.WriteLine("No input devices.");
@@ -49,6 +50,7 @@ namespace MidiExamples
             }
             Console.WriteLine();
 
+            // Print a table of the output device names, or "No output devices" if there are none.
             if (MidiOutputDevice.InstalledDevices.Count == 0)
             {
                 Console.WriteLine("No output devices.");
@@ -61,6 +63,8 @@ namespace MidiExamples
                     Console.WriteLine("  {0}", device.Name);
                 }
             }
+
+            // All done.
             Console.WriteLine();
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
