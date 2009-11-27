@@ -27,10 +27,10 @@ using Midi;
 
 namespace MidiExamples
 {
-    class DetectDevices : ExampleBase
+    class Example01 : ExampleBase
     {
-        public DetectDevices()
-            : base("DetectDevices.cs", "Prints info about devices.")
+        public Example01()
+            : base("Example01.cs", "Prints info about devices.")
         { }
 
         public override void Run()
