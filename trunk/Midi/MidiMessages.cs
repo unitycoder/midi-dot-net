@@ -23,9 +23,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Midi
 {
@@ -46,6 +43,7 @@ namespace Midi
         /// <summary>
         /// Sends this message immediately, ignoring the beatTime.
         /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public abstract MidiMessage[] SendNow();
 
         /// <summary>
@@ -168,12 +166,19 @@ namespace Midi
         public NoteOnMessage(MidiDevice device, int channel, int note, int velocity, float beatTime)
             : base(device, channel, note, velocity, beatTime) { }
 
+        /// <summary>
+        /// Sends this message immediately, ignoring the beatTime.
+        /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override MidiMessage[] SendNow()
         {
             ((MidiOutputDevice)Device).sendNoteOnMessage(Channel, Note, Velocity);
             return null;
         }
 
+        /// <summary>
+        /// Returns a copy of this message, shifted in time by the specified amount.
+        /// </summary>
         public override MidiMessage MakeTimeShiftedCopy(float delta)
         {
             return new NoteOnMessage(Device, Channel, Note, Velocity, BeatTime + delta);
@@ -196,12 +201,19 @@ namespace Midi
         public NoteOffMessage(MidiDevice device, int channel, int note, int velocity, float beatTime)
             : base(device, channel, note, velocity, beatTime) { }
 
+        /// <summary>
+        /// Sends this message immediately, ignoring the beatTime.
+        /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override MidiMessage[] SendNow()
         {
             ((MidiOutputDevice)Device).sendNoteOffMessage(Channel, Note, Velocity);
             return null;
         }
 
+        /// <summary>
+        /// Returns a copy of this message, shifted in time by the specified amount.
+        /// </summary>
         public override MidiMessage MakeTimeShiftedCopy(float delta)
         {
             return new NoteOffMessage(Device, Channel, Note, Velocity, BeatTime + delta);
@@ -234,12 +246,19 @@ namespace Midi
         public float Duration { get { return duration; } }
         private float duration;
 
+        /// <summary>
+        /// Sends this message immediately, ignoring the beatTime.
+        /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override MidiMessage[] SendNow()
         {
             ((MidiOutputDevice)Device).sendNoteOnMessage(Channel, Note, Velocity);
             return new MidiMessage[]{new NoteOffMessage(Device, Channel, Note, Velocity, BeatTime + Duration)};
         }
 
+        /// <summary>
+        /// Returns a copy of this message, shifted in time by the specified amount.
+        /// </summary>
         public override MidiMessage MakeTimeShiftedCopy(float delta)
         {
             return new NoteOnOffMessage(Device, Channel, Note, Velocity, BeatTime + delta, Duration);
@@ -286,12 +305,19 @@ namespace Midi
         public int Value { get { return value; } }
         private int value;
 
+        /// <summary>
+        /// Sends this message immediately, ignoring the beatTime.
+        /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override MidiMessage[] SendNow()
         {
             ((MidiOutputDevice)Device).sendControlChangeMessage(Channel, Control, Value);
             return null;
         }
 
+        /// <summary>
+        /// Returns a copy of this message, shifted in time by the specified amount.
+        /// </summary>
         public override MidiMessage MakeTimeShiftedCopy(float delta)
         {
             return new ControlChangeMessage(Device, Channel, Control, Value, BeatTime + delta);
@@ -326,12 +352,19 @@ namespace Midi
         public int Value { get { return value; } }
         private int value;
 
+        /// <summary>
+        /// Sends this message immediately, ignoring the beatTime.
+        /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override MidiMessage[] SendNow()
         {
             ((MidiOutputDevice)Device).sendPitchBendMessage(Channel, Value);
             return null;
         }
 
+        /// <summary>
+        /// Returns a copy of this message, shifted in time by the specified amount.
+        /// </summary>
         public override MidiMessage MakeTimeShiftedCopy(float delta)
         {
             return new PitchBendMessage(Device, Channel, Value, BeatTime + delta);
@@ -366,12 +399,19 @@ namespace Midi
         public int Preset { get { return preset; } }
         private int preset;
 
+        /// <summary>
+        /// Sends this message immediately, ignoring the beatTime.
+        /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override MidiMessage[] SendNow()
         {
             ((MidiOutputDevice)Device).sendProgramChangeMessage(Channel, Preset);
             return null;
         }
 
+        /// <summary>
+        /// Returns a copy of this message, shifted in time by the specified amount.
+        /// </summary>
         public override MidiMessage MakeTimeShiftedCopy(float delta)
         {
             return new ProgramChangeMessage(Device, Channel, Preset, BeatTime + delta);
@@ -393,6 +433,11 @@ namespace Midi
     /// The callback is invoked on the MidiOutputDevice's worker thread.
     public class CallbackMessage : MidiMessage
     {
+        /// <summary>
+        /// Delegate called when a CallbackMessage is sent.
+        /// </summary>
+        /// <param name="beatTime">The time at which this event was scheduled.</param>
+        /// <returns>Additional messages which should be scheduled as a result of this callback, or null.</returns>
         public delegate MidiMessage[] CallbackType(float beatTime);
         
         /// <summary>
@@ -412,11 +457,18 @@ namespace Midi
         public CallbackType Callback { get { return callback; } }
         private CallbackType callback;
 
+        /// <summary>
+        /// Sends this message immediately, ignoring the beatTime.
+        /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override MidiMessage[] SendNow()
         {
             return callback(BeatTime);
         }
 
+        /// <summary>
+        /// Returns a copy of this message, shifted in time by the specified amount.
+        /// </summary>
         public override MidiMessage MakeTimeShiftedCopy(float delta)
         {
             return new CallbackMessage(callback, BeatTime + delta);

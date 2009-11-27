@@ -23,13 +23,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Threading;
-using System.Threading;
 
 namespace Midi
 {
@@ -296,7 +291,7 @@ namespace Midi
         /// <summary>
         /// Private Constructor, only called by the getter for the InstalledDevices property.
         /// </summary>
-        /// <param name="id">Position of this device in the list of all devices.</param>
+        /// <param name="deviceId">Position of this device in the list of all devices.</param>
         /// <param name="caps">Win32 Struct with device metadata</param>
         private MidiInputDevice(UIntPtr deviceId, MidiWin32Wrapper.MIDIINCAPS caps)
             : base(caps.szPname)
