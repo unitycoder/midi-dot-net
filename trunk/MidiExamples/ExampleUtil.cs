@@ -6,6 +6,9 @@ using Midi;
 
 namespace MidiExamples
 {
+    /// <summary>
+    /// Utility functions for MIDI examples.
+    /// </summary>
     public class ExampleUtil
     {
         /// <summary>
@@ -73,6 +76,9 @@ namespace MidiExamples
             }
         }
 
+        /// <summary>
+        /// Prints "Press any key to continue." with a newline, then waits for a key to be pressed.
+        /// </summary>
         public static void PressAnyKeyToContinue()
         {
             Console.WriteLine("Press any key to continue.");
