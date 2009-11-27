@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C# Express 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MidiExamples", "MidiConsoleDemo\MidiExamples.csproj", "{1A5F8ED9-D70D-4FF3-8153-72D9859FA89E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MidiExamples", "MidiExamples\MidiExamples.csproj", "{1A5F8ED9-D70D-4FF3-8153-72D9859FA89E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midi", "Midi\Midi.csproj", "{F60D8B7B-2D2E-4B94-A736-3783FFE1A25C}"
 EndProject
