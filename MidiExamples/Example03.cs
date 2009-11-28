@@ -32,7 +32,7 @@ namespace MidiExamples
     class Example03 : ExampleBase
     {
         public Example03()
-            : base("Example03.cs", "Alpha keys play MIDI percussion sounds.")
+            : base("Example03.cs", "Alphabetic keys play MIDI percussion sounds.")
         { }
 
         // Struct representing a Percussion note number and name.
@@ -69,7 +69,7 @@ namespace MidiExamples
             {ConsoleKey.H, new PercussionNote(50, "High Tom 1")},
             {ConsoleKey.J, new PercussionNote(51, "Ride Cymbal 1")},
             {ConsoleKey.K, new PercussionNote(52, "Chinese Cymbal")},
-            {ConsoleKey.L, new PercussionNote(53, " Ride Bell")},
+            {ConsoleKey.L, new PercussionNote(53, "Ride Bell")},
             {ConsoleKey.Z, new PercussionNote(54, "Tambourine")},
             {ConsoleKey.X, new PercussionNote(55, "Splash Cymbal")},
             {ConsoleKey.C, new PercussionNote(56, "Cowbell")},

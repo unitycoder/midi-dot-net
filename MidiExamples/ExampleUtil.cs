@@ -85,6 +85,9 @@ namespace MidiExamples
             Console.ReadKey(true);
         }
 
+        /// <summary>
+        /// Key mappings for mock MIDI keys on the QWERTY keyboard.
+        /// </summary>
         private static Dictionary<ConsoleKey, int> mockKeys = new Dictionary<ConsoleKey,int>
         {
             {ConsoleKey.Q,        53},
@@ -104,7 +107,7 @@ namespace MidiExamples
             {ConsoleKey.O,        67},
             {ConsoleKey.D0,       68},
             {ConsoleKey.P,        69},
-            {ConsoleKey.Subtract, 70},
+            {ConsoleKey.OemMinus, 70},
             {ConsoleKey.Oem4,     71},
             {ConsoleKey.Oem6,     72}
         };
