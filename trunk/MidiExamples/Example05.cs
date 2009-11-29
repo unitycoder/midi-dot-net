@@ -107,7 +107,7 @@ namespace MidiExamples
                 {
                     break;
                 }
-                int note;
+                Note note;
                 if (ExampleUtil.IsMockNote(keyInfo.Key, out note))
                 {
                     NoteOnMessage noteOn = new NoteOnMessage(outputDevice, 0, note, 100, clock.BeatTime);

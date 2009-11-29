@@ -35,27 +35,16 @@ namespace MidiExamples
             : base("Example03.cs", "Alphabetic keys play MIDI percussion sounds.")
         { }
 
-        // Struct representing a Percussion note number and name.
-        private struct PercussionNote
-        {
-            public int noteNum;
-            public string noteName;
-            public PercussionNote(int noteNum, string noteName)
-            {
-                this.noteNum = noteNum;
-                this.noteName = noteName;
-            }
-        }
-
         // Key mappings for the first 26 MIDI percussion notes, used when Shift isn't pressed.
-        private static Dictionary<ConsoleKey, PercussionNote> unshiftedNotes =
-            new Dictionary<ConsoleKey, PercussionNote>
+        private static Dictionary<ConsoleKey, Percussion> unshiftedNotes =
+            new Dictionary<ConsoleKey, Percussion>
         {
-            {ConsoleKey.Q, new PercussionNote(35, "Bass Drum 2")},
-            {ConsoleKey.W, new PercussionNote(36, "Bass Drum 1")},
-            {ConsoleKey.E, new PercussionNote(37, "Side Stick")},
-            {ConsoleKey.R, new PercussionNote(38, "Snare Drum 1")},
-            {ConsoleKey.T, new PercussionNote(39, "Hand Clap")},
+            {ConsoleKey.Q, Percussion.BassDrum1},
+            {ConsoleKey.W, Percussion.BassDrum2},
+            {ConsoleKey.E, Percussion.SideStick},
+            {ConsoleKey.R, Percussion.SnareDrum1},
+            {ConsoleKey.T, Percussion.HandClap},
+            /*
             {ConsoleKey.Y, new PercussionNote(40, "Snare Drum 2")},
             {ConsoleKey.U, new PercussionNote(41, "Low Tom 2")},
             {ConsoleKey.I, new PercussionNote(42, "Closed Hi-hat")},
@@ -77,13 +66,15 @@ namespace MidiExamples
             {ConsoleKey.B, new PercussionNote(58, "Vibra Slap")},
             {ConsoleKey.N, new PercussionNote(59, "Ride Cymbal 2")},
             {ConsoleKey.M, new PercussionNote(60, "High Bongo")}
+                */
         };
 
         // Key mappings for the rest of the MIDI percussion notes, used when Shift is pressed.
-        private static Dictionary<ConsoleKey, PercussionNote> shiftedNotes =
-            new Dictionary<ConsoleKey, PercussionNote>
+        private static Dictionary<ConsoleKey, Percussion> shiftedNotes =
+            new Dictionary<ConsoleKey, Percussion>
         {
-            {ConsoleKey.Q, new PercussionNote(61, "Low Bongo")},
+            {ConsoleKey.Q, Percussion.LowBongo},
+            /*
             {ConsoleKey.W, new PercussionNote(62, "Mute High Conga")},
             {ConsoleKey.E, new PercussionNote(63, "Open High Conga")},
             {ConsoleKey.R, new PercussionNote(64, "Low Conga")},
@@ -104,7 +95,8 @@ namespace MidiExamples
             {ConsoleKey.L, new PercussionNote(79, "Open Cuica")},
             {ConsoleKey.Z, new PercussionNote(80, "Mute Triangle")},
             {ConsoleKey.X, new PercussionNote(81, "Open Triangle")}
-        };
+            */
+             };
 
         public override void Run()
         {
@@ -133,18 +125,18 @@ namespace MidiExamples
                 {
                     if (shiftedNotes.ContainsKey(keyInfo.Key))
                     {
-                        PercussionNote note = shiftedNotes[keyInfo.Key];
-                        Console.Write("\rNote {0} ({1})         ", note.noteNum, note.noteName);
-                        outputDevice.SendNoteOn(Channel.Channel10, note.noteNum, 90);
+                        Percussion note = shiftedNotes[keyInfo.Key];
+                        Console.Write("\rNote {0} ({1})         ", (int)note, note.Name());
+                        outputDevice.SendPercussion(note, 90);
                     }
                 }
                 else
                 {
                     if (unshiftedNotes.ContainsKey(keyInfo.Key))
                     {
-                        PercussionNote note = unshiftedNotes[keyInfo.Key];
-                        Console.Write("\rNote {0} ({1})         ", note.noteNum, note.noteName);
-                        outputDevice.SendNoteOn(Channel.Channel10, note.noteNum, 90);
+                        Percussion note = unshiftedNotes[keyInfo.Key];
+                        Console.Write("\rNote {0} ({1})         ", (int)note, note.Name());
+                        outputDevice.SendPercussion(note, 90);
                     }
                 }
             }

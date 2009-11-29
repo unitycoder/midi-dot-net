@@ -47,19 +47,19 @@ namespace Midi
         /// </summary>
         /// <param name="dwParam1">The dwParam1 arg passed to MidiInProc.</param>
         /// <param name="dwParam2">The dwParam2 arg passed to MidiInProc.</param>
-        /// <param name="channel">Filled in with the channel, 0-15.</param>
-        /// <param name="note">Filled in with the note, 0-127</param>
+        /// <param name="channel">Filled in with the channel.</param>
+        /// <param name="note">Filled in with the note.</param>
         /// <param name="velocity">Filled in with the velocity, 0.127</param>
         /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
         public static void DecodeNoteOn(UIntPtr dwParam1, UIntPtr dwParam2,
-            out Channel channel, out int note, out int velocity, out UInt32 timestamp)
+            out Channel channel, out Note note, out int velocity, out UInt32 timestamp)
         {
             if (!IsNoteOn(dwParam1, dwParam2))
             {
                 throw new ArgumentException("Not a Note On message.");
             }
             channel = (Channel)((int)dwParam1 & 0x0f);
-            note = (int)(((int)dwParam1 & 0xff00) >> 8);
+            note = (Note)(((int)dwParam1 & 0xff00) >> 8);
             velocity = (((int)dwParam1 & 0xff0000) >> 16);
             timestamp = (UInt32)dwParam2;
         }
@@ -68,21 +68,18 @@ namespace Midi
         /// Encodes a Note On short message.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        /// <param name="note">The note 0..127 (middle C is 60).</param>
+        /// <param name="note">The note.</param>
         /// <param name="velocity">The velocity 0..127.</param>
         /// <returns>A value that can be passed to midiOutShortMsg.</returns>
-        public static UInt32 EncodeNoteOn(Channel channel, int note, int velocity)
+        public static UInt32 EncodeNoteOn(Channel channel, Note note, int velocity)
         {
             channel.Validate();
-            if (note < 0 || note > 127)
-            {
-                throw new ArgumentOutOfRangeException("Note is out of range.");
-            }
+            note.Validate();
             if (velocity < 0 || velocity > 127)
             {
                 throw new ArgumentOutOfRangeException("Velocity is out of range.");
             }
-            return (UInt32)(0x90 | ((int)channel) | (note << 8) | (velocity << 16));
+            return (UInt32)(0x90 | ((int)channel) | ((int)note << 8) | (velocity << 16));
         }
 
 
@@ -101,19 +98,19 @@ namespace Midi
         /// </summary>
         /// <param name="dwParam1">The dwParam1 arg passed to MidiInProc.</param>
         /// <param name="dwParam2">The dwParam2 arg passed to MidiInProc.</param>
-        /// <param name="channel">Filled in with the channel, 0-15.</param>
-        /// <param name="note">Filled in with the note, 0-127</param>
+        /// <param name="channel">Filled in with the channel.</param>
+        /// <param name="note">Filled in with the note.</param>
         /// <param name="velocity">Filled in with the velocity, 0.127</param>
         /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
         public static void DecodeNoteOff(UIntPtr dwParam1, UIntPtr dwParam2,
-            out Channel channel, out int note, out int velocity, out UInt32 timestamp)
+            out Channel channel, out Note note, out int velocity, out UInt32 timestamp)
         {
             if (!IsNoteOff(dwParam1, dwParam2))
             {
                 throw new ArgumentException("Not a Note Off message.");
             }
             channel = (Channel)((int)dwParam1 & 0x0f);
-            note = (((int)dwParam1 & 0xff00) >> 8);
+            note = (Note)(((int)dwParam1 & 0xff00) >> 8);
             velocity = (((int)dwParam1 & 0xff0000) >> 16);
             timestamp = (UInt32)dwParam2;
         }
@@ -122,21 +119,18 @@ namespace Midi
         /// Encodes a Note Off short message.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        /// <param name="note">The note 0..127 (middle C is 60).</param>
+        /// <param name="note">The note.</param>
         /// <param name="velocity">The velocity 0..127.</param>
         /// <returns>A value that can be passed to midiOutShortMsg.</returns>
-        public static UInt32 EncodeNoteOff(Channel channel, int note, int velocity)
+        public static UInt32 EncodeNoteOff(Channel channel, Note note, int velocity)
         {
             channel.Validate();
-            if (note < 0 || note > 127)
-            {
-                throw new ArgumentOutOfRangeException("Note is out of range.");
-            }
+            note.Validate();
             if (velocity < 0 || velocity > 127)
             {
                 throw new ArgumentOutOfRangeException("Velocity is out of range.");
             }
-            return (UInt32)(0x80 | ((int)channel) | (note << 8) | (velocity << 16));
+            return (UInt32)(0x80 | ((int)channel) | ((int)note << 8) | (velocity << 16));
         }
 
         /// <summary>
@@ -154,8 +148,8 @@ namespace Midi
         /// </summary>
         /// <param name="dwParam1">The dwParam1 arg passed to MidiInProc.</param>
         /// <param name="dwParam2">The dwParam2 arg passed to MidiInProc.</param>
-        /// <param name="channel">Filled in with the channel, 0-15.</param>
-        /// <param name="control">Filled in with the control, 0-119.</param>
+        /// <param name="channel">Filled in with the channel.</param>
+        /// <param name="control">Filled in with the control.</param>
         /// <param name="value">Filled in with the value, 0-127.</param>
         /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
         public static void DecodeControlChange(UIntPtr dwParam1, UIntPtr dwParam2,

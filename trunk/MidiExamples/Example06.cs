@@ -21,9 +21,9 @@ namespace MidiExamples
                 this.beatsPerMeasure = beatsPerMeasure;
                 this.messagesForOneMeasure = new List<Message>();
                 for (int i = 0; i < beatsPerMeasure; ++i) {
-                    int note = i == 0 ? 44 : 42;
+                    Percussion percussion = i == 0 ? Percussion.PedalHiHat : Percussion.MidTom1;
                     int velocity = i == 0 ? 100 : 40;
-                    messagesForOneMeasure.Add(new NoteOnOffMessage(outputDevice, Channel.Channel10, note, velocity, i, 0.99f));
+                    messagesForOneMeasure.Add(new PercussionMessage(outputDevice, percussion, velocity, i));
                 }
                 messagesForOneMeasure.Add(new CallbackMessage(new CallbackMessage.CallbackType(CallbackHandler), 0));
                 clock.Schedule(messagesForOneMeasure, 0);
@@ -56,7 +56,7 @@ namespace MidiExamples
 
             public void NoteOn(NoteOnMessage msg)
             {
-                int[] scale = NoteUtil.MajorScaleStartingAt(msg.Note);
+                Note[] scale = NoteUtil.MajorScaleStartingAt(msg.Note);
                 for (int i = 1; i < scale.Count(); ++i)
                 {
                     clock.Schedule(new NoteOnOffMessage(outputDevice, msg.Channel, scale[i],
@@ -142,8 +142,8 @@ namespace MidiExamples
                 }
                 else if (key == ConsoleKey.D1)
                 {
-                    NoteOnMessage msg = new NoteOnMessage(outputDevice, 0, 60, 80, clock.BeatTime);
-                    NoteOffMessage msg2 = new NoteOffMessage(outputDevice, 0, 60, 80, clock.BeatTime+0.99f);
+                    NoteOnMessage msg = new NoteOnMessage(outputDevice, Channel.Channel1, Note.C4, 80, clock.BeatTime);
+                    NoteOffMessage msg2 = new NoteOffMessage(outputDevice, Channel.Channel1, Note.C4, 80, clock.BeatTime+0.99f);
                     clock.Schedule(msg);
                     clock.Schedule(msg2);
                     scaler.NoteOn(msg);

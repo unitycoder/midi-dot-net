@@ -331,7 +331,7 @@ namespace Midi
                 if (wMsg == Win32API.MidiInMessage.MIM_DATA)
                 {
                     Channel channel;
-                    int note;
+                    Note note;
                     int velocity;
                     Control control;
                     int value;

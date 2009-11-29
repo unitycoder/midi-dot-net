@@ -46,13 +46,10 @@ namespace Midi
         /// </summary>
         /// <param name="tonic">The tonic note.</param>
         /// <returns>The ascending sequence of notes.</returns>
-        public static int[] MajorScaleStartingAt(int tonic)
+        public static Note[] MajorScaleStartingAt(Note tonic)
         {
-            if (tonic < 0 || tonic > 115)
-            {
-                throw new ArgumentOutOfRangeException("tonic");
-            }
-            return new int[] { tonic, tonic + 2, tonic + 4, tonic + 5, tonic + 7,
+            tonic.Validate();
+            return new Note[] { tonic, tonic + 2, tonic + 4, tonic + 5, tonic + 7,
                 tonic + 9, tonic + 11, tonic + 12 };
         }
 
@@ -61,18 +58,12 @@ namespace Midi
         /// </summary>
         /// <param name="note">The note to test.</param>
         /// <param name="tonic">The tonic for the scale.</param>
-        public static bool IsInMajorScale(int note, int tonic)
+        public static bool IsInMajorScale(Note note, Note tonic)
         {
-            if (!IsValidNote(note))
-            {
-                throw new ArgumentOutOfRangeException("note");
-            }
-            if (!IsValidNote(tonic))
-            {
-                throw new ArgumentOutOfRangeException("tonic");
-            }
+            note.Validate();
+            tonic.Validate();
             // Compute how many semitones note is above the nearest tonic below.
-            int semitonesAbove = (note % 12 - tonic % 12);
+            int semitonesAbove = ((int)note % 12 - (int)tonic % 12);
             if (semitonesAbove < 0)
             {
                 semitonesAbove += 12;

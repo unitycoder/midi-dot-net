@@ -114,10 +114,12 @@ namespace Midi
         /// Sends a Note On message to this MIDI output device.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        /// <param name="note">The note 0..127 (middle C is 60).</param>
+        /// <param name="note">The note.</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        public void SendNoteOn(Channel channel, int note, int velocity)
+        public void SendNoteOn(Channel channel, Note note, int velocity)
         {
+            channel.Validate();
+            note.Validate();
             lock (this)
             {
                 CheckOpen();
@@ -129,14 +131,34 @@ namespace Midi
         /// Sends a Note Off message to this MIDI output device.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        /// <param name="note">The note 0..127 (middle C is 60).</param>
+        /// <param name="note">The note.</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        public void SendNoteOff(Channel channel, int note, int velocity)
+        public void SendNoteOff(Channel channel, Note note, int velocity)
         {
-            lock(this)
+            channel.Validate();
+            note.Validate();
+            lock (this)
             {
                 CheckOpen();
                 CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOff(channel, note, velocity)));
+            }
+        }
+
+        /// <summary>
+        /// Sends a Note On message to Channel10 of this MIDI output device.
+        /// </summary>
+        /// <param name="percussion">The percussion.</param>
+        /// <param name="velocity">The velocity 0..127.</param>
+        /// This is simply shorthand ofr a Note On message on Channel10 with a percussion-specific note, so
+        /// there is no corresponding message to receive from an input device.
+        public void SendPercussion(Percussion percussion, int velocity)
+        {
+            percussion.Validate();
+            lock (this)
+            {
+                CheckOpen();
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOn(Channel.Channel10, (Note)percussion,
+                    velocity)));
             }
         }
 

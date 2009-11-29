@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Midi;
 
 namespace MidiExamples
 {
@@ -46,6 +47,14 @@ namespace MidiExamples
 
         static void Main(string[] args)
         {
+            Note n = Note.CSharp4;
+            n += (int)Interval.MajorThird;
+            Console.WriteLine("{0}", n.Name());
+            Interval x = (Interval)6;
+            x += 2;
+            Console.WriteLine("{0}", x.Name());
+            Console.WriteLine("{0}", ((Interval)(Note.C5 - Note.C4)).Name());
+            Thread.Sleep(3000);
             while (true)
             {
                 Console.Clear();
