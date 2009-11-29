@@ -59,7 +59,7 @@
     <Compile Include="Messages.cs" />
     <Compile Include="OutputDevice.cs" />
     <Compile Include="Win32Util.cs" />
-    <Compile Include="Win32Wrapper.cs" />
+    <Compile Include="Win32API.cs" />
     <Compile Include="NoteUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
