@@ -46,14 +46,14 @@ namespace MidiExamples
 
         public void NoteOn(NoteOnMessage msg)
         {
-            clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Note + 4, msg.Velocity, msg.BeatTime + 1));
-            clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Note + 7, msg.Velocity, msg.BeatTime + 2));
+            clock.Schedule(new NoteOnMessage(outputDevice, msg.MessageChannel, msg.Note + 4, msg.Velocity, msg.BeatTime + 1));
+            clock.Schedule(new NoteOnMessage(outputDevice, msg.MessageChannel, msg.Note + 7, msg.Velocity, msg.BeatTime + 2));
         }
 
         public void NoteOff(NoteOffMessage msg)
         {
-            clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Note + 4, msg.Velocity, msg.BeatTime + 1));
-            clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Note + 7, msg.Velocity, msg.BeatTime + 2));
+            clock.Schedule(new NoteOffMessage(outputDevice, msg.MessageChannel, msg.Note + 4, msg.Velocity, msg.BeatTime + 1));
+            clock.Schedule(new NoteOffMessage(outputDevice, msg.MessageChannel, msg.Note + 7, msg.Velocity, msg.BeatTime + 2));
         }
 
         private InputDevice inputDevice;

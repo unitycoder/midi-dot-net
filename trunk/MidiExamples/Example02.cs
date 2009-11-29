@@ -34,16 +34,6 @@ namespace MidiExamples
             : base("Example02.cs", "Simple MIDI output example.")
         { }
 
-        void PressSustainPedal(OutputDevice outputDevice)
-        {
-            outputDevice.sendControlChangeMessage(0, 64, 127);
-        }
-
-        void ReleaseSustainPedal(OutputDevice outputDevice)
-        {
-            outputDevice.sendControlChangeMessage(0, 64, 0);
-        }
-
         void PlayRunUpKeyboard(OutputDevice outputDevice, Predicate<int> predicate, int millisecondsBetween)
         {
             int previousNote = -1;
@@ -53,16 +43,16 @@ namespace MidiExamples
                 {
                     if (previousNote != -1)
                     {
-                        outputDevice.sendNoteOffMessage(0, previousNote, 80);
+                        outputDevice.SendNoteOff(Channel.Channel1, previousNote, 80);
                     }
-                    outputDevice.sendNoteOnMessage(0, note, 80);
+                    outputDevice.SendNoteOn(Channel.Channel1, note, 80);
                     Thread.Sleep(millisecondsBetween);
                     previousNote = note;
                 }
             }
             if (previousNote != -1)
             {
-                outputDevice.sendNoteOffMessage(0, previousNote, 80);
+                outputDevice.SendNoteOff(Channel.Channel1, previousNote, 80);
             }
         }
 
@@ -80,45 +70,45 @@ namespace MidiExamples
 
             Console.WriteLine("Playing an arpeggiated C chord and then bending it down.");
             // Play C, E, G in half second intervals.
-            outputDevice.sendNoteOnMessage(0, 60, 80);
+            outputDevice.SendNoteOn(Channel.Channel1, 60, 80);
             Thread.Sleep(500);
-            outputDevice.sendNoteOnMessage(0, 64, 80);
+            outputDevice.SendNoteOn(Channel.Channel1, 64, 80);
             Thread.Sleep(500);
-            outputDevice.sendNoteOnMessage(0, 67, 80);
+            outputDevice.SendNoteOn(Channel.Channel1, 67, 80);
             Thread.Sleep(500);
 
             // Now apply the sustain pedal.
-            PressSustainPedal(outputDevice);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
 
             // Now release the C chord notes, but they should keep ringing because of the sustain pedal.
-            outputDevice.sendNoteOffMessage(0, 60, 80);
-            outputDevice.sendNoteOffMessage(0, 64, 80);
-            outputDevice.sendNoteOffMessage(0, 67, 80);
+            outputDevice.SendNoteOff(Channel.Channel1, 60, 80);
+            outputDevice.SendNoteOff(Channel.Channel1, 64, 80);
+            outputDevice.SendNoteOff(Channel.Channel1, 67, 80);
 
             // Now bend the pitches down.
             for (int i = 0; i < 17; ++i)
             {
-                outputDevice.sendPitchBendMessage(0, 8192 - i * 450);
+                outputDevice.SendPitchBend(Channel.Channel1, 8192 - i * 450);
                 Thread.Sleep(200);
             }
 
             // Now release the sustain pedal, which should silence the notes.
-            ReleaseSustainPedal(outputDevice);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
 
             Console.WriteLine("Playing sustained chord runs up the keyboard...");
-            PressSustainPedal(outputDevice);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
             PlayRunUpKeyboard(outputDevice, note => note % 12 == 0 || note % 12 == 4 || note % 12 == 7, 100);
-            ReleaseSustainPedal(outputDevice);
-            PressSustainPedal(outputDevice);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
             PlayRunUpKeyboard(outputDevice, note => note % 12 == 5 || note % 12 == 9 || note % 12 == 12, 100);
-            ReleaseSustainPedal(outputDevice);
-            PressSustainPedal(outputDevice);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
             PlayRunUpKeyboard(outputDevice, note => note % 12 == 7 || note % 12 == 11 || note % 12 == 14, 100);
-            ReleaseSustainPedal(outputDevice);
-            PressSustainPedal(outputDevice);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
             PlayRunUpKeyboard(outputDevice, note => note % 12 == 0 || note % 12 == 4 || note % 12 == 7, 100);
             Thread.Sleep(2000);
-            ReleaseSustainPedal(outputDevice);
+            outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
 
             // Close the output device.
             outputDevice.Close();

@@ -330,61 +330,60 @@ namespace Midi
             {
                 if (wMsg == Win32API.MidiInMessage.MIM_DATA)
                 {
-                    Byte channel;
-                    Byte note;
-                    Byte velocity;
-                    Byte control;
-                    Byte controlValue;
-                    Byte preset;
-                    UInt16 bendValue;
+                    Channel channel;
+                    int note;
+                    int velocity;
+                    Control control;
+                    int value;
+                    Instrument instrument;
                     UInt32 win32Timestamp;
-                    if (Win32Util.IsNoteOnMessage(dwParam1, dwParam2))
+                    if (ShortMsg.IsNoteOn(dwParam1, dwParam2))
                     {
                         if (NoteOn != null)
                         {
-                            Win32Util.DecodeNoteMessage(dwParam1, dwParam2, out channel, out note,
+                            ShortMsg.DecodeNoteOn(dwParam1, dwParam2, out channel, out note,
                                 out velocity, out win32Timestamp);
                             NoteOn(new NoteOnMessage(this, channel, note, velocity,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }
-                    else if (Win32Util.IsNoteOffMessage(dwParam1, dwParam2))
+                    else if (ShortMsg.IsNoteOff(dwParam1, dwParam2))
                     {
                         if (NoteOff != null)
                         {
-                            Win32Util.DecodeNoteMessage(dwParam1, dwParam2, out channel, out note,
+                            ShortMsg.DecodeNoteOff(dwParam1, dwParam2, out channel, out note,
                                 out velocity, out win32Timestamp);
                             NoteOff(new NoteOffMessage(this, channel, note, velocity,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }
-                    else if (Win32Util.IsControlChangeMessage(dwParam1, dwParam2))
+                    else if (ShortMsg.IsControlChange(dwParam1, dwParam2))
                     {
                         if (ControlChange != null)
                         {
-                            Win32Util.DecodeControlChangeMessage(dwParam1, dwParam2, out channel,
-                                out control, out controlValue, out win32Timestamp);
-                            ControlChange(new ControlChangeMessage(this, channel, control, controlValue,
+                            ShortMsg.DecodeControlChange(dwParam1, dwParam2, out channel,
+                                out control, out value, out win32Timestamp);
+                            ControlChange(new ControlChangeMessage(this, channel, control, value,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }
-                    else if (Win32Util.IsProgramChangeMessage(dwParam1, dwParam2))
+                    else if (ShortMsg.IsProgramChange(dwParam1, dwParam2))
                     {
                         if (ProgramChange != null)
                         {
-                            Win32Util.DecodeProgramChangeMessage(dwParam1, dwParam2, out channel,
-                                out preset, out win32Timestamp);
-                            ProgramChange(new ProgramChangeMessage(this, channel, preset,
+                            ShortMsg.DecodeProgramChange(dwParam1, dwParam2, out channel,
+                                out instrument, out win32Timestamp);
+                            ProgramChange(new ProgramChangeMessage(this, channel, instrument,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }
-                    else if (Win32Util.IsPitchBendMessage(dwParam1, dwParam2))
+                    else if (ShortMsg.IsPitchBend(dwParam1, dwParam2))
                     {
                         if (PitchBend != null)
                         {
-                            Win32Util.DecodePitchBendMessage(dwParam1, dwParam2, out channel,
-                                out bendValue, out win32Timestamp);
-                            PitchBend(new PitchBendMessage(this, channel, bendValue,
+                            ShortMsg.DecodePitchBend(dwParam1, dwParam2, out channel,
+                                out value, out win32Timestamp);
+                            PitchBend(new PitchBendMessage(this, channel, value,
                                 timeDelegate == null ? win32Timestamp : timeDelegate()));
                         }
                     }

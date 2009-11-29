@@ -135,7 +135,7 @@ namespace MidiExamples
                     {
                         PercussionNote note = shiftedNotes[keyInfo.Key];
                         Console.Write("\rNote {0} ({1})         ", note.noteNum, note.noteName);
-                        outputDevice.sendNoteOnMessage(9, note.noteNum, 90);
+                        outputDevice.SendNoteOn(Channel.Channel10, note.noteNum, 90);
                     }
                 }
                 else
@@ -144,7 +144,7 @@ namespace MidiExamples
                     {
                         PercussionNote note = unshiftedNotes[keyInfo.Key];
                         Console.Write("\rNote {0} ({1})         ", note.noteNum, note.noteName);
-                        outputDevice.sendNoteOnMessage(9, note.noteNum, 90);
+                        outputDevice.SendNoteOn(Channel.Channel10, note.noteNum, 90);
                     }
                 }
             }
