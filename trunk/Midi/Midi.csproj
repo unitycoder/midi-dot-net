@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -56,6 +56,8 @@
     <Compile Include="DeviceBase.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Instrument.cs" />
+    <Compile Include="Interval.cs" />
+    <Compile Include="Note.cs" />
     <Compile Include="Percussion.cs" />
     <Compile Include="InputDevice.cs" />
     <Compile Include="MessageQueue.cs" />
