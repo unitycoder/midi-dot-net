@@ -6,7 +6,7 @@ using System.Text;
 namespace Midi
 {
     /// <summary>
-    /// MIDI Channels.
+    /// MIDI Channel.
     /// </summary>
     /// MIDI channels are named starting at 1, but encoded programmatically starting at 0.
     ///
@@ -50,6 +50,7 @@ namespace Midi
     /// <summary>
     /// Extension methods for the Channel enum.
     /// </summary>
+    /// Be sure to "using midi" if you want to use these as extension methods.
     public static class ChannelExtensionMethods
     {
         /// <summary>
@@ -96,10 +97,7 @@ namespace Midi
         /// <param name="channel">The channel.</param>
         public static string Name(this Channel channel)
         {
-            if (!channel.IsValid())
-            {
-                throw new InvalidOperationException("invalid Channel");
-            }
+            channel.Validate();
             return ChannelNames[(int)channel];
         }
     }
