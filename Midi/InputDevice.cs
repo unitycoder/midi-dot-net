@@ -144,7 +144,7 @@ namespace Midi
             lock (this)
             {
                 CheckNotOpen();
-                CheckReturnCode(Win32Wrapper.midiInOpen(out handle, deviceId, new Win32Wrapper.MidiInProc(InputCallback),
+                CheckReturnCode(Win32API.midiInOpen(out handle, deviceId, new Win32API.MidiInProc(InputCallback),
                     (UIntPtr)0));
                 this.timeDelegate = timeDelegate;
                 isOpen = true;
@@ -163,7 +163,7 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32Wrapper.midiInClose(handle));
+                CheckReturnCode(Win32API.midiInClose(handle));
                 isOpen = false;
             }
         }
@@ -199,7 +199,7 @@ namespace Midi
              {
                  CheckOpen();
                  CheckNotReceiving();
-                 CheckReturnCode(Win32Wrapper.midiInStart(handle));
+                 CheckReturnCode(Win32API.midiInStart(handle));
                  isReceiving = true;
              }
          }
@@ -216,7 +216,7 @@ namespace Midi
              lock (this)
              {
                  CheckReceiving();
-                 CheckReturnCode(Win32Wrapper.midiInStop(handle));
+                 CheckReturnCode(Win32API.midiInStop(handle));
                  isReceiving = false;
              }
          }
@@ -230,13 +230,13 @@ namespace Midi
         /// with an appropriate error message.
         /// </summary>
         /// <param name="rc"></param>
-        private static void CheckReturnCode(Win32Wrapper.MMRESULT rc)
+        private static void CheckReturnCode(Win32API.MMRESULT rc)
         {
-            if (rc != Win32Wrapper.MMRESULT.MMSYSERR_NOERROR)
+            if (rc != Win32API.MMRESULT.MMSYSERR_NOERROR)
             {
                 StringBuilder errorMsg = new StringBuilder(128);
-                rc = Win32Wrapper.midiInGetErrorText(rc, errorMsg);
-                if (rc != Win32Wrapper.MMRESULT.MMSYSERR_NOERROR)
+                rc = Win32API.midiInGetErrorText(rc, errorMsg);
+                if (rc != Win32API.MMRESULT.MMSYSERR_NOERROR)
                 {
                     throw new DeviceException();
                 }
@@ -293,7 +293,7 @@ namespace Midi
         /// </summary>
         /// <param name="deviceId">Position of this device in the list of all devices.</param>
         /// <param name="caps">Win32 Struct with device metadata</param>
-        private InputDevice(UIntPtr deviceId, Win32Wrapper.MIDIINCAPS caps)
+        private InputDevice(UIntPtr deviceId, Win32API.MIDIINCAPS caps)
             : base(caps.szPname)
         {
             this.deviceId = deviceId;
@@ -308,12 +308,12 @@ namespace Midi
         /// <returns></returns>
         private static InputDevice[] MakeDeviceList()
         {
-            uint inDevs = Win32Wrapper.midiInGetNumDevs();
+            uint inDevs = Win32API.midiInGetNumDevs();
             InputDevice[] result = new InputDevice[inDevs];
             for (uint deviceId = 0; deviceId < inDevs; deviceId++)
             {
-                Win32Wrapper.MIDIINCAPS caps = new Win32Wrapper.MIDIINCAPS();
-                Win32Wrapper.midiInGetDevCaps((UIntPtr)deviceId, out caps);
+                Win32API.MIDIINCAPS caps = new Win32API.MIDIINCAPS();
+                Win32API.midiInGetDevCaps((UIntPtr)deviceId, out caps);
                 result[deviceId] = new InputDevice((UIntPtr)deviceId, caps);
             }
             return result;
@@ -322,12 +322,12 @@ namespace Midi
         /// <summary>
         /// The input callback for midiOutOpen.
         /// </summary>
-        private void InputCallback(Win32Wrapper.HMIDIIN hMidiIn, UInt32 wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2)
+        private void InputCallback(Win32API.HMIDIIN hMidiIn, UInt32 wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2)
         {
             isInsideInputHandler = true;
             try
             {
-                if (wMsg == Win32Wrapper.MIM_DATA)
+                if (wMsg == Win32API.MIM_DATA)
                 {
                     Byte channel;
                     Byte note;
@@ -410,13 +410,13 @@ namespace Midi
         // The fields initialized in the constructor never change after construction,
         // so they don't need to be guarded by a lock.
         private UIntPtr deviceId;
-        private Win32Wrapper.MIDIINCAPS caps;
+        private Win32API.MIDIINCAPS caps;
 
         // Access to the Open/Close state is guarded by lock(this).
         private bool isOpen;
         private bool isReceiving;
         private TimeDelegate timeDelegate;
-        private Win32Wrapper.HMIDIIN handle;
+        private Win32API.HMIDIIN handle;
 
         /// <summary>
         /// Thread-local, set to true when called by an input handler, false in all other threads.
