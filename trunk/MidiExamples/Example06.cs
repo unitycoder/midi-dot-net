@@ -59,7 +59,7 @@ namespace MidiExamples
                 int[] scale = NoteUtil.MajorScaleStartingAt(msg.Note);
                 for (int i = 1; i < scale.Count(); ++i)
                 {
-                    clock.Schedule(new NoteOnOffMessage(outputDevice, msg.MessageChannel, scale[i],
+                    clock.Schedule(new NoteOnOffMessage(outputDevice, msg.Channel, scale[i],
                     msg.Velocity, msg.BeatTime + i, 0.99f));
                 }
             }

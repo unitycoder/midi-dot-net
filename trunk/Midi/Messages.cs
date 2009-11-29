@@ -97,18 +97,18 @@ namespace Midi
         /// <summary>
         /// Protected constructor.
         /// </summary>
-        protected ChannelMessage(DeviceBase device, Channel messageChannel, float beatTime)
+        protected ChannelMessage(DeviceBase device, Channel channel, float beatTime)
             : base(device, beatTime)
         {
-            messageChannel.Validate();
-            this.messageChannel = messageChannel;
+            channel.Validate();
+            this.channel = channel;
         }
 
         /// <summary>
         /// Channel.
         /// </summary>
-        public Channel MessageChannel { get { return messageChannel; } }
-        private Channel messageChannel;
+        public Channel Channel { get { return channel; } }
+        private Channel channel;
     }
 
     /// <summary>
@@ -119,8 +119,8 @@ namespace Midi
         /// <summary>
         /// Protected constructor.
         /// </summary>
-        protected NoteMessage(DeviceBase device, Channel messageChannel, int note, int velocity, float beatTime)
-            : base(device, messageChannel, beatTime)
+        protected NoteMessage(DeviceBase device, Channel channel, int note, int velocity, float beatTime)
+            : base(device, channel, beatTime)
         {
             if (note < 0 || note > 127)
             {
@@ -156,12 +156,12 @@ namespace Midi
         /// Constructs a Note On message.
         /// </summary>
         /// <param name="device">The device associated with this message.</param>
-        /// <param name="messageChannel">Channel, 0..15, 10 reserved for percussion.</param>
+        /// <param name="channel">Channel, 0..15, 10 reserved for percussion.</param>
         /// <param name="note">Note, 0..127, middle C is 60.</param>
         /// <param name="velocity">Velocity, 0..127.</param>
         /// <param name="beatTime">Milliseconds since the music started.</param>
-        public NoteOnMessage(DeviceBase device, Channel messageChannel, int note, int velocity, float beatTime)
-            : base(device, messageChannel, note, velocity, beatTime) { }
+        public NoteOnMessage(DeviceBase device, Channel channel, int note, int velocity, float beatTime)
+            : base(device, channel, note, velocity, beatTime) { }
 
         /// <summary>
         /// Sends this message immediately, ignoring the beatTime.
@@ -169,7 +169,7 @@ namespace Midi
         /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override Message[] SendNow()
         {
-            ((OutputDevice)Device).SendNoteOn(MessageChannel, Note, Velocity);
+            ((OutputDevice)Device).SendNoteOn(Channel, Note, Velocity);
             return null;
         }
 
@@ -178,7 +178,7 @@ namespace Midi
         /// </summary>
         public override Message MakeTimeShiftedCopy(float delta)
         {
-            return new NoteOnMessage(Device, MessageChannel, Note, Velocity, BeatTime + delta);
+            return new NoteOnMessage(Device, Channel, Note, Velocity, BeatTime + delta);
         }
     }
 
@@ -191,12 +191,12 @@ namespace Midi
         /// Constructs a Note Off message.
         /// </summary>
         /// <param name="device">The device associated with this message.</param>
-        /// <param name="messageChannel">Channel, 0..15, 10 reserved for percussion.</param>
+        /// <param name="channel">Channel, 0..15, 10 reserved for percussion.</param>
         /// <param name="note">Note, 0..127, middle C is 60.</param>
         /// <param name="velocity">Velocity, 0..127.</param>
         /// <param name="beatTime">Milliseconds since the music started.</param>
-        public NoteOffMessage(DeviceBase device, Channel messageChannel, int note, int velocity, float beatTime)
-            : base(device, messageChannel, note, velocity, beatTime) { }
+        public NoteOffMessage(DeviceBase device, Channel channel, int note, int velocity, float beatTime)
+            : base(device, channel, note, velocity, beatTime) { }
 
         /// <summary>
         /// Sends this message immediately, ignoring the beatTime.
@@ -204,7 +204,7 @@ namespace Midi
         /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override Message[] SendNow()
         {
-            ((OutputDevice)Device).SendNoteOff(MessageChannel, Note, Velocity);
+            ((OutputDevice)Device).SendNoteOff(Channel, Note, Velocity);
             return null;
         }
 
@@ -213,7 +213,7 @@ namespace Midi
         /// </summary>
         public override Message MakeTimeShiftedCopy(float delta)
         {
-            return new NoteOffMessage(Device, MessageChannel, Note, Velocity, BeatTime + delta);
+            return new NoteOffMessage(Device, Channel, Note, Velocity, BeatTime + delta);
         }
     }
 
@@ -226,13 +226,13 @@ namespace Midi
         /// Constructs a Note On/Off message.
         /// </summary>
         /// <param name="device">The device associated with this message.</param>
-        /// <param name="messageChannel">Channel, 0..15, 10 reserved for percussion.</param>
+        /// <param name="channel">Channel, 0..15, 10 reserved for percussion.</param>
         /// <param name="note">Note, 0..127, middle C is 60.</param>
         /// <param name="velocity">Velocity, 0..127.</param>
         /// <param name="beatTime">Milliseconds since the music started.</param>
         /// <param name="duration">Milliseconds of duration.</param>
-        public NoteOnOffMessage(DeviceBase device, Channel messageChannel, int note, int velocity, float beatTime, float duration)
-            : base(device, messageChannel, note, velocity, beatTime)
+        public NoteOnOffMessage(DeviceBase device, Channel channel, int note, int velocity, float beatTime, float duration)
+            : base(device, channel, note, velocity, beatTime)
         {
             this.duration = duration;
         }
@@ -249,8 +249,8 @@ namespace Midi
         /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override Message[] SendNow()
         {
-            ((OutputDevice)Device).SendNoteOn(MessageChannel, Note, Velocity);
-            return new Message[]{new NoteOffMessage(Device, MessageChannel, Note, Velocity, BeatTime + Duration)};
+            ((OutputDevice)Device).SendNoteOn(Channel, Note, Velocity);
+            return new Message[]{new NoteOffMessage(Device, Channel, Note, Velocity, BeatTime + Duration)};
         }
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace Midi
         /// </summary>
         public override Message MakeTimeShiftedCopy(float delta)
         {
-            return new NoteOnOffMessage(Device, MessageChannel, Note, Velocity, BeatTime + delta, Duration);
+            return new NoteOnOffMessage(Device, Channel, Note, Velocity, BeatTime + delta, Duration);
         }
     }
 
@@ -271,27 +271,27 @@ namespace Midi
         /// Construts a Control Change message.
         /// </summary>
         /// <param name="device">The device associated with this message.</param>
-        /// <param name="messageChannel">Channel, 0..15, 10 reserved for percussion.</param>
-        /// <param name="messageControl">Control, 0..119</param>
+        /// <param name="channel">Channel, 0..15, 10 reserved for percussion.</param>
+        /// <param name="control">Control, 0..119</param>
         /// <param name="value">Value, 0..127.</param>
         /// <param name="beatTime">Milliseconds since the music started.</param>
-        public ControlChangeMessage(DeviceBase device, Channel messageChannel, Control messageControl, int value, float beatTime)
-            : base(device, messageChannel, beatTime)
+        public ControlChangeMessage(DeviceBase device, Channel channel, Control control, int value, float beatTime)
+            : base(device, channel, beatTime)
         {
-            messageControl.Validate();
+            control.Validate();
             if (value < 0 || value > 127)
             {
                 throw new ArgumentOutOfRangeException("control");
             }
-            this.messageControl = messageControl;
+            this.control = control;
             this.value = value;
         }
 
         /// <summary>
         /// Control.
         /// </summary>
-        public Control MessageControl { get { return messageControl; } }
-        private Control messageControl;
+        public Control Control { get { return control; } }
+        private Control control;
 
         /// <summary>
         /// Value, 0..127.
@@ -305,7 +305,7 @@ namespace Midi
         /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override Message[] SendNow()
         {
-            ((OutputDevice)Device).SendControlChange(MessageChannel, MessageControl, Value);
+            ((OutputDevice)Device).SendControlChange(Channel, Control, Value);
             return null;
         }
 
@@ -314,7 +314,7 @@ namespace Midi
         /// </summary>
         public override Message MakeTimeShiftedCopy(float delta)
         {
-            return new ControlChangeMessage(Device, MessageChannel, MessageControl, Value, BeatTime + delta);
+            return new ControlChangeMessage(Device, Channel, Control, Value, BeatTime + delta);
         }
     }
 
@@ -327,11 +327,11 @@ namespace Midi
         /// Constructs a Pitch Bend message.
         /// </summary>
         /// <param name="device">The device associated with this message.</param>
-        /// <param name="messageChannel">Channel, 0..15, 10 reserved for percussion.</param>
+        /// <param name="channel">Channel, 0..15, 10 reserved for percussion.</param>
         /// <param name="value">Pitch bend value, 0..16383, 8192 is centered.</param>        
         /// <param name="beatTime">Milliseconds since the music started.</param>
-        public PitchBendMessage(DeviceBase device, Channel messageChannel, int value, float beatTime)
-            : base(device, messageChannel,beatTime)
+        public PitchBendMessage(DeviceBase device, Channel channel, int value, float beatTime)
+            : base(device, channel,beatTime)
         {
             if (value < 0 || value > 16383)
             {
@@ -352,7 +352,7 @@ namespace Midi
         /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override Message[] SendNow()
         {
-            ((OutputDevice)Device).SendPitchBend(MessageChannel, Value);
+            ((OutputDevice)Device).SendPitchBend(Channel, Value);
             return null;
         }
 
@@ -361,7 +361,7 @@ namespace Midi
         /// </summary>
         public override Message MakeTimeShiftedCopy(float delta)
         {
-            return new PitchBendMessage(Device, MessageChannel, Value, BeatTime + delta);
+            return new PitchBendMessage(Device, Channel, Value, BeatTime + delta);
         }
     }
 
@@ -374,21 +374,21 @@ namespace Midi
         /// Constructs a Program Change message.
         /// </summary>
         /// <param name="device">The device associated with this message.</param>
-        /// <param name="messageChannel">Channel.</param>
-        /// <param name="messageInstrument">Instrument.</param>
+        /// <param name="channel">Channel.</param>
+        /// <param name="instrument">Instrument.</param>
         /// <param name="beatTime">Milliseconds since the music started.</param>
-        public ProgramChangeMessage(DeviceBase device, Channel messageChannel, Instrument messageInstrument, float beatTime)
-            : base(device, messageChannel, beatTime)
+        public ProgramChangeMessage(DeviceBase device, Channel channel, Instrument instrument, float beatTime)
+            : base(device, channel, beatTime)
         {
-            messageInstrument.Validate();
-            this.messageInstrument = messageInstrument;
+            instrument.Validate();
+            this.instrument = instrument;
         }
 
         /// <summary>
         /// Instrument.
         /// </summary>
-        public Instrument MessageInstrument { get { return messageInstrument; } }
-        private Instrument messageInstrument;
+        public Instrument Instrument { get { return instrument; } }
+        private Instrument instrument;
 
         /// <summary>
         /// Sends this message immediately, ignoring the beatTime.
@@ -396,7 +396,7 @@ namespace Midi
         /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
         public override Message[] SendNow()
         {
-            ((OutputDevice)Device).SendProgramChange(MessageChannel, MessageInstrument);
+            ((OutputDevice)Device).SendProgramChange(Channel, Instrument);
             return null;
         }
 
@@ -405,7 +405,7 @@ namespace Midi
         /// </summary>
         public override Message MakeTimeShiftedCopy(float delta)
         {
-            return new ProgramChangeMessage(Device, MessageChannel, MessageInstrument, BeatTime + delta);
+            return new ProgramChangeMessage(Device, Channel, Instrument, BeatTime + delta);
         }
     }
 
