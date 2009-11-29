@@ -97,44 +97,69 @@ namespace Midi
             MIDIERR_LASTERROR = MIDIERR_BASE + 7
         }
 
-        // Constants passed to midiInOpen() and midiOutOpen() to specify the kind of callback to use.
-        public const UInt32 CALLBACK_TYPEMASK = 0x70000;
-        public const UInt32 CALLBACK_NULL     = 0x00000;
-        public const UInt32 CALLBACK_WINDOW   = 0x10000;
-        public const UInt32 CALLBACK_TASK     = 0x20000;
-        public const UInt32 CALLBACK_FUNCTION = 0x30000;
-        public const UInt32 CALLBACK_THREAD   = CALLBACK_TASK;
-        public const UInt32 CALLBACK_EVENT    = 0x50000;
-        public const UInt32 MIDI_IO_STATUS    = 0x00020;
+        /// <summary>
+        /// Flags passed to midiInOpen() and midiOutOpen().
+        /// </summary>
+        public enum MidiOpenFlags : uint
+        {
+            CALLBACK_TYPEMASK = 0x70000,
+            CALLBACK_NULL     = 0x00000,
+            CALLBACK_WINDOW   = 0x10000,
+            CALLBACK_TASK     = 0x20000,
+            CALLBACK_FUNCTION = 0x30000,
+            CALLBACK_THREAD   = CALLBACK_TASK,
+            CALLBACK_EVENT    = 0x50000,
+            MIDI_IO_STATUS    = 0x00020
+        }
 
-        // Flags for wTechnology field of MIDIOUTCAPS structure.
-        public const UInt32 MOD_MIDIPORT  = 1;
-        public const UInt32 MOD_SYNTH     = 2;
-        public const UInt32 MOD_SQSYNTH   = 3;
-        public const UInt32 MOD_FMSYNTH   = 4;
-        public const UInt32 MOD_MAPPER    = 5;
-        public const UInt32 MOD_WAVETABLE = 6;
-        public const UInt32 MOD_SWSYNTH   = 7;
+        /// <summary>
+        /// Values for wTechnology field of MIDIOUTCAPS structure.
+        /// </summary>
+        public enum MidiDeviceType : ushort
+        {
+            MOD_MIDIPORT  = 1,
+            MOD_SYNTH     = 2,
+            MOD_SQSYNTH   = 3,
+            MOD_FMSYNTH   = 4,
+            MOD_MAPPER    = 5,
+            MOD_WAVETABLE = 6,
+            MOD_SWSYNTH   = 7
+        }
 
-        // Flags for dwSupport field of MIDIOUTCAPS structure.
-        public const UInt32 MIDICAPS_VOLUME   = 0x0001;
-        public const UInt32 MIDICAPS_LRVOLUME = 0x0002;
-        public const UInt32 MIDICAPS_CACHE    = 0x0004;
-        public const UInt32 MIDICAPS_STREAM   = 0x0008;
+        /// <summary>
+        /// Flags for dwSupport field of MIDIOUTCAPS structure.
+        /// </summary>
+        public enum MidiExtraFeatures : uint
+        {
+            MIDICAPS_VOLUME   = 0x0001,
+            MIDICAPS_LRVOLUME = 0x0002,
+            MIDICAPS_CACHE    = 0x0004,
+            MIDICAPS_STREAM   = 0x0008
+        }
 
-        // "Midi Out Messages", passed to wMsg param of MidiOutProc.
-        public const UInt32 MOM_OPEN  = 0x3C7;
-        public const UInt32 MOM_CLOSE = 0x3C8;
-        public const UInt32 MOM_DONE  = 0x3C9;
+        /// <summary>
+        /// "Midi Out Messages", passed to wMsg param of MidiOutProc.
+        /// </summary>
+        public enum MidiOutMessage : uint
+        {
+            MOM_OPEN = 0x3C7,
+            MOM_CLOSE = 0x3C8,
+            MOM_DONE = 0x3C9
+        }
 
-        // "Midi In Messages", passed to wMsg param of MidiInProc.
-        public const UInt32 MIM_OPEN      = 0x3C1;
-        public const UInt32 MIM_CLOSE     = 0x3C2;
-        public const UInt32 MIM_DATA      = 0x3C3;
-        public const UInt32 MIM_LONGDATA  = 0x3C4;
-        public const UInt32 MIM_ERROR     = 0x3C5;
-        public const UInt32 MIM_LONGERROR = 0x3C6;
-        public const UInt32 MIM_MOREDATA  = 0x3CC;
+        /// <summary>
+        /// "Midi In Messages", passed to wMsg param of MidiInProc.
+        /// </summary>
+        public enum MidiInMessage : uint
+        {
+            MIM_OPEN      = 0x3C1,
+            MIM_CLOSE     = 0x3C2,
+            MIM_DATA      = 0x3C3,
+            MIM_LONGDATA  = 0x3C4,
+            MIM_ERROR     = 0x3C5,
+            MIM_LONGERROR = 0x3C6,
+            MIM_MOREDATA  = 0x3CC
+        }
 
         #endregion
 
@@ -159,11 +184,11 @@ namespace Midi
             public UInt32 vDriverVersion;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = (int)MAXPNAMELEN)]
             public string szPname;
-            public UInt16 wTechnology;
+            public MidiDeviceType wTechnology;
             public UInt16 wVoices;
             public UInt16 wNotes;
             public UInt16 wChannelMask;
-            public UInt32 dwSupport;
+            public MidiExtraFeatures dwSupport;
         }
 
         /// <summary>
@@ -190,7 +215,7 @@ namespace Midi
         /// Callback invoked when a MIDI output device is opened, closed, or finished with a buffer.
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711637(VS.85).aspx
-        public delegate void MidiOutProc(HMIDIOUT hmo, UInt32 wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2);
+        public delegate void MidiOutProc(HMIDIOUT hmo, MidiOutMessage wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2);
 
         /// <summary>
         /// Opens a MIDI output device.
@@ -202,7 +227,7 @@ namespace Midi
                                          MidiOutProc dwCallback, UIntPtr dwCallbackInstance)
         {
             return midiOutOpen(out lphmo, uDeviceID, dwCallback, dwCallbackInstance,
-                dwCallback == null ? CALLBACK_NULL : CALLBACK_FUNCTION);
+                dwCallback == null ? MidiOpenFlags.CALLBACK_NULL : MidiOpenFlags.CALLBACK_FUNCTION);
         }
 
         /// <summary>
@@ -287,7 +312,7 @@ namespace Midi
         /// Callback invoked when a MIDI event is received from an input device.
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711612(VS.85).aspx
-        public delegate void MidiInProc(HMIDIIN hMidiIn, UInt32 wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2);
+        public delegate void MidiInProc(HMIDIIN hMidiIn, MidiInMessage wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2);
 
         /// <summary>
         /// Opens a MIDI input device.
@@ -296,10 +321,10 @@ namespace Midi
         ///
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711610(VS.85).aspx
         public static MMRESULT midiInOpen(out HMIDIIN lphMidiIn, UIntPtr uDeviceID,
-                                         MidiInProc dwCallback, UIntPtr dwCallbackInstance)
+                                          MidiInProc dwCallback, UIntPtr dwCallbackInstance)
         {
             return midiInOpen(out lphMidiIn, uDeviceID, dwCallback, dwCallbackInstance,
-                dwCallback == null ? CALLBACK_NULL : CALLBACK_FUNCTION);
+                dwCallback == null ? MidiOpenFlags.CALLBACK_NULL : MidiOpenFlags.CALLBACK_FUNCTION);
         }
 
         /// <summary>
@@ -352,7 +377,7 @@ namespace Midi
 
         [DllImport("winmm.dll", SetLastError = true)]
         private static extern MMRESULT midiOutOpen(out HMIDIOUT lphmo, UIntPtr uDeviceID,
-            MidiOutProc dwCallback, UIntPtr dwCallbackInstance, UInt32 dwFlags);
+            MidiOutProc dwCallback, UIntPtr dwCallbackInstance, MidiOpenFlags dwFlags);
 
         [DllImport("winmm.dll", SetLastError = true)]
         private static extern MMRESULT midiOutGetErrorText(MMRESULT mmrError, StringBuilder lpText, UInt32 cchText);
@@ -362,7 +387,7 @@ namespace Midi
 
         [DllImport("winmm.dll", SetLastError = true)]
         private static extern MMRESULT midiInOpen(out HMIDIIN lphMidiIn, UIntPtr uDeviceID,
-            MidiInProc dwCallback, UIntPtr dwCallbackInstance, UInt32 dwFlags);
+            MidiInProc dwCallback, UIntPtr dwCallbackInstance, MidiOpenFlags dwFlags);
 
         [DllImport("winmm.dll", SetLastError = true)]
         private static extern MMRESULT midiInGetErrorText(MMRESULT mmrError, StringBuilder lpText, UInt32 cchText);

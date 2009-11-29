@@ -322,12 +322,13 @@ namespace Midi
         /// <summary>
         /// The input callback for midiOutOpen.
         /// </summary>
-        private void InputCallback(Win32API.HMIDIIN hMidiIn, UInt32 wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2)
+        private void InputCallback(Win32API.HMIDIIN hMidiIn, Win32API.MidiInMessage wMsg, UIntPtr dwInstance, UIntPtr dwParam1,
+            UIntPtr dwParam2)
         {
             isInsideInputHandler = true;
             try
             {
-                if (wMsg == Win32API.MIM_DATA)
+                if (wMsg == Win32API.MidiInMessage.MIM_DATA)
                 {
                     Byte channel;
                     Byte note;
