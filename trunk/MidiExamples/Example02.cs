@@ -34,6 +34,38 @@ namespace MidiExamples
             : base("Example02.cs", "Simple MIDI output example.")
         { }
 
+        void PressSustainPedal(OutputDevice outputDevice)
+        {
+            outputDevice.sendControlChangeMessage(0, 64, 127);
+        }
+
+        void ReleaseSustainPedal(OutputDevice outputDevice)
+        {
+            outputDevice.sendControlChangeMessage(0, 64, 0);
+        }
+
+        void PlayRunUpKeyboard(OutputDevice outputDevice, Predicate<int> predicate, int millisecondsBetween)
+        {
+            int previousNote = -1;
+            for (int note = 21; note < 107; ++note)
+            {
+                if (predicate(note))
+                {
+                    if (previousNote != -1)
+                    {
+                        outputDevice.sendNoteOffMessage(0, previousNote, 80);
+                    }
+                    outputDevice.sendNoteOnMessage(0, note, 80);
+                    Thread.Sleep(millisecondsBetween);
+                    previousNote = note;
+                }
+            }
+            if (previousNote != -1)
+            {
+                outputDevice.sendNoteOffMessage(0, previousNote, 80);
+            }
+        }
+
         public override void Run()
         {
             // Utility function prompts user to choose an output device (or if there is only one, returns that one).
@@ -46,8 +78,7 @@ namespace MidiExamples
             }
             outputDevice.Open();
 
-            Console.WriteLine("Playing arpeggiated C major chord and bending it...");
-
+            Console.WriteLine("Playing an arpeggiated C chord and then bending it down.");
             // Play C, E, G in half second intervals.
             outputDevice.sendNoteOnMessage(0, 60, 80);
             Thread.Sleep(500);
@@ -57,7 +88,7 @@ namespace MidiExamples
             Thread.Sleep(500);
 
             // Now apply the sustain pedal.
-            outputDevice.sendControlChangeMessage(0, 64, 127);
+            PressSustainPedal(outputDevice);
 
             // Now release the C chord notes, but they should keep ringing because of the sustain pedal.
             outputDevice.sendNoteOffMessage(0, 60, 80);
@@ -72,8 +103,22 @@ namespace MidiExamples
             }
 
             // Now release the sustain pedal, which should silence the notes.
-            outputDevice.sendControlChangeMessage(0, 64, 0);
-            Thread.Sleep(1000);
+            ReleaseSustainPedal(outputDevice);
+
+            Console.WriteLine("Playing sustained chord runs up the keyboard...");
+            PressSustainPedal(outputDevice);
+            PlayRunUpKeyboard(outputDevice, note => note % 12 == 0 || note % 12 == 4 || note % 12 == 7, 100);
+            ReleaseSustainPedal(outputDevice);
+            PressSustainPedal(outputDevice);
+            PlayRunUpKeyboard(outputDevice, note => note % 12 == 5 || note % 12 == 9 || note % 12 == 12, 100);
+            ReleaseSustainPedal(outputDevice);
+            PressSustainPedal(outputDevice);
+            PlayRunUpKeyboard(outputDevice, note => note % 12 == 7 || note % 12 == 11 || note % 12 == 14, 100);
+            ReleaseSustainPedal(outputDevice);
+            PressSustainPedal(outputDevice);
+            PlayRunUpKeyboard(outputDevice, note => note % 12 == 0 || note % 12 == 4 || note % 12 == 7, 100);
+            Thread.Sleep(2000);
+            ReleaseSustainPedal(outputDevice);
 
             // Close the output device.
             outputDevice.Close();
