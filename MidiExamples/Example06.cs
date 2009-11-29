@@ -23,7 +23,7 @@ namespace MidiExamples
                 for (int i = 0; i < beatsPerMeasure; ++i) {
                     int note = i == 0 ? 44 : 42;
                     int velocity = i == 0 ? 100 : 40;
-                    messagesForOneMeasure.Add(new NoteOnOffMessage(outputDevice, 9, note, velocity, i, 0.99f));
+                    messagesForOneMeasure.Add(new NoteOnOffMessage(outputDevice, Channel.Channel10, note, velocity, i, 0.99f));
                 }
                 messagesForOneMeasure.Add(new CallbackMessage(new CallbackMessage.CallbackType(CallbackHandler), 0));
                 clock.Schedule(messagesForOneMeasure, 0);
@@ -59,7 +59,7 @@ namespace MidiExamples
                 int[] scale = NoteUtil.MajorScaleStartingAt(msg.Note);
                 for (int i = 1; i < scale.Count(); ++i)
                 {
-                    clock.Schedule(new NoteOnOffMessage(outputDevice, msg.Channel, scale[i],
+                    clock.Schedule(new NoteOnOffMessage(outputDevice, msg.MessageChannel, scale[i],
                     msg.Velocity, msg.BeatTime + i, 0.99f));
                 }
             }

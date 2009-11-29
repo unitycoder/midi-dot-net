@@ -113,73 +113,73 @@ namespace Midi
         /// <summary>
         /// Sends a Note On message to this MIDI output device.
         /// </summary>
-        /// <param name="channel">The channel 0..15.</param>
+        /// <param name="channel">The channel.</param>
         /// <param name="note">The note 0..127 (middle C is 60).</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        public void sendNoteOnMessage(int channel, int note, int velocity)
+        public void SendNoteOn(Channel channel, int note, int velocity)
         {
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32Util.sendNoteOnMessage(handle, channel, note, velocity));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOn(channel, note, velocity)));
             }
         }
 
         /// <summary>
         /// Sends a Note Off message to this MIDI output device.
         /// </summary>
-        /// <param name="channel">The channel 0..15.</param>
+        /// <param name="channel">The channel.</param>
         /// <param name="note">The note 0..127 (middle C is 60).</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        public void sendNoteOffMessage(int channel, int note, int velocity)
+        public void SendNoteOff(Channel channel, int note, int velocity)
         {
             lock(this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32Util.sendNoteOffMessage(handle, channel, note, velocity));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOff(channel, note, velocity)));
             }
         }
 
         /// <summary>
         /// Sends a Control Change message to this MIDI output device.
         /// </summary>
-        /// <param name="channel">The channel 0..15.</param>
-        /// <param name="control">The controller 0..119.</param>
+        /// <param name="channel">The channel.</param>
+        /// <param name="control">The control.</param>
         /// <param name="value">The new value 0..127.</param>
-        public void sendControlChangeMessage(int channel, int control, int value)
+        public void SendControlChange(Channel channel, Control control, int value)
         {
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32Util.sendControlChangeMessage(handle, channel, control, value));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeControlChange(channel, control, value)));
             }
         }
 
         /// <summary>
         /// Sends a Pitch Bend message to this MIDI output device.
         /// </summary>
-        /// <param name="channel">The channel 0..15.</param>
+        /// <param name="channel">The channel.</param>
         /// <param name="value">The pitch bend value, 0..16383, 8192 is centered.</param>
-        public void sendPitchBendMessage(int channel, int value)
+        public void SendPitchBend(Channel channel, int value)
         {
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32Util.sendPitchBendMessage(handle, channel, value));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodePitchBend(channel, value)));
             }
         }
 
         /// <summary>
         /// Sends a Program Change message to this MIDI output device.
         /// </summary>
-        /// <param name="channel">The channel 0..15.</param>
-        /// <param name="preset">The preset to choose 0..127.</param>
-        public void sendProgramChangeMessage(int channel, int preset)
+        /// <param name="channel">The channel.</param>
+        /// <param name="instrument">The instrument.</param>
+        public void SendProgramChange(Channel channel, Instrument instrument)
         {
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32Util.sendProgramChangeMessage(handle, channel, preset));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeProgramChange(channel, instrument)));
             }
         }
 

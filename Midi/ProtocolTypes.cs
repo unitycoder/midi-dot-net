@@ -64,6 +64,18 @@ namespace Midi
         }
 
         /// <summary>
+        /// Throws an exception if channel is not valid.
+        /// </summary>
+        /// <param name="channel">The channel to validate.</param>
+        public static void Validate(this Channel channel)
+        {
+            if (!channel.IsValid())
+            {
+                throw new Exception("invalid Channel");
+            }
+        }
+
+        /// <summary>
         /// Table of channel names.
         /// </summary>
         private static string[] ChannelNames = new string[]
@@ -99,7 +111,7 @@ namespace Midi
     #region MIDI Instruments.
 
     /// <summary>
-    /// General MIDI instruments.
+    /// General MIDI instruments, used in Program Change messages.
     /// </summary>
     /// Officially, MIDI instruments are one-indexed, but we have them zero-indexed here since that's how
     /// they're used programmatically.
@@ -423,7 +435,19 @@ namespace Midi
         {
             return (int)instrument >= 0 && (int)instrument < 128;
         }
-        
+
+        /// <summary>
+        /// Throws an exception if instrument is not valid.
+        /// </summary>
+        /// <param name="instrument">The instrument to validate.</param>
+        public static void Validate(this Instrument instrument)
+        {
+            if (!instrument.IsValid())
+            {
+                throw new Exception("invalid Instrument");
+            }
+        }
+
         /// <summary>
         /// General Midi instrument names, used by GetInstrumentName().
         /// </summary>
@@ -724,7 +748,19 @@ namespace Midi
         {
             return (int)percussion >= 35 && (int)percussion < 81;
         }
-        
+
+        /// <summary>
+        /// Throws an exception if percussion is not valid.
+        /// </summary>
+        /// <param name="percussion">The percussion to validate.</param>
+        public static void Validate(this Percussion percussion)
+        {
+            if (!percussion.IsValid())
+            {
+                throw new Exception("invalid Percussion");
+            }
+        }
+
         private static string[] PercussionNames = new string[]
         {
             "Bass Drum 2",
@@ -795,7 +831,7 @@ namespace Midi
     #region Controls
 
     /// <summary>
-    /// MIDI Controls as used in Control Change messages.
+    /// MIDI Controls, used in Control Change messages.
     /// </summary>
     /// This is an incomplete list of controls, and the details of how each control is encoded and
     /// used is complicated.  See the MIDI spec for details.
@@ -853,6 +889,18 @@ namespace Midi
         public static bool IsValid(this Control control)
         {
             return (int)control >= 0 && (int)control < 128;
+        }
+
+        /// <summary>
+        /// Throws an exception if control is not valid.
+        /// </summary>
+        /// <param name="control">The control to validate.</param>
+        public static void Validate(this Control control)
+        {
+            if (!control.IsValid())
+            {
+                throw new Exception("invalid Control");
+            }
         }
 
         /// <summary>
