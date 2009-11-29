@@ -53,6 +53,7 @@
     <Compile Include="Clock.cs" />
     <Compile Include="DeviceBase.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="ProtocolTypes.cs" />
     <Compile Include="InputDevice.cs" />
     <Compile Include="MessageQueue.cs" />
     <Compile Include="Messages.cs" />
