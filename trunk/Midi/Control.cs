@@ -6,7 +6,7 @@ using System.Text;
 namespace Midi
 {
     /// <summary>
-    /// MIDI Controls, used in Control Change messages.
+    /// MIDI Control, used in Control Change messages.
     /// </summary>
     /// This is an incomplete list of controls, and the details of how each control is encoded and
     /// used is complicated.  See the MIDI spec for details.
@@ -55,6 +55,7 @@ namespace Midi
     /// <summary>
     /// Extension methods for the Control enum.
     /// </summary>
+    /// Be sure to "using midi" if you want to use these as extension methods.
     public static class ControlExtensionMethods
     {
         /// <summary>
@@ -109,10 +110,7 @@ namespace Midi
         /// <param name="control">The control.</param>
         public static string Name(this Control control)
         {
-            if (!control.IsValid())
-            {
-                throw new InvalidOperationException("invalid Control");
-            }
+            control.Validate();
             if (ControlNames.ContainsKey((int)control))
             {
                 return ControlNames[(int)control];

@@ -6,10 +6,9 @@ using System.Text;
 namespace Midi
 {
     /// <summary>
-    /// General MIDI instruments, used in Program Change messages.
+    /// General MIDI instrument, used in Program Change messages.
     /// </summary>
-    /// Officially, MIDI instruments are one-indexed, but we have them zero-indexed here since that's how
-    /// they're used programmatically.
+    /// MIDI instruments are one-indexed in the spec, but they're zero-indexed in code, so we have them zero-indexed here.
     public enum Instrument
     {
         // Piano Family:
@@ -515,10 +514,7 @@ namespace Midi
         /// <param name="instrument">The instrument.</param>
         public static string Name(this Instrument instrument)
         {
-            if (!instrument.IsValid())
-            {
-                throw new InvalidOperationException("invalid Instrument");
-            }
+            instrument.Validate();
             return InstrumentNames[(int)instrument];
         }
     }

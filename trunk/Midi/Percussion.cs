@@ -6,7 +6,7 @@ using System.Text;
 namespace Midi
 {
     /// <summary>
-    /// General MIDI percussion notes.
+    /// General MIDI percussion note.
     /// </summary>
     /// In General MIDI, notes played on channel 10 (channel 9 in code) make the following percussion sounds,
     /// regardless of any ProgramChange messages on that channel.
@@ -111,6 +111,7 @@ namespace Midi
     /// <summary>
     /// Extension methods for the Percussion enum.
     /// </summary>
+    /// Be sure to "using midi" if you want to use these as extension methods.
     public static class PercussionExtensionMethods
     {
         /// <summary>
@@ -191,10 +192,7 @@ namespace Midi
         /// <param name="percussion">The percussion.</param>
         public static string Name(this Percussion percussion)
         {
-            if (!percussion.IsValid())
-            {
-                throw new InvalidOperationException("invalid Percussion");
-            }
+            percussion.Validate();
             return PercussionNames[(int)percussion];
         }
     }

@@ -208,7 +208,7 @@ namespace Midi
         /// <param name="instrument">Filled in with the instrument, 0-127</param>
         /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
         public static void DecodeProgramChange(UIntPtr dwParam1, UIntPtr dwParam2,
-                               out Channel channel, out Instrument instrument, out UInt32 timestamp)
+            out Channel channel, out Instrument instrument, out UInt32 timestamp)
         {
             if (!IsProgramChange(dwParam1, dwParam2))
             {
