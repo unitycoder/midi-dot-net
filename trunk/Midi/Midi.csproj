@@ -50,10 +50,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Channel.cs" />
     <Compile Include="Clock.cs" />
+    <Compile Include="Control.cs" />
     <Compile Include="DeviceBase.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="ProtocolTypes.cs" />
+    <Compile Include="Instrument.cs" />
+    <Compile Include="Percussion.cs" />
     <Compile Include="InputDevice.cs" />
     <Compile Include="MessageQueue.cs" />
     <Compile Include="Messages.cs" />
