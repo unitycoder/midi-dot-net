@@ -119,11 +119,11 @@ namespace MidiExamples
         /// <param name="key">The computer key pressed.</param>
         /// <param name="note">The note it mocks.</param>
         /// <returns></returns>
-        public static bool IsMockNote(ConsoleKey key, out int note)
+        public static bool IsMockNote(ConsoleKey key, out Note note)
         {
             if (mockKeys.ContainsKey(key))
             {
-                note = mockKeys[key];
+                note = (Note)mockKeys[key];
                 return true;
             }
             note = 0;

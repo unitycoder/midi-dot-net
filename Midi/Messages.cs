@@ -119,13 +119,10 @@ namespace Midi
         /// <summary>
         /// Protected constructor.
         /// </summary>
-        protected NoteMessage(DeviceBase device, Channel channel, int note, int velocity, float beatTime)
+        protected NoteMessage(DeviceBase device, Channel channel, Note note, int velocity, float beatTime)
             : base(device, channel, beatTime)
         {
-            if (note < 0 || note > 127)
-            {
-                throw new ArgumentOutOfRangeException("note");
-            }
+            note.Validate();
             if (velocity < 0 || velocity > 127)
             {
                 throw new ArgumentOutOfRangeException("velocity");
@@ -137,8 +134,8 @@ namespace Midi
         /// <summary>
         /// Note, 0..127, middle C is 60.
         /// </summary>
-        public int Note { get { return note; } }
-        private int note;
+        public Note Note { get { return note; } }
+        private Note note;
 
         /// <summary>
         /// Velocity, 0..127.
@@ -160,7 +157,7 @@ namespace Midi
         /// <param name="note">Note, 0..127, middle C is 60.</param>
         /// <param name="velocity">Velocity, 0..127.</param>
         /// <param name="beatTime">Milliseconds since the music started.</param>
-        public NoteOnMessage(DeviceBase device, Channel channel, int note, int velocity, float beatTime)
+        public NoteOnMessage(DeviceBase device, Channel channel, Note note, int velocity, float beatTime)
             : base(device, channel, note, velocity, beatTime) { }
 
         /// <summary>
@@ -183,6 +180,63 @@ namespace Midi
     }
 
     /// <summary>
+    /// Percussion message.
+    /// </summary>
+    /// A percussion message is simply shorthand for sending a Note On message to Channel10 with a percussion-specific
+    /// note.  This message can be sent to an OutputDevice but will be received by an InputDevice as a NoteOn message.
+    public class PercussionMessage : DeviceMessage
+    {
+        /// <summary>
+        /// Constructs a Percussion message.
+        /// </summary>
+        /// <param name="device">The device associated with this message.</param>
+        /// <param name="percussion">Percussion.</param>
+        /// <param name="velocity">Velocity, 0..127.</param>
+        /// <param name="beatTime">Milliseconds since the music started.</param>
+        public PercussionMessage(DeviceBase device, Percussion percussion, int velocity, float beatTime)
+            : base(device, beatTime)
+        {
+            percussion.Validate();
+            if (velocity < 0 || velocity > 127)
+            {
+                throw new ArgumentOutOfRangeException("velocity");
+            }
+            this.percussion = percussion;
+            this.velocity = velocity;
+        }
+
+        /// <summary>
+        /// Percussion.
+        /// </summary>
+        public Percussion Percussion { get { return percussion; } }
+        private Percussion percussion;
+
+        /// <summary>
+        /// Velocity, 0..127.
+        /// </summary>
+        public int Velocity { get { return velocity; } }
+        private int velocity;
+
+        /// <summary>
+        /// Sends this message immediately, ignoring the beatTime.
+        /// </summary>
+        /// <returns>Additional messages which should be scheduled as a result of this message, or null.</returns>
+        public override Message[] SendNow()
+        {
+            ((OutputDevice)Device).SendNoteOn(Channel.Channel10, (Note)Percussion, Velocity);
+            return null;
+        }
+
+        /// <summary>
+        /// Returns a copy of this message, shifted in time by the specified amount.
+        /// </summary>
+        public override Message MakeTimeShiftedCopy(float delta)
+        {
+            return new PercussionMessage(Device, Percussion, Velocity, BeatTime + delta);
+        }
+    }
+
+    /// <summary>
     /// Note Off message.
     /// </summary>
     public class NoteOffMessage : NoteMessage
@@ -195,7 +249,7 @@ namespace Midi
         /// <param name="note">Note, 0..127, middle C is 60.</param>
         /// <param name="velocity">Velocity, 0..127.</param>
         /// <param name="beatTime">Milliseconds since the music started.</param>
-        public NoteOffMessage(DeviceBase device, Channel channel, int note, int velocity, float beatTime)
+        public NoteOffMessage(DeviceBase device, Channel channel, Note note, int velocity, float beatTime)
             : base(device, channel, note, velocity, beatTime) { }
 
         /// <summary>
@@ -231,7 +285,7 @@ namespace Midi
         /// <param name="velocity">Velocity, 0..127.</param>
         /// <param name="beatTime">Milliseconds since the music started.</param>
         /// <param name="duration">Milliseconds of duration.</param>
-        public NoteOnOffMessage(DeviceBase device, Channel channel, int note, int velocity, float beatTime, float duration)
+        public NoteOnOffMessage(DeviceBase device, Channel channel, Note note, int velocity, float beatTime, float duration)
             : base(device, channel, note, velocity, beatTime)
         {
             this.duration = duration;
