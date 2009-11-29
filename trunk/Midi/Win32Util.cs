@@ -109,7 +109,7 @@ namespace Midi
         /// <param name="note">The note 0..127 (middle C is 60).</param>
         /// <param name="velocity">The velocity 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendNoteOnMessage(Win32Wrapper.HMIDIOUT hmo,
+        public static Win32Wrapper.MMRESULT sendNoteOnMessage(Win32Wrapper.HMIDIOUT hmo,
                                                int channel, int note, int velocity)
         {
             #region Preconditions
@@ -136,7 +136,7 @@ namespace Midi
         /// <param name="note">The note 0..127 (middle C is 60).</param>
         /// <param name="velocity">The velocity 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendNoteOffMessage(Win32Wrapper.HMIDIOUT hmo,
+        public static Win32Wrapper.MMRESULT sendNoteOffMessage(Win32Wrapper.HMIDIOUT hmo,
                                                 int channel, int note, int velocity)
         {
             #region Preconditions
@@ -164,7 +164,7 @@ namespace Midi
         /// <param name="control">The controller 0..119.</param>
         /// <param name="value">The new value 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendControlChangeMessage(Win32Wrapper.HMIDIOUT hmo,
+        public static Win32Wrapper.MMRESULT sendControlChangeMessage(Win32Wrapper.HMIDIOUT hmo,
                                                       int channel, int control, int value)
         {
             #region Preconditions
@@ -191,7 +191,7 @@ namespace Midi
         /// <param name="channel">The channel 0..15.</param>
         /// <param name="preset">The preset to choose 0..127.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendProgramChangeMessage(Win32Wrapper.HMIDIOUT hmo,
+        public static Win32Wrapper.MMRESULT sendProgramChangeMessage(Win32Wrapper.HMIDIOUT hmo,
                                                       int channel, int preset)
         {
             #region Preconditions
@@ -214,7 +214,7 @@ namespace Midi
         /// <param name="channel">The channel 0..15.</param>
         /// <param name="value">The pitch bend value, 0..16383, 8192 is centered.</param>
         /// <returns>Return code as in midiOutShortMsg.</returns>
-        public static UInt32 sendPitchBendMessage(Win32Wrapper.HMIDIOUT hmo,
+        public static Win32Wrapper.MMRESULT sendPitchBendMessage(Win32Wrapper.HMIDIOUT hmo,
                                                   int channel, int value)
         {
             #region Preconditions

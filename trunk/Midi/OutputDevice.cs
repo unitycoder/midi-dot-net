@@ -192,13 +192,13 @@ namespace Midi
         /// appropriate error message.
         /// </summary>
         /// <param name="rc"></param>
-        private static void CheckReturnCode(UInt32 rc)
+        private static void CheckReturnCode(Win32Wrapper.MMRESULT rc)
         {
-            if (rc != Win32Wrapper.MMSYSERR_NOERROR)
+            if (rc != Win32Wrapper.MMRESULT.MMSYSERR_NOERROR)
             {
                 StringBuilder errorMsg = new StringBuilder(128);
                 rc = Win32Wrapper.midiOutGetErrorText(rc, errorMsg);
-                if (rc != Win32Wrapper.MMSYSERR_NOERROR)
+                if (rc != Win32Wrapper.MMRESULT.MMSYSERR_NOERROR)
                 {
                     throw new DeviceException();
                 }

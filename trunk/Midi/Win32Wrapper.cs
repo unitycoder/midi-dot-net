@@ -42,52 +42,60 @@ namespace Midi
     ///
     /// Some of the C functions are not typesafe when wrapped, so those wrappers are made private and typesafe
     /// variants are provided.
-    class Win32Wrapper
+    public class Win32Wrapper
     {
         #region Constants
 
         // The following constants come from MMSystem.h.
 
-        // General constants.
-        public const UInt32 MAXPNAMELEN = 32; // Max length of a manufacturer name.
+        /// <summary>
+        /// Max length of a manufacturer name in the Win32 API.
+        /// </summary>
+        public const UInt32 MAXPNAMELEN = 32;
 
-        // General return codes.
-        public const UInt32 MMSYSERR_BASE         = 0;
-        public const UInt32 MMSYSERR_NOERROR      = MMSYSERR_BASE + 0;
-        public const UInt32 MMSYSERR_ERROR        = MMSYSERR_BASE + 1;
-        public const UInt32 MMSYSERR_BADDEVICEID  = MMSYSERR_BASE + 2;
-        public const UInt32 MMSYSERR_NOTENABLED   = MMSYSERR_BASE + 3;
-        public const UInt32 MMSYSERR_ALLOCATED    = MMSYSERR_BASE + 4;
-        public const UInt32 MMSYSERR_INVALHANDLE  = MMSYSERR_BASE + 5;
-        public const UInt32 MMSYSERR_NODRIVER     = MMSYSERR_BASE + 6;
-        public const UInt32 MMSYSERR_NOMEM        = MMSYSERR_BASE + 7;
-        public const UInt32 MMSYSERR_NOTSUPPORTED = MMSYSERR_BASE + 8;
-        public const UInt32 MMSYSERR_BADERRNUM    = MMSYSERR_BASE + 9;
-        public const UInt32 MMSYSERR_INVALFLAG    = MMSYSERR_BASE + 10;
-        public const UInt32 MMSYSERR_INVALPARAM   = MMSYSERR_BASE + 11;
-        public const UInt32 MMSYSERR_HANDLEBUSY   = MMSYSERR_BASE + 12;
-        public const UInt32 MMSYSERR_INVALIDALIAS = MMSYSERR_BASE + 13;
-        public const UInt32 MMSYSERR_BADDB        = MMSYSERR_BASE + 14;
-        public const UInt32 MMSYSERR_KEYNOTFOUND  = MMSYSERR_BASE + 15;
-        public const UInt32 MMSYSERR_READERROR    = MMSYSERR_BASE + 16;
-        public const UInt32 MMSYSERR_WRITEERROR   = MMSYSERR_BASE + 17;
-        public const UInt32 MMSYSERR_DELETEERROR  = MMSYSERR_BASE + 18;
-        public const UInt32 MMSYSERR_VALNOTFOUND  = MMSYSERR_BASE + 19;
-        public const UInt32 MMSYSERR_NODRIVERCB   = MMSYSERR_BASE + 20;
-        public const UInt32 MMSYSERR_MOREDATA     = MMSYSERR_BASE + 21;
-        public const UInt32 MMSYSERR_LASTERROR    = MMSYSERR_BASE + 21;
+        /// <summary>
+        /// Status type returned from most functions in the Win32 API.
+        /// </summary>
+        public enum MMRESULT : uint
+        {
+            // General return codes.
+            MMSYSERR_BASE = 0,
+            MMSYSERR_NOERROR = MMSYSERR_BASE + 0,
+            MMSYSERR_ERROR = MMSYSERR_BASE + 1,
+            MMSYSERR_BADDEVICEID = MMSYSERR_BASE + 2,
+            MMSYSERR_NOTENABLED = MMSYSERR_BASE + 3,
+            MMSYSERR_ALLOCATED = MMSYSERR_BASE + 4,
+            MMSYSERR_INVALHANDLE = MMSYSERR_BASE + 5,
+            MMSYSERR_NODRIVER = MMSYSERR_BASE + 6,
+            MMSYSERR_NOMEM = MMSYSERR_BASE + 7,
+            MMSYSERR_NOTSUPPORTED = MMSYSERR_BASE + 8,
+            MMSYSERR_BADERRNUM = MMSYSERR_BASE + 9,
+            MMSYSERR_INVALFLAG = MMSYSERR_BASE + 10,
+            MMSYSERR_INVALPARAM = MMSYSERR_BASE + 11,
+            MMSYSERR_HANDLEBUSY = MMSYSERR_BASE + 12,
+            MMSYSERR_INVALIDALIAS = MMSYSERR_BASE + 13,
+            MMSYSERR_BADDB = MMSYSERR_BASE + 14,
+            MMSYSERR_KEYNOTFOUND = MMSYSERR_BASE + 15,
+            MMSYSERR_READERROR = MMSYSERR_BASE + 16,
+            MMSYSERR_WRITEERROR = MMSYSERR_BASE + 17,
+            MMSYSERR_DELETEERROR = MMSYSERR_BASE + 18,
+            MMSYSERR_VALNOTFOUND = MMSYSERR_BASE + 19,
+            MMSYSERR_NODRIVERCB = MMSYSERR_BASE + 20,
+            MMSYSERR_MOREDATA = MMSYSERR_BASE + 21,
+            MMSYSERR_LASTERROR = MMSYSERR_BASE + 21,
 
-        // MIDI-specific return codes.
-        public const UInt32 MIDIERR_BASE          = 64;
-        public const UInt32 MIDIERR_UNPREPARED    = MIDIERR_BASE + 0;
-        public const UInt32 MIDIERR_STILLPLAYING  = MIDIERR_BASE + 1;
-        public const UInt32 MIDIERR_NOMAP         = MIDIERR_BASE + 2;
-        public const UInt32 MIDIERR_NOTREADY      = MIDIERR_BASE + 3;
-        public const UInt32 MIDIERR_NODEVICE      = MIDIERR_BASE + 4;
-        public const UInt32 MIDIERR_INVALIDSETUP  = MIDIERR_BASE + 5;
-        public const UInt32 MIDIERR_BADOPENMODE   = MIDIERR_BASE + 6;
-        public const UInt32 MIDIERR_DONT_CONTINUE = MIDIERR_BASE + 7;
-        public const UInt32 MIDIERR_LASTERROR     = MIDIERR_BASE + 7;
+            // MIDI-specific return codes.
+            MIDIERR_BASE = 64,
+            MIDIERR_UNPREPARED = MIDIERR_BASE + 0,
+            MIDIERR_STILLPLAYING = MIDIERR_BASE + 1,
+            MIDIERR_NOMAP = MIDIERR_BASE + 2,
+            MIDIERR_NOTREADY = MIDIERR_BASE + 3,
+            MIDIERR_NODEVICE = MIDIERR_BASE + 4,
+            MIDIERR_INVALIDSETUP = MIDIERR_BASE + 5,
+            MIDIERR_BADOPENMODE = MIDIERR_BASE + 6,
+            MIDIERR_DONT_CONTINUE = MIDIERR_BASE + 7,
+            MIDIERR_LASTERROR = MIDIERR_BASE + 7
+        }
 
         // Constants passed to midiInOpen() and midiOutOpen() to specify the kind of callback to use.
         public const UInt32 CALLBACK_TYPEMASK = 0x70000;
@@ -164,7 +172,7 @@ namespace Midi
         /// NOTE: This is adapted from the original Win32 function in order to make it typesafe.
         ///
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711621(VS.85).aspx
-        public static UInt32 midiOutGetDevCaps(UIntPtr uDeviceID, out MIDIOUTCAPS caps)
+        public static MMRESULT midiOutGetDevCaps(UIntPtr uDeviceID, out MIDIOUTCAPS caps)
         {
             return midiOutGetDevCaps(uDeviceID, out caps, (UInt32)Marshal.SizeOf(typeof(MIDIOUTCAPS)));
         }
@@ -190,7 +198,7 @@ namespace Midi
         /// NOTE: This is adapted from the original Win32 function in order to make it typesafe.
         ///
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711632(VS.85).aspx
-        public static UInt32 midiOutOpen(out HMIDIOUT lphmo, UIntPtr uDeviceID,
+        public static MMRESULT midiOutOpen(out HMIDIOUT lphmo, UIntPtr uDeviceID,
                                          MidiOutProc dwCallback, UIntPtr dwCallbackInstance)
         {
             return midiOutOpen(out lphmo, uDeviceID, dwCallback, dwCallbackInstance,
@@ -202,21 +210,21 @@ namespace Midi
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/dd798479(VS.85).aspx
         [DllImport("winmm.dll", SetLastError = true)]
-        public static extern UInt32 midiOutReset(HMIDIOUT hmo);
+        public static extern MMRESULT midiOutReset(HMIDIOUT hmo);
 
         /// <summary>
         /// Closes a MIDI output device.
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711620(VS.85).aspx
         [DllImport("winmm.dll", SetLastError = true)]
-        public static extern UInt32 midiOutClose(HMIDIOUT hmo);
+        public static extern MMRESULT midiOutClose(HMIDIOUT hmo);
 
         /// <summary>
         /// Sends a short MIDI message (anything but sysex or stream).
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711640(VS.85).aspx
         [DllImport("winmm.dll", SetLastError = true)]
-        public static extern UInt32 midiOutShortMsg(HMIDIOUT hmo, UInt32 dwMsg);
+        public static extern MMRESULT midiOutShortMsg(HMIDIOUT hmo, UInt32 dwMsg);
 
         /// <summary>
         /// Gets the error text for a return code related to an output device.
@@ -224,7 +232,7 @@ namespace Midi
         /// NOTE: This is adapted from the original Win32 function in order to make it typesafe.
         ///
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711622(VS.85).aspx
-        public static UInt32 midiOutGetErrorText(UInt32 mmrError, StringBuilder lpText)
+        public static MMRESULT midiOutGetErrorText(MMRESULT mmrError, StringBuilder lpText)
         {
             return midiOutGetErrorText(mmrError, lpText, (UInt32)lpText.Capacity);
         }
@@ -261,7 +269,7 @@ namespace Midi
         /// NOTE: This is adapted from the original Win32 function in order to make it typesafe.
         ///
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711604(VS.85).aspx
-        public static UInt32 midiInGetDevCaps(UIntPtr uDeviceID, out MIDIINCAPS caps)
+        public static MMRESULT midiInGetDevCaps(UIntPtr uDeviceID, out MIDIINCAPS caps)
         {
             return midiInGetDevCaps(uDeviceID, out caps, (UInt32)Marshal.SizeOf(typeof(MIDIINCAPS)));
         }
@@ -287,7 +295,7 @@ namespace Midi
         /// NOTE: This is adapted from the original Win32 function in order to make it typesafe.
         ///
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711610(VS.85).aspx
-        public static UInt32 midiInOpen(out HMIDIIN lphMidiIn, UIntPtr uDeviceID,
+        public static MMRESULT midiInOpen(out HMIDIIN lphMidiIn, UIntPtr uDeviceID,
                                          MidiInProc dwCallback, UIntPtr dwCallbackInstance)
         {
             return midiInOpen(out lphMidiIn, uDeviceID, dwCallback, dwCallbackInstance,
@@ -299,28 +307,28 @@ namespace Midi
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711614(VS.85).aspx
         [DllImport("winmm.dll", SetLastError = true)]
-        public static extern UInt32 midiInStart(HMIDIIN hMidiIn);
+        public static extern MMRESULT midiInStart(HMIDIIN hMidiIn);
 
         /// <summary>
         /// Stops input on a MIDI input device.
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711615(VS.85).aspx
         [DllImport("winmm.dll", SetLastError = true)]
-        public static extern UInt32 midiInStop(HMIDIIN hMidiIn);
+        public static extern MMRESULT midiInStop(HMIDIIN hMidiIn);
 
         /// <summary>
         /// Resets input on a MIDI input device.
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711613(VS.85).aspx
         [DllImport("winmm.dll", SetLastError = true)]
-        public static extern UInt32 midiInReset(HMIDIIN hMidiIn);
+        public static extern MMRESULT midiInReset(HMIDIIN hMidiIn);
 
         /// <summary>
         /// Closes a MIDI input device.
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711602(VS.85).aspx
         [DllImport("winmm.dll", SetLastError = true)]
-        public static extern UInt32 midiInClose(HMIDIIN hMidiIn);
+        public static extern MMRESULT midiInClose(HMIDIIN hMidiIn);
 
         /// <summary>
         /// Gets the error text for a return code related to an input device.
@@ -328,7 +336,7 @@ namespace Midi
         /// NOTE: This is adapted from the original Win32 function in order to make it typesafe.
         ///
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711605(VS.85).aspx
-        public static UInt32 midiInGetErrorText(UInt32 mmrError, StringBuilder lpText)
+        public static MMRESULT midiInGetErrorText(MMRESULT mmrError, StringBuilder lpText)
         {
             return midiInGetErrorText(mmrError, lpText, (UInt32)lpText.Capacity);
         }
@@ -340,24 +348,24 @@ namespace Midi
         // The bindings in this section are not typesafe, so we make them private and privide typesafe variants above.
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern UInt32 midiOutGetDevCaps(UIntPtr uDeviceID, out MIDIOUTCAPS caps, UInt32 cbMidiOutCaps);
+        private static extern MMRESULT midiOutGetDevCaps(UIntPtr uDeviceID, out MIDIOUTCAPS caps, UInt32 cbMidiOutCaps);
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern UInt32 midiOutOpen(out HMIDIOUT lphmo, UIntPtr uDeviceID,
+        private static extern MMRESULT midiOutOpen(out HMIDIOUT lphmo, UIntPtr uDeviceID,
             MidiOutProc dwCallback, UIntPtr dwCallbackInstance, UInt32 dwFlags);
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern UInt32 midiOutGetErrorText(UInt32 mmrError, StringBuilder lpText, UInt32 cchText);
+        private static extern MMRESULT midiOutGetErrorText(MMRESULT mmrError, StringBuilder lpText, UInt32 cchText);
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern UInt32 midiInGetDevCaps(UIntPtr uDeviceID, out MIDIINCAPS caps, UInt32 cbMidiInCaps);
+        private static extern MMRESULT midiInGetDevCaps(UIntPtr uDeviceID, out MIDIINCAPS caps, UInt32 cbMidiInCaps);
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern UInt32 midiInOpen(out HMIDIIN lphMidiIn, UIntPtr uDeviceID,
+        private static extern MMRESULT midiInOpen(out HMIDIIN lphMidiIn, UIntPtr uDeviceID,
             MidiInProc dwCallback, UIntPtr dwCallbackInstance, UInt32 dwFlags);
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern UInt32 midiInGetErrorText(UInt32 mmrError, StringBuilder lpText, UInt32 cchText);
+        private static extern MMRESULT midiInGetErrorText(MMRESULT mmrError, StringBuilder lpText, UInt32 cchText);
 
         #endregion    
     }
