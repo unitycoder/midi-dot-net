@@ -3,14 +3,15 @@
         <assembly location="C:\Documents and Settings\tdl\My Documents\Visual Studio 2008\Projects\midi-dot-net\Midi\bin\Release\Midi.dll" documentation="C:\Documents and Settings\tdl\My Documents\Visual Studio 2008\Projects\midi-dot-net\Midi\bin\Release\Midi.xml" />
     </assemblies>
     <namespaces>
-        <namespace name="Midi">Namespace for all MIDI capabilities.</namespace>
+        <namespace name="Midi">Classes providing MIDI support.</namespace>
     </namespaces>
     <documenters>
         <documenter name="MSDN">
             <property name="OutputDirectory" value=".\docs\" />
             <property name="HtmlHelpName" value="Documentation" />
-            <property name="Title" value="MIDI Library for .NET" />
+            <property name="Title" value="A MIDI Library for .NET" />
             <property name="OutputTarget" value="Web" />
+            <property name="CopyrightText" value="Copyright © 2009 Tom Lokovic" />
             <property name="SdkDocVersion" value="SDK_v3_5" />
             <property name="SdkDocVersionString" value="VS.90" />
         </documenter>
