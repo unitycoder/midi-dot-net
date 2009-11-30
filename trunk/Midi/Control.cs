@@ -8,10 +8,12 @@ namespace Midi
     /// <summary>
     /// MIDI Control, used in Control Change messages.
     /// </summary>
+    /// <remarks>
     /// This is an incomplete list of controls, and the details of how each control is encoded and
     /// used is complicated.  See the MIDI spec for details.
     ///
     /// The most commonly used control is SustainPedal, which is considered off when &lt; 64, on when &gt; 64.
+    /// </remarks>
     public enum Control
     {
         /// <summary>General MIDI Control--See MIDI spec for details.</summary>
