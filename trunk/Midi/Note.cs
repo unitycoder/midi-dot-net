@@ -8,8 +8,10 @@ namespace Midi
     /// <summary>
     /// MIDI Notes.
     /// </summary>
+    /// <remarks>
     /// Each note name includes the octave number, using the piano terminology where octave 4 includes Middle C.  Thus octaves
     /// range from -1 to 9.  (This is different from "MIDI octaves", which range from -5 to 5.)
+    /// </remarks>
     public enum Note
     {
         /// <summary>C in octave -1.</summary>
@@ -57,7 +59,7 @@ namespace Midi
         GSharp0 = 20,
         /// <summary>A in octave 0.</summary>
         A0 = 21,
-        /// <summary>A# in octave 0.</summary>
+        /// <summary>A# in octave 0, usually the lowest key on an 88-key keyboard.</summary>
         ASharp0 = 22,
         /// <summary>B in octave 0.</summary>
         B0 = 23,
@@ -137,7 +139,7 @@ namespace Midi
         /// <summary>B in octave 3.</summary>
         B3 = 59,
 
-        /// <summary>C in octave 4.</summary>
+        /// <summary>C in octave 4, also known as Middle C.</summary>
         C4 = 60,
         /// <summary>C# in octave 4.</summary>
         CSharp4 = 61,
@@ -237,7 +239,7 @@ namespace Midi
         /// <summary>B in octave 7.</summary>
         B7 = 107,
 
-        /// <summary>C in octave 8.</summary>
+        /// <summary>C in octave 8, usually the highest key on an 88-key keyboard.</summary>
         C8 = 108,
         /// <summary>C# in octave 8.</summary>
         CSharp8 = 109,

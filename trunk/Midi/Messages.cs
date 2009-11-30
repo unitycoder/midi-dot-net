@@ -182,8 +182,10 @@ namespace Midi
     /// <summary>
     /// Percussion message.
     /// </summary>
+    /// <remarks>
     /// A percussion message is simply shorthand for sending a Note On message to Channel10 with a percussion-specific
     /// note.  This message can be sent to an OutputDevice but will be received by an InputDevice as a NoteOn message.
+    /// </remarks>
     public class PercussionMessage : DeviceMessage
     {
         /// <summary>
