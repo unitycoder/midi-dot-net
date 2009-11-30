@@ -43,52 +43,52 @@ namespace Midi
         public delegate float TimeDelegate();
 
         /// <summary>
-        /// Delegate called with a Note On message.
+        /// Delegate called when an input device receives a Note On message.
         /// </summary>
         public delegate void NoteOnHandler(NoteOnMessage msg);
 
         /// <summary>
-        /// Delegate called with a Note Off message.
+        /// Delegate called when an input device receives a Note Off message.
         /// </summary>
         public delegate void NoteOffHandler(NoteOffMessage msg);
 
         /// <summary>
-        /// Delegate called with a Control Change message.
+        /// Delegate called when an input device receives a Control Change message.
         /// </summary>
         public delegate void ControlChangeHandler(ControlChangeMessage msg);
 
         /// <summary>
-        /// Delegate called with a Program Change message.
+        /// Delegate called when an input device receives a Program Change message.
         /// </summary>
         public delegate void ProgramChangeHandler(ProgramChangeMessage msg);
 
         /// <summary>
-        /// Delegate called with a Pitch Bend message.
+        /// Delegate called when an input device receives a Pitch Bend message.
         /// </summary>
         public delegate void PitchBendHandler(PitchBendMessage msg);
 
         /// <summary>
-        /// Event called with a Note On message.
+        /// Event called when an input device receives a Note On message.
         /// </summary>
         public event NoteOnHandler NoteOn;
 
         /// <summary>
-        /// Event called with a Note Off message.
+        /// Event called when an input device receives a Note Off message.
         /// </summary>
         public event NoteOffHandler NoteOff;
 
         /// <summary>
-        /// Event called with a Control Change message.
+        /// Event called when an input device receives a Control Change message.
         /// </summary>
         public event ControlChangeHandler ControlChange;
 
         /// <summary>
-        /// Event called with a Program Change message.
+        /// Event called when an input device receives a Program Change message.
         /// </summary>
         public event ProgramChangeHandler ProgramChange;
 
         /// <summary>
-        /// Event called with a Pitch Bend message.
+        /// Event called when an input device receives a Pitch Bend message.
         /// </summary>
         public event PitchBendHandler PitchBend;
 
@@ -238,7 +238,7 @@ namespace Midi
                 rc = Win32API.midiInGetErrorText(rc, errorMsg);
                 if (rc != Win32API.MMRESULT.MMSYSERR_NOERROR)
                 {
-                    throw new DeviceException();
+                    throw new DeviceException("no error details");
                 }
                 throw new DeviceException(errorMsg.ToString());
             }

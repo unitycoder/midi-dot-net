@@ -29,19 +29,32 @@ using System.Text;
 namespace Midi
 {
     /// <summary>
-    /// Class representing a MIDI output device.
+    /// A MIDI output device.
     /// </summary>
-    /// The client cannot create instances of this class, but can retrieve a collection of installed devices through
-    /// the static InstalledDevices property.
-    /// 
-    /// All methods on this class are threadsafe.  The open/close state for a specific instance is guarded by locking
-    /// the MidiOutputDevice instance.  To perform multiple operations with the device open or closed, lock the instance.
+    /// <remarks>
+    /// <para>Each instance of this class describes a MIDI output device installed on the system.  You cannot
+    /// create your own instances, but instead should go through the <see cref="InstalledDevices"/> property to
+    /// find which devices are available.  You may wish to examine the <see cref="DeviceBase.Name"/> property
+    /// of each one and possibly present the user with a choice of which device to use.
+    /// </para>
+    /// <para>A device must be opened with <see cref="Open"/> before messages may be sent to it, and when it is no
+    /// longer is use it must be closed with <see cref="Close"/>.  Once open, you may send MIDI messages with
+    /// functions such as <see cref="SendNoteOn"/>, <see cref="SendNoteOff"/> and <see cref="SendProgramChange"/>.
+    /// All notes may be silenced on the device by calling <see cref="SilenceAllNotes"/>.</para>
+    /// <para>Note that the above methods send their messages immediately.  If you wish to arrange for a message to
+    /// be sent at a specific future time, you'll need to instantiate some subclass of <see cref="Message"/>
+    /// (eg <see cref="NoteOnMessage"/>) and then pass it to <see cref="Clock.Schedule(Midi.Message)">Clock.Schedule</see>.
+    /// </para>
+    /// </remarks>
+    /// <threadsafety static="true" instance="true" />
+    /// <seealso cref="Clock"/>
+    /// <seealso cref="InputDevice"/>
     public class OutputDevice : DeviceBase
     {
         #region Public Methods and Properties
 
         /// <summary>
-        /// Global list of devices installed on this system.
+        /// List of devices installed on this system.
         /// </summary>
         public static ReadOnlyCollection<OutputDevice> InstalledDevices
         {
@@ -59,7 +72,7 @@ namespace Midi
         }
 
         /// <summary>
-        /// True if this device has been successfully opened.
+        /// True if this device is open.
         /// </summary>
         public bool IsOpen
         {
@@ -73,8 +86,10 @@ namespace Midi
         }
 
         /// <summary>
-        /// Opens this output device.
+        /// Tries to open this output device.
         /// </summary>
+        /// <exception cref="InvalidOperationException">The device is already open.</exception>
+        /// <exception cref="DeviceException">The device cannot be opened.</exception>
         public void Open()
         {
             lock (this)
@@ -86,8 +101,10 @@ namespace Midi
         }
 
         /// <summary>
-        /// Closes this output device.
+        /// Tries to close this output device.
         /// </summary>
+        /// <exception cref="InvalidOperationException">The device is not open.</exception>
+        /// <exception cref="DeviceException">The device cannot be closed.</exception>
         public void Close()
         {
             lock (this)
@@ -101,6 +118,8 @@ namespace Midi
         /// <summary>
         /// Silences all notes on this output device.
         /// </summary>
+        /// <exception cref="InvalidOperationException">The device is not open.</exception>
+        /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SilenceAllNotes()
         {
             lock (this)
@@ -116,10 +135,11 @@ namespace Midi
         /// <param name="channel">The channel.</param>
         /// <param name="note">The note.</param>
         /// <param name="velocity">The velocity 0..127.</param>
+        /// <exception cref="ArgumentOutOfRangeException">channel, note, or velocity is out-of-range.</exception>
+        /// <exception cref="InvalidOperationException">The device is not open.</exception>
+        /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendNoteOn(Channel channel, Note note, int velocity)
         {
-            channel.Validate();
-            note.Validate();
             lock (this)
             {
                 CheckOpen();
@@ -133,10 +153,11 @@ namespace Midi
         /// <param name="channel">The channel.</param>
         /// <param name="note">The note.</param>
         /// <param name="velocity">The velocity 0..127.</param>
+        /// <exception cref="ArgumentOutOfRangeException">channel, note, or velocity is out-of-range.</exception>
+        /// <exception cref="InvalidOperationException">The device is not open.</exception>
+        /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendNoteOff(Channel channel, Note note, int velocity)
         {
-            channel.Validate();
-            note.Validate();
             lock (this)
             {
                 CheckOpen();
@@ -149,11 +170,13 @@ namespace Midi
         /// </summary>
         /// <param name="percussion">The percussion.</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        /// This is simply shorthand ofr a Note On message on Channel10 with a percussion-specific note, so
-        /// there is no corresponding message to receive from an input device.
+        /// <remarks>This is simply shorthand for a Note On message on Channel10 with a percussion-specific note, so
+        /// there is no corresponding message to receive from an input device.</remarks>
+        /// <exception cref="ArgumentOutOfRangeException">percussion or velocity is out-of-range.</exception>
+        /// <exception cref="InvalidOperationException">The device is not open.</exception>
+        /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendPercussion(Percussion percussion, int velocity)
         {
-            percussion.Validate();
             lock (this)
             {
                 CheckOpen();
@@ -168,6 +191,9 @@ namespace Midi
         /// <param name="channel">The channel.</param>
         /// <param name="control">The control.</param>
         /// <param name="value">The new value 0..127.</param>
+        /// <exception cref="ArgumentOutOfRangeException">channel, control, or value is out-of-range.</exception>
+        /// <exception cref="InvalidOperationException">The device is not open.</exception>
+        /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendControlChange(Channel channel, Control control, int value)
         {
             lock (this)
@@ -182,6 +208,9 @@ namespace Midi
         /// </summary>
         /// <param name="channel">The channel.</param>
         /// <param name="value">The pitch bend value, 0..16383, 8192 is centered.</param>
+        /// <exception cref="ArgumentOutOfRangeException">channel or value is out-of-range.</exception>
+        /// <exception cref="InvalidOperationException">The device is not open.</exception>
+        /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendPitchBend(Channel channel, int value)
         {
             lock (this)
@@ -196,6 +225,9 @@ namespace Midi
         /// </summary>
         /// <param name="channel">The channel.</param>
         /// <param name="instrument">The instrument.</param>
+        /// <exception cref="ArgumentOutOfRangeException">channel or instrument is out-of-range.</exception>
+        /// <exception cref="InvalidOperationException">The device is not open.</exception>
+        /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendProgramChange(Channel channel, Instrument instrument)
         {
             lock (this)
@@ -222,7 +254,7 @@ namespace Midi
                 rc = Win32API.midiOutGetErrorText(rc, errorMsg);
                 if (rc != Win32API.MMRESULT.MMSYSERR_NOERROR)
                 {
-                    throw new DeviceException();
+                    throw new DeviceException("no error details");
                 }
                 throw new DeviceException(errorMsg.ToString());
             }
@@ -235,7 +267,7 @@ namespace Midi
         {
             if (!isOpen)
             {
-                throw new DeviceException("device not open");
+                throw new InvalidOperationException("device not open");
             }
         }
 
@@ -246,7 +278,7 @@ namespace Midi
         {
             if (isOpen)
             {
-                throw new DeviceException("device open");
+                throw new InvalidOperationException("device open");
             }
         }
 

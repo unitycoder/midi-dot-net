@@ -301,11 +301,12 @@ namespace Midi
         /// Throws an exception if note is invalid.
         /// </summary>
         /// <param name="note">The note to validate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
         public static void Validate(this Note note)
         {
             if (!note.IsValid())
             {
-                throw new Exception("invalid Note");
+                throw new ArgumentOutOfRangeException("Note out of range");
             }
         }
 
