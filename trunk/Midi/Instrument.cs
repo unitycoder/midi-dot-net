@@ -334,11 +334,12 @@ namespace Midi
         /// Throws an exception if instrument is not valid.
         /// </summary>
         /// <param name="instrument">The instrument to validate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The instrument is out-of-range.</exception>
         public static void Validate(this Instrument instrument)
         {
             if (!instrument.IsValid())
             {
-                throw new Exception("invalid Instrument");
+                throw new ArgumentOutOfRangeException("Instrument out of range");
             }
         }
 

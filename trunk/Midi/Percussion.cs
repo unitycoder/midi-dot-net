@@ -127,11 +127,12 @@ namespace Midi
         /// Throws an exception if percussion is not valid.
         /// </summary>
         /// <param name="percussion">The percussion to validate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The percussion is out-of-range.</exception>
         public static void Validate(this Percussion percussion)
         {
             if (!percussion.IsValid())
             {
-                throw new Exception("invalid Percussion");
+                throw new ArgumentOutOfRangeException("Percussion out of range");
             }
         }
 

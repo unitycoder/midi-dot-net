@@ -24,7 +24,7 @@
       </div>
     </div>
     <div id="nstext">
-      <p> Class representing a MIDI output device. </p>
+      <p> A MIDI output device. </p>
       <p>
 								For a list of all members of this type, see <a href="Midi~Midi.OutputDevice~Members.html">OutputDevice Members
 								</a>.
@@ -36,11 +36,11 @@
         <div>public class OutputDevice<b> : <a href="Midi~Midi.DeviceBase.html">DeviceBase</a></b></div>
       </div>
       <H4 class="dtH4">Thread Safety</H4>
-      <P>
-					Public static (<b>Shared</b> in Visual Basic) members of this type are
-					safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
-					thread-safe.
-				</P>
+      <P>This type is safe for multithreaded operations.</P>
+      <h4 class="dtH4">Remarks</h4>
+      <p>Each instance of this class describes a MIDI output device installed on the system. You cannot create your own instances, but instead should go through the <a href="Midi~Midi.OutputDevice.InstalledDevices.html">InstalledDevices</a> property to find which devices are available. You may wish to examine the <a href="Midi~Midi.DeviceBase.Name.html">Name</a> property of each one and possibly present the user with a choice of which device to use. </p>
+      <p>A device must be opened with <a href="Midi~Midi.OutputDevice.Open.html">Open</a> before messages may be sent to it, and when it is no longer is use it must be closed with <a href="Midi~Midi.OutputDevice.Close.html">Close</a>. Once open, you may send MIDI messages with functions such as <a href="Midi~Midi.OutputDevice.SendNoteOn.html">SendNoteOn</a>, <a href="Midi~Midi.OutputDevice.SendNoteOff.html">SendNoteOff</a> and <a href="Midi~Midi.OutputDevice.SendProgramChange.html">SendProgramChange</a>. All notes may be silenced on the device by calling <a href="Midi~Midi.OutputDevice.SilenceAllNotes.html">SilenceAllNotes</a>.</p>
+      <p>Note that the above methods send their messages immediately. If you wish to arrange for a message to be sent at a specific future time, you'll need to instantiate some subclass of <a href="Midi~Midi.Message.html">Message</a> (eg <a href="Midi~Midi.NoteOnMessage.html">NoteOnMessage</a>) and then pass it to <a href="Midi~Midi.Clock.Schedule1.html">Clock.Schedule</a>. </p>
       <h4 class="dtH4">Requirements</h4>
       <p>
         <b>Namespace: </b>
@@ -51,7 +51,7 @@
 					</p>
       <h4 class="dtH4">See Also</h4>
       <p>
-        <a href="Midi~Midi.OutputDevice~Members.html">OutputDevice Members</a> | <a href="~Midi.html">Midi Namespace</a></p>
+        <a href="Midi~Midi.OutputDevice~Members.html">OutputDevice Members</a> | <a href="~Midi.html">Midi Namespace</a> | <a href="Midi~Midi.Clock.html">Clock</a> | <a href="Midi~Midi.InputDevice.html">InputDevice</a></p>
       <hr />
       <div id="footer">
         <p>

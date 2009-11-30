@@ -73,11 +73,12 @@ namespace Midi
         /// Throws an exception if control is not valid.
         /// </summary>
         /// <param name="control">The control to validate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The control is out-of-range.</exception>
         public static void Validate(this Control control)
         {
             if (!control.IsValid())
             {
-                throw new Exception("invalid Control");
+                throw new ArgumentOutOfRangeException("Control out of range");
             }
         }
 

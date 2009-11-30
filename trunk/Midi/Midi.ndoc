@@ -15,6 +15,7 @@
             <property name="CopyrightHref" value="http://code.google.com/p/midi-dot-net/" />
             <property name="SdkDocVersion" value="SDK_v3_5" />
             <property name="SdkDocVersionString" value="VS.90" />
+            <property name="IncludeDefaultThreadSafety" value="False" />
         </documenter>
     </documenters>
 </project>

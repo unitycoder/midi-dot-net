@@ -66,11 +66,12 @@ namespace Midi
         /// Throws an exception if channel is not valid.
         /// </summary>
         /// <param name="channel">The channel to validate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The channel is out-of-range.</exception>
         public static void Validate(this Channel channel)
         {
             if (!channel.IsValid())
             {
-                throw new Exception("invalid Channel");
+                throw new ArgumentOutOfRangeException("Channel out of range");
             }
         }
 
