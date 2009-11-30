@@ -8,10 +8,11 @@
     <documenters>
         <documenter name="MSDN">
             <property name="OutputDirectory" value=".\docs\" />
-            <property name="HtmlHelpName" value="Documentation" />
+            <property name="HtmlHelpName" value="A MIDI Library for .NET" />
             <property name="Title" value="A MIDI Library for .NET" />
             <property name="OutputTarget" value="Web" />
             <property name="CopyrightText" value="Copyright © 2009 Tom Lokovic" />
+            <property name="CopyrightHref" value="http://code.google.com/p/midi-dot-net/" />
             <property name="SdkDocVersion" value="SDK_v3_5" />
             <property name="SdkDocVersionString" value="VS.90" />
         </documenter>
