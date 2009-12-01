@@ -11,6 +11,7 @@
             <property name="HtmlHelpName" value="A MIDI Library for .NET" />
             <property name="Title" value="A MIDI Library for .NET" />
             <property name="OutputTarget" value="Web" />
+            <property name="AssemblyVersionInfo" value="AssemblyVersion" />
             <property name="CopyrightText" value="Copyright © 2009 Tom Lokovic" />
             <property name="SdkDocVersion" value="SDK_v3_5" />
             <property name="SdkDocVersionString" value="VS.90" />
