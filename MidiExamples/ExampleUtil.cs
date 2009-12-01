@@ -66,9 +66,8 @@ namespace MidiExamples
             while (true)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                int deviceId;
-                if (int.TryParse(keyInfo.Key.ToString(), out deviceId) &&
-                    deviceId > 0 && deviceId < InputDevice.InstalledDevices.Count)
+                int deviceId = (int)keyInfo.Key - (int)ConsoleKey.D0;
+                if (deviceId >= 0 && deviceId < InputDevice.InstalledDevices.Count)
                 {
                     return InputDevice.InstalledDevices[deviceId];
                 }
