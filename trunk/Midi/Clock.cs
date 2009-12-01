@@ -58,16 +58,28 @@ namespace Midi
             this.threadLock = new object();
             this.threadLock = new Object();
             this.threadShouldExit = false;
+            this.threadProcessingTime = 0;
             this.threadMessageQueue = new MessageQueue();
         }
 
         /// <summary>
         /// This clock's current time in beats.
         /// </summary>
+        /// <remarks>
+        /// Normally, this method polls the clock's current time, and thus changes from moment
+        /// to moment as long as the clock is running.  However, when called from the scheduler
+        /// thread (that is, from a <see cref="Message.SendNow">Message.SendNow</see> method or a
+        /// <see cref="CallbackMessage"/>), it returns the precise time at which the message
+        /// was scheduled.
+        /// </remarks>
         public float BeatTime
         {
             get
             {
+                if (isSchedulerThread)
+                {
+                    return threadProcessingTime;
+                }
                 lock (timingLock)
                 {
                     return (stopwatch.ElapsedMilliseconds + millisecondFudge) / millisecondsPerBeat;
@@ -266,7 +278,8 @@ namespace Midi
         /// <returns>The positive number of milliseconds, or 0 if beatTime is in the past.</returns>
         private long MillisecondsUntil(float beatTime)
         {
-            return Math.Max(0, (long)((beatTime - this.BeatTime) * millisecondsPerBeat));
+            float now = (stopwatch.ElapsedMilliseconds + millisecondFudge) / millisecondsPerBeat;
+            return Math.Max(0, (long)((beatTime - now) * millisecondsPerBeat));
         }
 
         /// <summary>
@@ -295,6 +308,7 @@ namespace Midi
                         }
                         else
                         {
+                            threadProcessingTime = threadMessageQueue.EarliestTimestamp;
                             List<Message> timeslice = threadMessageQueue.PopEarliest();
                             foreach (Message message in timeslice)
                             {
@@ -328,6 +342,7 @@ namespace Midi
         // Thread state is guarded by lock(threadLock).
         private Object threadLock;
         private bool threadShouldExit;
+        private float threadProcessingTime;
         private MessageQueue threadMessageQueue;
 
         /// <summary>

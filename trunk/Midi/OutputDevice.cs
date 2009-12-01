@@ -32,18 +32,20 @@ namespace Midi
     /// A MIDI output device.
     /// </summary>
     /// <remarks>
-    /// <para>Each instance of this class describes a MIDI output device installed on the system.  You cannot
-    /// create your own instances, but instead must go through the <see cref="InstalledDevices"/> property to
-    /// find which devices are available.  You may wish to examine the <see cref="DeviceBase.Name"/> property
-    /// of each one and present the user with a choice of which device to use.
+    /// <para>Each instance of this class describes a MIDI output device installed on the system.
+    /// You cannot create your own instances, but instead must go through the
+    /// <see cref="InstalledDevices"/> property to find which devices are available.  You may wish
+    /// to examine the <see cref="DeviceBase.Name"/> property of each one and present the user with
+    /// a choice of which device to use.
     /// </para>
-    /// <para>Open an output device with <see cref="Open"/> and close it with <see cref="Close"/>.  While it is
-    /// open, you may send MIDI messages with functions such as <see cref="SendNoteOn"/>, <see cref="SendNoteOff"/>
-    /// and <see cref="SendProgramChange"/>.  All notes may be silenced on the device by calling
-    /// <see cref="SilenceAllNotes"/>.</para>
-    /// <para>Note that the above methods send their messages immediately.  If you wish to arrange for a message to
-    /// be sent at a specific future time, you'll need to instantiate some subclass of <see cref="Message"/>
-    /// (eg <see cref="NoteOnMessage"/>) and then pass it to <see cref="Clock.Schedule(Midi.Message)">Clock.Schedule</see>.
+    /// <para>Open an output device with <see cref="Open"/> and close it with <see cref="Close"/>.
+    /// While it is open, you may send MIDI messages with functions such as
+    /// <see cref="SendNoteOn"/>, <see cref="SendNoteOff"/> and <see cref="SendProgramChange"/>.
+    /// All notes may be silenced on the device by calling <see cref="SilenceAllNotes"/>.</para>
+    /// <para>Note that the above methods send their messages immediately.  If you wish to arrange
+    /// for a message to be sent at a specific future time, you'll need to instantiate some subclass
+    /// of <see cref="Message"/> (eg <see cref="NoteOnMessage"/>) and then pass it to
+    /// <see cref="Clock.Schedule(Midi.Message)">Clock.Schedule</see>.
     /// </para>
     /// </remarks>
     /// <threadsafety static="true" instance="true" />
@@ -135,7 +137,8 @@ namespace Midi
         /// <param name="channel">The channel.</param>
         /// <param name="note">The note.</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        /// <exception cref="ArgumentOutOfRangeException">channel, note, or velocity is out-of-range.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">channel, note, or velocity is
+        /// out-of-range.</exception>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendNoteOn(Channel channel, Note note, int velocity)
@@ -143,7 +146,8 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOn(channel, note, velocity)));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOn(channel,
+                    note, velocity)));
             }
         }
 
@@ -153,7 +157,8 @@ namespace Midi
         /// <param name="channel">The channel.</param>
         /// <param name="note">The note.</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        /// <exception cref="ArgumentOutOfRangeException">channel, note, or velocity is out-of-range.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">channel, note, or velocity is
+        /// out-of-range.</exception>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendNoteOff(Channel channel, Note note, int velocity)
@@ -161,7 +166,8 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOff(channel, note, velocity)));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOff(channel,
+                    note, velocity)));
             }
         }
 
@@ -170,9 +176,11 @@ namespace Midi
         /// </summary>
         /// <param name="percussion">The percussion.</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        /// <remarks>This is simply shorthand for a Note On message on Channel10 with a percussion-specific note, so
-        /// there is no corresponding message to receive from an input device.</remarks>
-        /// <exception cref="ArgumentOutOfRangeException">percussion or velocity is out-of-range.</exception>
+        /// <remarks>This is simply shorthand for a Note On message on Channel10 with a
+        /// percussion-specific note, so there is no corresponding message to receive from an input
+        /// device.</remarks>
+        /// <exception cref="ArgumentOutOfRangeException">percussion or velocity is out-of-range.
+        /// </exception>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendPercussion(Percussion percussion, int velocity)
@@ -180,7 +188,8 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOn(Channel.Channel10, (Note)percussion,
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOn(
+                    Channel.Channel10, (Note)percussion,
                     velocity)));
             }
         }
@@ -191,7 +200,8 @@ namespace Midi
         /// <param name="channel">The channel.</param>
         /// <param name="control">The control.</param>
         /// <param name="value">The new value 0..127.</param>
-        /// <exception cref="ArgumentOutOfRangeException">channel, control, or value is out-of-range.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">channel, control, or value is
+        /// out-of-range.</exception>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendControlChange(Channel channel, Control control, int value)
@@ -199,7 +209,8 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeControlChange(channel, control, value)));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeControlChange(
+                    channel, control, value)));
             }
         }
 
@@ -208,7 +219,8 @@ namespace Midi
         /// </summary>
         /// <param name="channel">The channel.</param>
         /// <param name="value">The pitch bend value, 0..16383, 8192 is centered.</param>
-        /// <exception cref="ArgumentOutOfRangeException">channel or value is out-of-range.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">channel or value is out-of-range.
+        /// </exception>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The message cannot be sent.</exception>
         public void SendPitchBend(Channel channel, int value)
@@ -216,7 +228,8 @@ namespace Midi
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodePitchBend(channel, value)));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodePitchBend(channel,
+                    value)));
             }
         }
 
@@ -225,15 +238,23 @@ namespace Midi
         /// </summary>
         /// <param name="channel">The channel.</param>
         /// <param name="instrument">The instrument.</param>
-        /// <exception cref="ArgumentOutOfRangeException">channel or instrument is out-of-range.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">channel or instrument is out-of-range.
+        /// </exception>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The message cannot be sent.</exception>
+        /// <remarks>
+        /// A Program Change message is used to switch among instrument settings, generally
+        /// instrument voices.  An instrument conforming to General Midi 1 will have the
+        /// instruments described in the <see cref="Instrument"/> enum; other instruments
+        /// may have different instrument sets.
+        /// </remarks>
         public void SendProgramChange(Channel channel, Instrument instrument)
         {
             lock (this)
             {
                 CheckOpen();
-                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeProgramChange(channel, instrument)));
+                CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeProgramChange(
+                    channel, instrument)));
             }
         }
 

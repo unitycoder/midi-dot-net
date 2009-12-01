@@ -28,6 +28,8 @@
       <div class="syntax">public <a href="">float</a> BeatTime { public get; }</div>
       <p>
       </p>
+      <h4 class="dtH4">Remarks</h4>
+      <p> Normally, this method polls the clock's current time, and thus changes from moment to moment as long as the clock is running. However, when called from the scheduler thread (that is, from a <a href="Midi~Midi.Message.SendNow.html">Message.SendNow</a> method or a <a href="Midi~Midi.CallbackMessage.html">CallbackMessage</a>), it returns the precise time at which the message was scheduled. </p>
       <h4 class="dtH4">See Also</h4>
       <p>
         <a href="Midi~Midi.Clock.html">Clock Class</a> | <a href="~Midi.html">Midi Namespace</a></p>

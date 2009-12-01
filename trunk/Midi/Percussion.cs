@@ -8,8 +8,19 @@ namespace Midi
     /// <summary>
     /// General MIDI percussion note.
     /// </summary>
-    /// In General MIDI, notes played on channel 10 (channel 9 in code) make the following percussion sounds,
-    /// regardless of any ProgramChange messages on that channel.
+    /// <remarks>
+    /// <para>
+    /// In General MIDI, notes played on <see cref="Channel.Channel10"/> make the following
+    /// percussion sounds, regardless of any <see cref="OutputDevice.SendProgramChange">Program
+    /// Change</see> messages on that channel.
+    /// </para>
+    /// <para>
+    /// This enum is used with <see cref="OutputDevice.SendPercussion">OutputDevice.SendPercussion
+    /// </see> and <see cref="PercussionMessage"/>.  Equivalently, when cast to <see cref="Note"/>
+    /// it can be used with <see cref="OutputDevice.SendNoteOn">OutputDevice.SendNoteOn</see> and
+    /// <see cref="NoteOnMessage"/> on <see cref="Channel.Channel10"/>.
+    /// </para>
+    /// </remarks>
     public enum Percussion
     {
         /// <summary>General MIDI percussion 35 ("Bass Drum 2").</summary>
