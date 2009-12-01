@@ -33,14 +33,14 @@ namespace Midi
     /// </summary>
     /// <remarks>
     /// <para>Each instance of this class describes a MIDI output device installed on the system.  You cannot
-    /// create your own instances, but instead should go through the <see cref="InstalledDevices"/> property to
+    /// create your own instances, but instead must go through the <see cref="InstalledDevices"/> property to
     /// find which devices are available.  You may wish to examine the <see cref="DeviceBase.Name"/> property
-    /// of each one and possibly present the user with a choice of which device to use.
+    /// of each one and present the user with a choice of which device to use.
     /// </para>
-    /// <para>A device must be opened with <see cref="Open"/> before messages may be sent to it, and when it is no
-    /// longer is use it must be closed with <see cref="Close"/>.  Once open, you may send MIDI messages with
-    /// functions such as <see cref="SendNoteOn"/>, <see cref="SendNoteOff"/> and <see cref="SendProgramChange"/>.
-    /// All notes may be silenced on the device by calling <see cref="SilenceAllNotes"/>.</para>
+    /// <para>Open an output device with <see cref="Open"/> and close it with <see cref="Close"/>.  While it is
+    /// open, you may send MIDI messages with functions such as <see cref="SendNoteOn"/>, <see cref="SendNoteOff"/>
+    /// and <see cref="SendProgramChange"/>.  All notes may be silenced on the device by calling
+    /// <see cref="SilenceAllNotes"/>.</para>
     /// <para>Note that the above methods send their messages immediately.  If you wish to arrange for a message to
     /// be sent at a specific future time, you'll need to instantiate some subclass of <see cref="Message"/>
     /// (eg <see cref="NoteOnMessage"/>) and then pass it to <see cref="Clock.Schedule(Midi.Message)">Clock.Schedule</see>.
@@ -86,7 +86,7 @@ namespace Midi
         }
 
         /// <summary>
-        /// Tries to open this output device.
+        /// Opens this output device.
         /// </summary>
         /// <exception cref="InvalidOperationException">The device is already open.</exception>
         /// <exception cref="DeviceException">The device cannot be opened.</exception>
@@ -101,7 +101,7 @@ namespace Midi
         }
 
         /// <summary>
-        /// Tries to close this output device.
+        /// Closes this output device.
         /// </summary>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The device cannot be closed.</exception>

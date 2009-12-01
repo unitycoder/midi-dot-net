@@ -25,21 +25,37 @@
     </div>
     <div id="nstext">
       <p> Opens this input device. </p>
-      <div class="syntax">public <a href="">void</a> Open(<br />   <a href="Midi~Midi.InputDevice.TimeDelegate.html">TimeDelegate</a> <i>timeDelegate</i><br />);</div>
-      <h4 class="dtH4">Parameters</h4>
-      <dl>
-        <dt>
-          <i>timeDelegate</i>
-        </dt>
-        <dd>Function to call to compute timestamp for each incoming event. If null, then the Win32 millisecond time will be used.</dd>
-      </dl>
+      <div class="syntax">public <a href="">void</a> Open();</div>
+      <h4 class="dtH4">Remarks</h4>
+      <p>Note that Open() establishes a connection to the device, but no messages will be received until <a href="Midi~Midi.InputDevice.StartReceiving.html">StartReceiving</a> is called.</p>
+      <h4 class="dtH4">Exceptions</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Exception Type</th>
+            <th width="50%">Condition</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="http://msdn.microsoft.com/en-us/library/System.InvalidOperationException(VS.90).aspx">InvalidOperationException</a>
+            </td>
+            <td width="50%">The device is already open.</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Midi~Midi.DeviceException.html">DeviceException</a>
+            </td>
+            <td width="50%">The device cannot be opened.</td>
+          </tr>
+        </table>
+      </div>
       <h4 class="dtH4">See Also</h4>
       <p>
         <a href="Midi~Midi.InputDevice.html">InputDevice Class</a> | <a href="~Midi.html">Midi Namespace</a></p>
       <hr />
       <div id="footer">
         <p>
-          <a href="http://code.google.com/p/midi-dot-net/">Copyright © 2009 Tom Lokovic</a>
+          <a>Copyright © 2009 Tom Lokovic</a>
         </p>
         <p>
         </p>
