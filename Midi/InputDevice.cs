@@ -177,7 +177,8 @@ namespace Midi
         /// <summary>
         /// Closes this input device.
         /// </summary>
-        /// <exception cref="InvalidOperationException">The device is not open or is still receiving.</exception>
+        /// <exception cref="InvalidOperationException">The device is not open or is still
+        /// receiving.</exception>
         /// <exception cref="DeviceException">The device cannot be closed.</exception>
         public void Close()
         {
@@ -250,20 +251,23 @@ namespace Midi
         /// Stops this input device from receiving messages.
         /// </summary>
         /// <remarks>
-        /// <para>This method waits for all in-progress input event handlers to finish, and then joins (shuts down)
-        /// the background thread that was created in <see cref="StartReceiving"/>.  Thus, when this function returns
-        /// you can be sure that no more event handlers will be invoked.</para>
-        /// <para>It is illegal to call this method from an input event handler (ie, from the background thread), and
-        /// doing so throws an exception. If an event handler really needs to call this method, consider using
-        /// BeginInvoke to schedule it on another thread.</para>
+        /// <para>This method waits for all in-progress input event handlers to finish, and then
+        /// joins (shuts down) the background thread that was created in
+        /// <see cref="StartReceiving"/>.  Thus, when this function returns you can be sure that no
+        /// more event handlers will be invoked.</para>
+        /// <para>It is illegal to call this method from an input event handler (ie, from the
+        /// background thread), and doing so throws an exception. If an event handler really needs
+        /// to call this method, consider using BeginInvoke to schedule it on another thread.</para>
         /// </remarks>
-        /// <exception cref="InvalidOperationException">The device is not open; is not receiving; or called from within an event handler (ie, from the background thread).</exception>
+        /// <exception cref="InvalidOperationException">The device is not open; is not receiving;
+        /// or called from within an event handler (ie, from the background thread).</exception>
         /// <exception cref="DeviceException">The device cannot start receiving.</exception>
         public void StopReceiving()
         {
             if (isInsideInputHandler)
             {
-                throw new InvalidOperationException("Can't call StopReceiving() from inside an input handler.");
+                throw new InvalidOperationException(
+                    "Can't call StopReceiving() from inside an input handler.");
             }
             lock (this)
             {
@@ -279,8 +283,8 @@ namespace Midi
         #region Private Methods
 
         /// <summary>
-        /// Makes sure rc is MidiWin32Wrapper.MMSYSERR_NOERROR.  If not, throws an exception
-        /// with an appropriate error message.
+        /// Makes sure rc is MidiWin32Wrapper.MMSYSERR_NOERROR.  If not, throws an exception with an
+        /// appropriate error message.
         /// </summary>
         /// <param name="rc"></param>
         private static void CheckReturnCode(Win32API.MMRESULT rc)
@@ -375,8 +379,8 @@ namespace Midi
         /// <summary>
         /// The input callback for midiOutOpen.
         /// </summary>
-        private void InputCallback(Win32API.HMIDIIN hMidiIn, Win32API.MidiInMessage wMsg, UIntPtr dwInstance, UIntPtr dwParam1,
-            UIntPtr dwParam2)
+        private void InputCallback(Win32API.HMIDIIN hMidiIn, Win32API.MidiInMessage wMsg,
+            UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2)
         {
             isInsideInputHandler = true;
             try

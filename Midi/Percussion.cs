@@ -205,7 +205,7 @@ namespace Midi
         public static string Name(this Percussion percussion)
         {
             percussion.Validate();
-            return PercussionNames[(int)percussion];
+            return PercussionNames[(int)percussion-35];
         }
     }
 }

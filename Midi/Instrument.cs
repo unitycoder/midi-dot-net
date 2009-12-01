@@ -8,7 +8,13 @@ namespace Midi
     /// <summary>
     /// General MIDI instrument, used in Program Change messages.
     /// </summary>
-    /// MIDI instruments are one-indexed in the spec, but they're zero-indexed in code, so we have them zero-indexed here.
+    /// The MIDI protocol defines a Program Change message, which can be used to switch a
+    /// device among "presets".  The General MIDI specification further standardizes those presets
+    /// into the specific instruments in this enum.  General-MIDI-compliant devices will
+    /// have these particular instruments; non-GM devices may have other instruments.
+    /// 
+    /// MIDI instruments are one-indexed in the spec, but they're zero-indexed in code, so
+    /// we have them zero-indexed here.
     public enum Instrument
     {
         // Piano Family:
