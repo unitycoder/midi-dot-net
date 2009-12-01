@@ -12,7 +12,8 @@ namespace Midi
     /// This is an incomplete list of controls, and the details of how each control is encoded and
     /// used is complicated.  See the MIDI spec for details.
     ///
-    /// The most commonly used control is SustainPedal, which is considered off when &lt; 64, on when &gt; 64.
+    /// The most commonly used control is SustainPedal, which is considered off when &lt; 64, on
+    /// when &gt; 64.
     /// </remarks>
     public enum Control
     {
@@ -111,6 +112,7 @@ namespace Midi
         /// Returns the human-readable name of a MIDI control.
         /// </summary>
         /// <param name="control">The control.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The control is out-of-range.</exception>
         public static string Name(this Control control)
         {
             control.Validate();

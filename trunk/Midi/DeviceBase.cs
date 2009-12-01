@@ -27,7 +27,8 @@ namespace Midi
     /// <summary>
     /// Common base class for input and output devices.
     /// </summary>
-    /// This base class exists mainly so that input and output devices can both go into the same kinds of MidiMessages.
+    /// This base class exists mainly so that input and output devices can both go into the same
+    /// kinds of MidiMessages.
     public class DeviceBase
     {
         /// <summary>

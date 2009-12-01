@@ -6,7 +6,7 @@ using System.Text;
 namespace Midi
 {
     /// <summary>
-    /// MIDI Channel.
+    /// A MIDI Channel.
     /// </summary>
     /// <remarks>
     /// <para>Each MIDI device has 16 independent channels.  Channels are named starting at 1, but
@@ -104,6 +104,7 @@ namespace Midi
         /// Returns the human-readable name of a MIDI channel.
         /// </summary>
         /// <param name="channel">The channel.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The channel is out-of-range.</exception>
         public static string Name(this Channel channel)
         {
             channel.Validate();
