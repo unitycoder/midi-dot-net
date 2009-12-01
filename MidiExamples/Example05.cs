@@ -87,7 +87,7 @@ namespace MidiExamples
             InputDevice inputDevice = ExampleUtil.ChooseInputDeviceFromConsole();
             if (inputDevice != null)
             {
-                inputDevice.Open(() => clock.BeatTime);
+                inputDevice.Open();
             }
 
             Arpeggiator arpeggiator = new Arpeggiator(inputDevice, outputDevice, clock);
@@ -97,7 +97,7 @@ namespace MidiExamples
             clock.Start();
             if (inputDevice != null)
             {
-                inputDevice.StartReceiving();
+                inputDevice.StartReceiving(clock);
             }
 
             while (true)

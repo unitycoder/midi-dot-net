@@ -100,7 +100,8 @@ namespace MidiExamples
 
         public override void Run()
         {
-            // Utility function prompts user to choose an output device (or if there is only one, returns that one).
+            // Utility function prompts user to choose an output device (or if there is only one,
+            // returns that one).
             OutputDevice outputDevice = ExampleUtil.ChooseOutputDeviceFromConsole();
             if (outputDevice == null)
             {
@@ -110,7 +111,8 @@ namespace MidiExamples
             }
             outputDevice.Open();
 
-            Console.WriteLine("Press alphabetic keys (with and without SHIFT) to play MIDI percussion sounds.");
+            Console.WriteLine("Press alphabetic keys (with and without SHIFT) to play MIDI "+
+                "percussion sounds.");
             Console.WriteLine("Press Escape when finished.");
             Console.WriteLine();
 

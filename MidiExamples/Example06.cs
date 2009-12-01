@@ -90,14 +90,14 @@ namespace MidiExamples
             {
                 // Just pick the first input device.  This will throw an exception if there isn't one.
                 inputDevice = InputDevice.InstalledDevices[0];
-                inputDevice.Open(() => clock.BeatTime);
+                inputDevice.Open();
             }
             Scaler scaler = new Scaler(clock, inputDevice, outputDevice);
 
             clock.Start();
             if (inputDevice != null)
             {
-                inputDevice.StartReceiving();
+                inputDevice.StartReceiving(clock);
             }
 
             bool done = false;
@@ -136,7 +136,7 @@ namespace MidiExamples
                         clock.Start();
                         if (inputDevice != null)
                         {
-                            inputDevice.StartReceiving();
+                            inputDevice.StartReceiving(clock);
                         }
                     }
                 }

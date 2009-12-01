@@ -28,15 +28,14 @@ namespace MidiExamples
             Console.WriteLine("Output Devices:");
             for (int i = 0; i < OutputDevice.InstalledDevices.Count; ++i)
             {
-                Console.WriteLine("   {0}: {1}", i, OutputDevice.InstalledDevices[i]);
+                Console.WriteLine("   {0}: {1}", i, OutputDevice.InstalledDevices[i].Name);
             }
             Console.Write("Choose the id of an output device...");
             while (true)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                int deviceId;
-                if (int.TryParse(keyInfo.Key.ToString(), out deviceId) &&
-                    deviceId > 0 && deviceId < OutputDevice.InstalledDevices.Count)
+                int deviceId = (int)keyInfo.Key - (int)ConsoleKey.D0;
+                if (deviceId >= 0 && deviceId < OutputDevice.InstalledDevices.Count)
                 {
                     return OutputDevice.InstalledDevices[deviceId];
                 }

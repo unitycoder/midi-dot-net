@@ -8,9 +8,10 @@ namespace Midi
     /// <summary>
     /// MIDI Channel.
     /// </summary>
-    /// MIDI channels are named starting at 1, but encoded programmatically starting at 0.
+    /// <remarks>MIDI channels are named starting at 1, but encoded programmatically starting at 0.
     ///
     /// Channel10 is the dedicated percussion channel.
+    /// </remarks>
     public enum Channel
     {
         /// <summary> MIDI Channel 1. </summary>
