@@ -66,11 +66,15 @@ namespace Midi
         /// This clock's current time in beats.
         /// </summary>
         /// <remarks>
-        /// Normally, this method polls the clock's current time, and thus changes from moment
-        /// to moment as long as the clock is running.  However, when called from the scheduler
-        /// thread (that is, from a <see cref="Message.SendNow">Message.SendNow</see> method or a
-        /// <see cref="CallbackMessage"/>), it returns the precise time at which the message
-        /// was scheduled.
+        /// <para>Normally, this method polls the clock's current time, and thus changes from
+        /// moment to moment as long as the clock is running.  However, when called from the
+        /// scheduler thread (that is, from a <see cref="Message.SendNow">Message.SendNow</see>
+        /// method or a <see cref="CallbackMessage"/>), it returns the precise time at which the
+        /// message was scheduled.</para>
+        /// <para>For example, suppose a callback was scheduled for time T, and the scheduler
+        /// managed to call that callback at time T+delta.  In the callback, BeatTime will
+        /// return T for the duration of the callback.  In any other thread, BeatTime would
+        /// return approximately T+delta.</para>
         /// </remarks>
         public float BeatTime
         {
