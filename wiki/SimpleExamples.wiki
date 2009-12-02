@@ -1,8 +1,10 @@
-#summary Simple Code Snippets
+==Introduction==
+
+This page gives some simple code snippets to give you a sense of how the [http://code.google.com/p/midi-dot-net/ midi-dot-net] API works.  For fuller, working examples see the [http://code.google.com/p/midi-dot-net/source/browse/trunk#trunk/MidiExamples demo program] in the source distribution.
 
 ----
 
-==Simple Output Example==
+==Output==
 
 This snippet opens the first MIDI output device, sends a note On event, and then bends the pitch down.  See [http://code.google.com/p/midi-dot-net/source/browse/trunk/MidiExamples/Example02.cs Example02.cs] for a fuller example.
 {{{
@@ -15,7 +17,7 @@ outputDevice.SendPitchBend(Channel.Channel1, 7000);  // 8192 is centered, so 700
 
 ----
 
-==Simple Input Example==
+==Input==
 
 This snippet opens the first MIDI input device, registers a !NoteOn event listener, and then prints the names of notes played until a key on the computer keyboard is pressed.
 
