@@ -11,13 +11,14 @@ namespace Midi
     /// <remarks>
     /// <para>Each MIDI device has 16 independent channels.  Channels are named starting at 1, but
     /// are encoded programmatically starting at 0.</para>
-    /// <para>This enum is used with the various <see cref="OutputDevice">OutputDevice</see>.Send*
-    /// methods, and also with the various subclasses of <see cref="ChannelMessage"/>.</para>
     /// <para>All of the channels are general-purpose except for Channel10, which is the
     /// dedicated percussion channel.  Any notes sent to that channel will play
     /// <see cref="Percussion">percussion notes</see>, regardless of any
     /// <see cref="OutputDevice.SendProgramChange">Program Change</see> messages sent on that
     /// channel.</para>
+    /// <para>This enum has extension methods, such as <see cref="ChannelExtensionMethods.Name"/>
+    /// and <see cref="ChannelExtensionMethods.IsValid"/>, defined in
+    /// <see cref="ChannelExtensionMethods"/>. </para>
     /// </remarks>
     public enum Channel
     {
@@ -58,7 +59,6 @@ namespace Midi
     /// <summary>
     /// Extension methods for the Channel enum.
     /// </summary>
-    /// Be sure to "using midi" if you want to use these as extension methods.
     public static class ChannelExtensionMethods
     {
         /// <summary>

@@ -9,11 +9,17 @@ namespace Midi
     /// MIDI Control, used in Control Change messages.
     /// </summary>
     /// <remarks>
-    /// This is an incomplete list of controls, and the details of how each control is encoded and
-    /// used is complicated.  See the MIDI spec for details.
-    ///
-    /// The most commonly used control is SustainPedal, which is considered off when &lt; 64, on
-    /// when &gt; 64.
+    /// <para>In MIDI, Control Change messages are used to influence various auxiliary "controls"
+    /// on a device, such as knobs, levers, and pedals.  Controls are specified with
+    /// integers in [0..127].  This enum provides an incomplete list of controls, because
+    /// most controls are too obscure to document effetively here.  Even for the ones listed
+    /// here, the details of how the value is interpreted are arcane.  Please see the MIDI spec for
+    /// details.</para>
+    /// <para>The most commonly used control is SustainPedal, which is considered off when &lt; 64,
+    /// on when &gt; 64.</para>
+    /// <para>This enum has extension methods, such as <see cref="ControlExtensionMethods.Name"/>
+    /// and <see cref="ControlExtensionMethods.IsValid"/>, defined in
+    /// <see cref="ControlExtensionMethods"/>.</para>
     /// </remarks>
     public enum Control
     {
@@ -86,7 +92,7 @@ namespace Midi
         /// <summary>
         /// Table of control names.
         /// </summary>
-        public static Dictionary<int, string> ControlNames = new Dictionary<int, string>
+        private static Dictionary<int, string> ControlNames = new Dictionary<int, string>
         {
             {1, "Modulation wheel"},
             {6, "Data Entry MSB"},

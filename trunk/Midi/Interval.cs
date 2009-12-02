@@ -8,10 +8,22 @@ namespace Midi
     /// <summary>
     /// Interval measuring the relationship between pitches.
     /// </summary>
+    /// <remarks>
+    /// <para>This enum is simply for making interval operations more explicit.  When adding to or
+    /// subtracting from the <see cref="Note"/> enum, one can either use ints...</para>
+    /// <code>Note n = Note.C4 + 5;</code>
+    /// <para>...or use the Interval enum, cast to int...</para>
+    /// <code>Note n = Note.C4 + (int)Interval.PerfectFourth;</code>
+    /// <para>These two examples are equivalent.  The benefit of the latter is simply that it makes
+    /// the intention more explicit.</para>
+    /// <para>This enum has extension methods, such as <see cref="IntervalExtensionMethods.Name"/>,
+    /// defined in <see cref="IntervalExtensionMethods"/>.</para>
+    /// </remarks>
+    /// <seealso cref="Note"/>
     public enum Interval
     {
         /// <summary>Unison interval, 0 semitones</summary>
-        Unison        = 0,
+        Unison = 0,
         /// <summary>Semitone interval, 1 semitone</summary>
         Semitone = 1,
         /// <summary>Whole Tone interval, 2 semitones</summary>
@@ -67,7 +79,9 @@ namespace Midi
         /// Returns the human-readable name of an interval.
         /// </summary>
         /// <param name="interval">The interval.</param>
-        /// <returns>The human-readable name.</returns>
+        /// <returns>The human-readable name.  If the interval is less than an octave, it gives
+        /// the standard term (eg, "Major third").  If the interval is more than an octave, it
+        /// gives the number of semitones in the interval.</returns>
         public static string Name(this Interval interval)
         {
             int value = Math.Abs((int)interval);

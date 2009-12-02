@@ -32,12 +32,71 @@ namespace Midi
     /// <summary>
     /// A clock for scheduling MIDI messages in a rate-adjustable, pausable timeline.
     /// </summary>
+    /// <remarks>
+    /// <para>Clock is used for scheduling MIDI messages.  Though you can always send messages
+    /// synchronously with the various <see cref="OutputDevice"/>.Send* methods, doing so
+    /// requires your code to be "ready" at the precise moment each message needs to
+    /// be sent.  In most cases, and especially in interactive programs, it's more convenient
+    /// to describe messages that <i>will</i> be sent at specified points in the future, and then
+    /// rely on a scheduler to make it happen.  Clock is such a scheduler.</para>
+    /// <h3>Basic usage</h3>
+    /// <para> In the simplest case, Clock can be used to schedule a sequence of messages which is
+    /// known in its entirety ahead of time.  For example, this code snippet schedules two notes to
+    /// play one after the other:</para>
+    /// <code>
+    /// Clock clock(120);  // beatsPerMinute=120
+    /// OutputDevice outputDevice = ...;
+    /// clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 0));
+    /// clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 1));
+    /// clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.D4, 80, 1));
+    /// clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.D4, 80, 2));
+    /// </code>
+    /// <para>At this point, four messages have been scheduled, but they haven't been sent because
+    /// the clock has not started.  We can start the clock with <see cref="Start"/>, pause it with
+    /// <see cref="Stop"/>, and reset it with <see cref="Reset"/>.  We can change the
+    /// beats-per-minute at any time, even as the sequence is playing.  And the playing happens
+    /// in a background thread, so your client code can focus on arranging the notes and controlling
+    /// the clock.</para>
+    /// <para>You can even schedule new notes as the clock is playing.  Generally you should
+    /// schedule messages for times in the future; scheduling a message with a time in the past
+    /// simply causes it to play immediately, which is probably not what you wanted.</para>
+    /// <h3>NoteOnOffMessage and Self-Propagating Messages</h3>
+    /// <para>In the above example, we wanted to play two notes but had to schedule four messages.
+    /// This case is so common that we provide a convenience class, <see cref="NoteOnOffMessage"/>,
+    /// which encapsulates a Note On message and its corresponding Note Off message in a single
+    /// unit.  We could rewrite the above example as follows:</para>
+    /// <code>
+    /// Clock clock(120);  // beatsPerMinute=120
+    /// OutputDevice outputDevice = ...;
+    /// clock.Schedule(new NoteOnOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 0, 1));
+    /// clock.Schedule(new NoteOnOffMessage(outputDevice, Channel.Channel1, Note.D4, 80, 1, 1));
+    /// </code>
+    /// <para>This works because each NoteOnOffMessage, when it is actually sent, does two things:
+    /// it sends the Note On message to the output device, and <i>also</i> schedules the
+    /// correponding Note Off message for the appropriate time in the future.  This is an example
+    /// of a <i>self-propagating message</i>: a message which, when triggered, schedules additional
+    /// events for the future.</para>
+    /// <para>You can design your own self-propagating messages by subclassing from
+    /// <see cref="Message"/>.  For example, you could make a self-propagating MetronomeMessage
+    /// which keeps a steady beat by always scheduling the <i>next</i> MetronomeMessage when it
+    /// plays the current beat.  However, subclassing can be tedious, and it is usually preferable
+    /// to use <see cref="CallbackMessage"/> to call-out to your own code instead.</para>
+    /// </remarks>
+    /// <threadsafety static="true" instance="true" />
     public class Clock
     {
         /// <summary>
         /// Constructs a midi clock with a given beats-per-minute.
         /// </summary>
-        /// <param name="beatsPerMinute">The initial beats-per-minute, which can be changed later.</param>
+        /// <param name="beatsPerMinute">The initial beats-per-minute, which can be changed later.
+        /// </param>
+        /// <remarks>
+        /// <para>When constructed, the clock is not running, and so <see cref="BeatTime"/> will
+        /// return zero.  Call <see cref="Start"/> when you are ready for the clock to start
+        /// progressing (and scheduled messages to actually trigger).
+        /// </para>
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">beatsPerMinute is non-positive</exception>
         public Clock(float beatsPerMinute)
         {
             if (beatsPerMinute <= 0)
@@ -94,8 +153,10 @@ namespace Midi
         /// <summary>
         /// Beats per minute property.
         /// </summary>
-        /// Changing the value of BeatsPerMinute does not change the current beat time, but changes the rate at
-        /// which BeatTime will progress hereafter.
+        /// <remarks>
+        /// <para>Setting this property changes the rate at which the clock progresses.  If the
+        /// clock is currently running, the new rate is effectively immediately.</para>
+        /// </remarks>
         public float BeatsPerMinute
         {
             get
@@ -150,17 +211,34 @@ namespace Midi
         /// <summary>
         /// Starts or resumes the clock.
         /// </summary>
+        /// <remarks>
+        /// <para>This method causes the clock to start progressing at the rate given in the
+        /// <see cref="BeatsPerMinute"/> property.  It may only be called when the clock is
+        /// not yet rnuning.</para>
+        /// <para>If this is the first time Start is called,
+        /// the clock starts at time zero and progresses from there.  If the clock was previously
+        /// started, stopped, and not reset, then Start effectively "unpauses" the clock, picking up
+        /// at the left-off time, and resuming scheduling of any as-yet-unsent messages.</para>
+        /// <para>This method creates a new thread which runs in the background and sends
+        /// messages at the appropriate times.  All
+        /// <see cref="Message.SendNow">Message.SendNow</see> methods and
+        /// <see cref="CallbackMessage"/>s will be called in that thread.</para>
+        /// <para>The scheduler thread is joined (shut down) in <see cref="Stop"/>.</para>
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">Clock is already running.</exception>
+        /// <seealso cref="Stop"/>
+        /// <seealso cref="Reset"/>
         public void Start()
         {
             if (isSchedulerThread)
             {
-                throw new InvalidOperationException("Can't call Start() from the scheduler thread.");
+                throw new InvalidOperationException("Clock already running.");
             }
             lock (runLock)
             {
                 if (isRunning)
                 {
-                    throw new InvalidOperationException("already started");
+                    throw new InvalidOperationException("Clock already running.");
                 }
 
                 // Start the stopwatch.
@@ -179,6 +257,24 @@ namespace Midi
         /// <summary>
         /// Stops the clock (but does not reset its time or discard pending events).
         /// </summary>
+        /// <remarks>
+        /// <para>This method stops the progression of the clock.  It may only be called when
+        /// the clock is running.</para>
+        /// <para>Any scheduled but as-yet-unsent messages remain in the queue.  A consecutive call
+        /// to <see cref="Start"/> can re-start the progress of the clock, or <see cref="Reset"/>
+        /// can discard pending messages and reset the clock to zero.</para>
+        /// <para>This method waits for any in-progress messages to be processed and joins
+        /// (shuts down) the scheduler thread before returning, so when it returns you can be sure
+        /// that no more messages will be sent or callbacks invoked.</para>
+        /// <para>It is illegal to call Stop from the scheduler thread (ie, from any
+        /// <see cref="Message.SendNow">Message.SendNow</see> method or
+        /// <see cref="CallbackMessage"/>.  If a callback really needs to stop the clock,
+        /// consider using BeginInvoke to arrange for it to happen in another thread.</para>
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">Clock is not running or Stop was invoked
+        /// from the scheduler thread.</exception>
+        /// <seealso cref="Start"/>
+        /// <seealso cref="Reset"/>
         public void Stop()
         {
             if (isSchedulerThread)
@@ -189,7 +285,7 @@ namespace Midi
             {
                 if (!isRunning)
                 {
-                    throw new InvalidOperationException("not started");
+                    throw new InvalidOperationException("Clock is not running.");
                 }
 
                 // Tell the thread to stop, wait for it to terminate, then discard it.  By the time this is done, we know
@@ -211,19 +307,26 @@ namespace Midi
         }
 
         /// <summary>
-        /// Resets the clock to zero and discards pending events.
+        /// Resets the clock to zero and discards pending messages.
         /// </summary>
+        /// <remarks>
+        /// <para>This method resets the clock to zero and discards any scheduled but
+        /// as-yet-unsent messages.  It may only be called when the clock is not running.</para>
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">Clock is running.</exception>
+        /// <seealso cref="Start"/>
+        /// <seealso cref="Stop"/>
         public void Reset()
         {
             if (isSchedulerThread)
             {
-                throw new InvalidOperationException("Can't call Reset() from the scheduler thread.");
+                throw new InvalidOperationException("Clock is running.");
             }
             lock (runLock)
             {
                 if (isRunning)
                 {
-                    throw new InvalidOperationException("clock is running");
+                    throw new InvalidOperationException("Clock is running.");
                 }
                 stopwatch.Reset();
                 millisecondFudge = 0;
@@ -239,6 +342,15 @@ namespace Midi
         /// Schedules a single message based on its beatTime.
         /// </summary>
         /// <param name="message">The message to schedule.</param>
+        /// <remarks>
+        /// <para>This method schedules a message to be sent at the time indicated in the message's
+        /// <see cref="Message.BeatTime"/> property.  It may be called at any time, whether
+        /// the clock is running or not.  The message will not be sent until the clock progresses
+        /// to the specified time.  (If the clock is never started, or is paused before that time
+        /// and not re-started, then the message will never be sent.)</para>
+        /// <para>If a message is scheduled for a time that has already passed, then the scheduler
+        /// will send the message at the first opportunity.</para>
+        /// </remarks>
         public void Schedule(Message message)
         {
             lock (threadLock)
@@ -249,7 +361,8 @@ namespace Midi
         }
 
         /// <summary>
-        /// Schedules a collection of messages, applying an optional time delta to the scheduled beatTime.
+        /// Schedules a collection of messages, applying an optional time delta to the scheduled
+        /// beatTime.
         /// </summary>
         /// <param name="messages">The message to send</param>
         /// <param name="beatTimeDelta">The delta to apply (or zero).</param>

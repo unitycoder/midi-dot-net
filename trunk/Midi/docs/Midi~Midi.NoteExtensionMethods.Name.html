@@ -24,7 +24,7 @@
       </div>
     </div>
     <div id="nstext">
-      <p> Returns the name of the specified note using sharps instead of flats. </p>
+      <p> Returns the letter name of the specified note, plus '#' if necessary. </p>
       <div class="syntax">
         <div class="attribute">[Extension]</div>public static <a href="">string</a> Name(<br />   this <a href="Midi~Midi.Note.html">Note</a> <i>note</i><br />);</div>
       <h4 class="dtH4">Parameters</h4>
@@ -35,7 +35,22 @@
         <dd>The note.</dd>
       </dl>
       <h4 class="dtH4">Return Value</h4>
-      <p>The note's name.</p>
+      <p>The note's name. For example, note 60 is "C", and note 61 is "C#".</p>
+      <h4 class="dtH4">Exceptions</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Exception Type</th>
+            <th width="50%">Condition</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="http://msdn.microsoft.com/en-us/library/System.ArgumentOutOfRangeException(VS.90).aspx">ArgumentOutOfRangeException</a>
+            </td>
+            <td width="50%">The note is out-of-range.</td>
+          </tr>
+        </table>
+      </div>
       <h4 class="dtH4">See Also</h4>
       <p>
         <a href="Midi~Midi.NoteExtensionMethods.html">NoteExtensionMethods Class</a> | <a href="~Midi.html">Midi Namespace</a></p>
@@ -44,7 +59,7 @@
         <p>
           <a>Copyright © 2009 Tom Lokovic</a>
         </p>
-        <p>Generated from assembly Midi [1.0.1.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+        <p>Generated from assembly Midi [1.0.2.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
       </div>
     </div>
   </body>

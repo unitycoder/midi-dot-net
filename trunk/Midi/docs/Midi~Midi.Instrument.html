@@ -28,6 +28,10 @@
       <div class="syntax">
         <div>public enum Instrument</div>
       </div>
+      <h4 class="dtH4">Remarks</h4>
+      <p>The MIDI protocol defines a Program Change message, which can be used to switch a device among "presets". The General MIDI specification further standardizes those presets into the specific instruments in this enum. General-MIDI-compliant devices will have these particular instruments; non-GM devices may have other instruments.</p>
+      <p>MIDI instruments are one-indexed in the spec, but they're zero-indexed in code, so we have them zero-indexed here.</p>
+      <p>This enum has extension methods, such as <a href="Midi~Midi.InstrumentExtensionMethods.Name.html">Name</a> and <a href="Midi~Midi.InstrumentExtensionMethods.IsValid.html">IsValid</a>, defined in <a href="Midi~Midi.InstrumentExtensionMethods.html">InstrumentExtensionMethods</a>.</p>
       <h4 class="dtH4">Members</h4>
       <div class="tablediv">
         <table class="dtTABLE" cellspacing="0">
@@ -181,7 +185,7 @@
         <p>
           <a>Copyright © 2009 Tom Lokovic</a>
         </p>
-        <p>Generated from assembly Midi [1.0.1.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+        <p>Generated from assembly Midi [1.0.2.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
       </div>
     </div>
   </body>

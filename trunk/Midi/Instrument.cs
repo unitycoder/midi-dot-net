@@ -8,13 +8,17 @@ namespace Midi
     /// <summary>
     /// General MIDI instrument, used in Program Change messages.
     /// </summary>
-    /// The MIDI protocol defines a Program Change message, which can be used to switch a
+    /// <remarks>
+    /// <para>The MIDI protocol defines a Program Change message, which can be used to switch a
     /// device among "presets".  The General MIDI specification further standardizes those presets
     /// into the specific instruments in this enum.  General-MIDI-compliant devices will
-    /// have these particular instruments; non-GM devices may have other instruments.
-    /// 
-    /// MIDI instruments are one-indexed in the spec, but they're zero-indexed in code, so
-    /// we have them zero-indexed here.
+    /// have these particular instruments; non-GM devices may have other instruments.</para>
+    /// <para>MIDI instruments are one-indexed in the spec, but they're zero-indexed in code, so
+    /// we have them zero-indexed here.</para>
+    /// <para>This enum has extension methods, such as <see cref="InstrumentExtensionMethods.Name"/>
+    /// and <see cref="InstrumentExtensionMethods.IsValid"/>, defined in
+    /// <see cref="InstrumentExtensionMethods"/>.</para>
+    /// </remarks>
     public enum Instrument
     {
         // Piano Family:
@@ -340,7 +344,8 @@ namespace Midi
         /// Throws an exception if instrument is not valid.
         /// </summary>
         /// <param name="instrument">The instrument to validate.</param>
-        /// <exception cref="ArgumentOutOfRangeException">The instrument is out-of-range.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The instrument is out-of-range.
+        /// </exception>
         public static void Validate(this Instrument instrument)
         {
             if (!instrument.IsValid())
@@ -519,6 +524,8 @@ namespace Midi
         /// Returns the human-readable name of a MIDI instrument.
         /// </summary>
         /// <param name="instrument">The instrument.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The instrument is out-of-range.
+        /// </exception>
         public static string Name(this Instrument instrument)
         {
             instrument.Validate();

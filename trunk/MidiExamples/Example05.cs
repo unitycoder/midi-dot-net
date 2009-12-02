@@ -46,14 +46,18 @@ namespace MidiExamples
 
         public void NoteOn(NoteOnMessage msg)
         {
-            clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Note + 4, msg.Velocity, msg.BeatTime + 1));
-            clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Note + 7, msg.Velocity, msg.BeatTime + 2));
+            clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Note + 4, msg.Velocity,
+                msg.BeatTime + 1));
+            clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Note + 7, msg.Velocity,
+                msg.BeatTime + 2));
         }
 
         public void NoteOff(NoteOffMessage msg)
         {
-            clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Note + 4, msg.Velocity, msg.BeatTime + 1));
-            clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Note + 7, msg.Velocity, msg.BeatTime + 2));
+            clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Note + 4, msg.Velocity,
+                msg.BeatTime + 1));
+            clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Note + 7, msg.Velocity,
+                msg.BeatTime + 2));
         }
 
         private InputDevice inputDevice;
@@ -73,7 +77,8 @@ namespace MidiExamples
             int beatsPerMinute = 180;
             Clock clock = new Clock(beatsPerMinute);
             
-            // Utility function prompts user to choose an output device (or if there is only one, returns that one).
+            // Utility function prompts user to choose an output device (or if there is only one,
+            // returns that one).
             OutputDevice outputDevice = ExampleUtil.ChooseOutputDeviceFromConsole();
             if (outputDevice == null)
             {
@@ -83,7 +88,8 @@ namespace MidiExamples
             }
             outputDevice.Open();
 
-            // Utility function prompts user to choose an input device (or if there is only one, returns that one).
+            // Utility function prompts user to choose an input device (or if there is only one,
+            // returns that one).
             InputDevice inputDevice = ExampleUtil.ChooseInputDeviceFromConsole();
             if (inputDevice != null)
             {
@@ -110,8 +116,10 @@ namespace MidiExamples
                 Note note;
                 if (ExampleUtil.IsMockNote(keyInfo.Key, out note))
                 {
-                    NoteOnMessage noteOn = new NoteOnMessage(outputDevice, 0, note, 100, clock.BeatTime);
-                    NoteOffMessage noteOff = new NoteOffMessage(outputDevice, 0, note, 100, clock.BeatTime+1);
+                    NoteOnMessage noteOn = new NoteOnMessage(outputDevice, 0, note, 100,
+                        clock.BeatTime);
+                    NoteOffMessage noteOff = new NoteOffMessage(outputDevice, 0, note, 100,
+                        clock.BeatTime+1);
                     clock.Schedule(noteOn);
                     clock.Schedule(noteOff);
                     arpeggiator.NoteOn(noteOn);

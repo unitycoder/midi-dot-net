@@ -29,7 +29,10 @@
         <div>public enum Note</div>
       </div>
       <h4 class="dtH4">Remarks</h4>
-      <p> Each note name includes the octave number, using the piano terminology where octave 4 includes Middle C. Thus octaves range from -1 to 9. (This is different from "MIDI octaves", which range from -5 to 5.) </p>
+      <p>MIDI defines 127 distinct notes, in semitone intervals, ranging from C five octaves below middle C, up to G five octaves above middle C. This covers several octaves above and below the range of a normal 88-key piano.</p>
+      <p>These 127 notes are the only ones directly expressible in MIDI. Precise variations in frequency can be achieved with <a href="Midi~Midi.OutputDevice.SendPitchBend.html">Pitch Bend</a> messages, though Pitch Bend messages apply to the whole channel at once.</p>
+      <p>In this enum, each note name includes the letter name, followed by Sharp if necessary, followed by the octave number, where octaves are numbered with standard piano terminology: Middle C is in octave four. Thus octaves range from -1 to 9. (This is different from "MIDI octaves", which range from -5 to 5.)</p>
+      <p>This enum has extension methods, such as <a href="Midi~Midi.NoteExtensionMethods.Name.html">Name</a> and <a href="Midi~Midi.NoteExtensionMethods.IsValid.html">IsValid</a>, defined in <a href="Midi~Midi.NoteExtensionMethods.html">NoteExtensionMethods</a>. </p>
       <h4 class="dtH4">Members</h4>
       <div class="tablediv">
         <table class="dtTABLE" cellspacing="0">
@@ -176,14 +179,13 @@
 					</p>
       <h4 class="dtH4">See Also</h4>
       <p>
-        <a href="~Midi.html">Midi Namespace</a>
-      </p>
+        <a href="~Midi.html">Midi Namespace</a> | <a href="Midi~Midi.Interval.html">Interval</a></p>
       <hr />
       <div id="footer">
         <p>
           <a>Copyright © 2009 Tom Lokovic</a>
         </p>
-        <p>Generated from assembly Midi [1.0.1.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+        <p>Generated from assembly Midi [1.0.2.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
       </div>
     </div>
   </body>
