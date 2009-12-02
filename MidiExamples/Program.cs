@@ -52,14 +52,14 @@ namespace MidiExamples
                 Console.Clear();
                 Console.WriteLine("MIDI Examples:");
                 Console.WriteLine();
-                Console.WriteLine("-----------------------------------------------------------------");
+                Console.WriteLine("--------------------------------------------------------------");
                 foreach (KeyValuePair<ConsoleKey, ExampleBase> example in examples)
                 {
                     Console.WriteLine("{0} : {1} ({2})",
                         example.Key.ToString().ToLower(),
                         example.Value.FileName, example.Value.Description);
                 }
-                Console.WriteLine("-----------------------------------------------------------------");
+                Console.WriteLine("--------------------------------------------------------------");
                 Console.WriteLine();
                 Console.Write("Enter the letter for an example to run, or Escape to quit: ");
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
