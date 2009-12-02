@@ -1,4 +1,28 @@
-﻿using System;
+﻿// Copyright (c) 2009, Tom Lokovic
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright notice,
+//       this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,9 +47,11 @@ namespace MidiExamples
                 for (int i = 0; i < beatsPerMeasure; ++i) {
                     Percussion percussion = i == 0 ? Percussion.PedalHiHat : Percussion.MidTom1;
                     int velocity = i == 0 ? 100 : 40;
-                    messagesForOneMeasure.Add(new PercussionMessage(outputDevice, percussion, velocity, i));
+                    messagesForOneMeasure.Add(new PercussionMessage(outputDevice, percussion,
+                        velocity, i));
                 }
-                messagesForOneMeasure.Add(new CallbackMessage(new CallbackMessage.CallbackType(CallbackHandler), 0));
+                messagesForOneMeasure.Add(new CallbackMessage(
+                    new CallbackMessage.CallbackType(CallbackHandler), 0));
                 clock.Schedule(messagesForOneMeasure, 0);
             }
             private Message[] CallbackHandler(float beatTime)
@@ -88,7 +114,8 @@ namespace MidiExamples
             InputDevice inputDevice = null;
             if (InputDevice.InstalledDevices.Count > 0)
             {
-                // Just pick the first input device.  This will throw an exception if there isn't one.
+                // Just pick the first input device.  This will throw an exception if there isn't
+                // one.
                 inputDevice = InputDevice.InstalledDevices[0];
                 inputDevice.Open();
             }
@@ -105,7 +132,8 @@ namespace MidiExamples
             while (!done)
             {
                 Console.Clear();
-                Console.WriteLine("BPM = {0}, Playing = {1}", clock.BeatsPerMinute, clock.IsRunning);
+                Console.WriteLine("BPM = {0}, Playing = {1}", clock.BeatsPerMinute,
+                    clock.IsRunning);
                 Console.WriteLine("Escape = Quit, '[' = slower, ']' = faster, 'P' = Toggle Play");
                 ConsoleKey key = Console.ReadKey(true).Key;
                 if (key == ConsoleKey.Escape)
@@ -142,8 +170,10 @@ namespace MidiExamples
                 }
                 else if (key == ConsoleKey.D1)
                 {
-                    NoteOnMessage msg = new NoteOnMessage(outputDevice, Channel.Channel1, Note.C4, 80, clock.BeatTime);
-                    NoteOffMessage msg2 = new NoteOffMessage(outputDevice, Channel.Channel1, Note.C4, 80, clock.BeatTime+0.99f);
+                    NoteOnMessage msg = new NoteOnMessage(outputDevice, Channel.Channel1, Note.C4,
+                        80, clock.BeatTime);
+                    NoteOffMessage msg2 = new NoteOffMessage(outputDevice, Channel.Channel1,
+                        Note.C4, 80, clock.BeatTime+0.99f);
                     clock.Schedule(msg);
                     clock.Schedule(msg2);
                     scaler.NoteOn(msg);
