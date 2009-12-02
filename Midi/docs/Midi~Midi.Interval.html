@@ -28,6 +28,13 @@
       <div class="syntax">
         <div>public enum Interval</div>
       </div>
+      <h4 class="dtH4">Remarks</h4>
+      <p>This enum is simply for making interval operations more explicit. When adding to or subtracting from the <a href="Midi~Midi.Note.html">Note</a> enum, one can either use ints...</p>
+      <pre class="code">Note n = Note.C4 + 5;</pre>
+      <p>...or use the Interval enum, cast to int...</p>
+      <pre class="code">Note n = Note.C4 + (int)Interval.PerfectFourth;</pre>
+      <p>These two examples are equivalent. The benefit of the latter is simply that it makes the intention more explicit.</p>
+      <p>This enum has extension methods, such as <a href="Midi~Midi.IntervalExtensionMethods.Name.html">Name</a>, defined in <a href="Midi~Midi.IntervalExtensionMethods.html">IntervalExtensionMethods</a>.</p>
       <h4 class="dtH4">Members</h4>
       <div class="tablediv">
         <table class="dtTABLE" cellspacing="0">
@@ -59,14 +66,13 @@
 					</p>
       <h4 class="dtH4">See Also</h4>
       <p>
-        <a href="~Midi.html">Midi Namespace</a>
-      </p>
+        <a href="~Midi.html">Midi Namespace</a> | <a href="Midi~Midi.Note.html">Note</a></p>
       <hr />
       <div id="footer">
         <p>
           <a>Copyright © 2009 Tom Lokovic</a>
         </p>
-        <p>Generated from assembly Midi [1.0.1.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+        <p>Generated from assembly Midi [1.0.2.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
       </div>
     </div>
   </body>

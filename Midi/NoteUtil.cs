@@ -32,16 +32,6 @@ namespace Midi
     public class NoteUtil
     {
         /// <summary>
-        ///  Returns true if note is within range for valid MIDI notes.
-        /// </summary>
-        /// <param name="note">The note.</param>
-        /// <returns>True if note is in 0..127.</returns>
-        public static bool IsValidNote(int note)
-        {
-            return note >= 0 && note < 127;
-        }
-
-        /// <summary>
         /// Returns the 8 notes in the major scale starting at the given tonic and including the tonic above.
         /// </summary>
         /// <param name="tonic">The tonic note.</param>

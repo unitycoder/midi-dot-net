@@ -102,6 +102,26 @@ namespace MidiExamples
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
             outputDevice.SendPitchBend(Channel.Channel1, 8192);
 
+            Console.WriteLine("Playing the first two bars of Mary Had a Little Lamb...");
+            Clock clock = new Clock(120);
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 0));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 1));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.D4, 80, 1));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.D4, 80, 2));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.C4, 80, 2));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.C4, 80, 3));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.D4, 80, 3));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.D4, 80, 4));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 4));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 5));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 5));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 6));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 6));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 7));
+            clock.Start();
+            Thread.Sleep(5000);
+            clock.Stop();
+
             Console.WriteLine("Playing sustained chord runs up the keyboard...");
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
             PlayRunUpKeyboard(outputDevice, note => (int)note % 12 == 0 || (int)note % 12 == 4 ||

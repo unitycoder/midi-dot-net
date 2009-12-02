@@ -18,8 +18,10 @@ namespace Midi
     /// This enum is used with <see cref="OutputDevice.SendPercussion">OutputDevice.SendPercussion
     /// </see> and <see cref="PercussionMessage"/>.  Equivalently, when cast to <see cref="Note"/>
     /// it can be used with <see cref="OutputDevice.SendNoteOn">OutputDevice.SendNoteOn</see> and
-    /// <see cref="NoteOnMessage"/> on <see cref="Channel.Channel10"/>.
-    /// </para>
+    /// <see cref="NoteOnMessage"/> on <see cref="Channel.Channel10"/>.</para>
+    /// <para>This enum has extension methods, such as <see cref="PercussionExtensionMethods.Name"/>
+    /// and <see cref="PercussionExtensionMethods.IsValid"/>, defined in
+    /// <see cref="PercussionExtensionMethods"/>. </para>
     /// </remarks>
     public enum Percussion
     {
@@ -138,7 +140,8 @@ namespace Midi
         /// Throws an exception if percussion is not valid.
         /// </summary>
         /// <param name="percussion">The percussion to validate.</param>
-        /// <exception cref="ArgumentOutOfRangeException">The percussion is out-of-range.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The percussion is out-of-range.
+        /// </exception>
         public static void Validate(this Percussion percussion)
         {
             if (!percussion.IsValid())

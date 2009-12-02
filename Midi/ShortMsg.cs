@@ -50,7 +50,8 @@ namespace Midi
         /// <param name="channel">Filled in with the channel.</param>
         /// <param name="note">Filled in with the note.</param>
         /// <param name="velocity">Filled in with the velocity, 0.127</param>
-        /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
+        /// <param name="timestamp">Filled in with the timestamp in microseconds since
+        /// midiInStart().</param>
         public static void DecodeNoteOn(UIntPtr dwParam1, UIntPtr dwParam2,
             out Channel channel, out Note note, out int velocity, out UInt32 timestamp)
         {
@@ -101,7 +102,8 @@ namespace Midi
         /// <param name="channel">Filled in with the channel.</param>
         /// <param name="note">Filled in with the note.</param>
         /// <param name="velocity">Filled in with the velocity, 0.127</param>
-        /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
+        /// <param name="timestamp">Filled in with the timestamp in microseconds since
+        /// midiInStart().</param>
         public static void DecodeNoteOff(UIntPtr dwParam1, UIntPtr dwParam2,
             out Channel channel, out Note note, out int velocity, out UInt32 timestamp)
         {
@@ -151,7 +153,8 @@ namespace Midi
         /// <param name="channel">Filled in with the channel.</param>
         /// <param name="control">Filled in with the control.</param>
         /// <param name="value">Filled in with the value, 0-127.</param>
-        /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
+        /// <param name="timestamp">Filled in with the timestamp in microseconds since
+        /// midiInStart().</param>
         public static void DecodeControlChange(UIntPtr dwParam1, UIntPtr dwParam2,
             out Channel channel, out Control control, out int value, out UInt32 timestamp)
         {
@@ -200,7 +203,8 @@ namespace Midi
         /// <param name="dwParam2">The dwParam2 arg passed to MidiInProc.</param>
         /// <param name="channel">Filled in with the channel, 0-15.</param>
         /// <param name="instrument">Filled in with the instrument, 0-127</param>
-        /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
+        /// <param name="timestamp">Filled in with the timestamp in microseconds since
+        /// midiInStart().</param>
         public static void DecodeProgramChange(UIntPtr dwParam1, UIntPtr dwParam2,
             out Channel channel, out Instrument instrument, out UInt32 timestamp)
         {
@@ -242,8 +246,10 @@ namespace Midi
         /// <param name="dwParam1">The dwParam1 arg passed to MidiInProc.</param>
         /// <param name="dwParam2">The dwParam2 arg passed to MidiInProc.</param>
         /// <param name="channel">Filled in with the channel, 0-15.</param>
-        /// <param name="value">Filled in with the pitch bend value, 0..16383, 8192 is centered.</param>
-        /// <param name="timestamp">Filled in with the timestamp in microseconds since midiInStart().</param>
+        /// <param name="value">Filled in with the pitch bend value, 0..16383, 8192 is centered.
+        /// </param>
+        /// <param name="timestamp">Filled in with the timestamp in microseconds since
+        /// midiInStart().</param>
         public static void DecodePitchBend(UIntPtr dwParam1, UIntPtr dwParam2,
                                out Channel channel, out int value, out UInt32 timestamp)
         {
@@ -269,7 +275,8 @@ namespace Midi
             {
                 throw new ArgumentOutOfRangeException("Value is out of range.");
             }
-            return (UInt32)(0xE0 | (int)(channel) | ((value & 0x7f) << 8) | ((value & 0x3f80) << 9));
+            return (UInt32)(0xE0 | (int)(channel) | ((value & 0x7f) << 8) |
+                ((value & 0x3f80) << 9));
         }
     }
 }

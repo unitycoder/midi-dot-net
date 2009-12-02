@@ -30,8 +30,8 @@
       </div>
       <h4 class="dtH4">Remarks</h4>
       <p>Each MIDI device has 16 independent channels. Channels are named starting at 1, but are encoded programmatically starting at 0.</p>
-      <p>This enum is used with the various <a href="Midi~Midi.OutputDevice.html">OutputDevice</a>.Send* methods, and also with the various subclasses of <a href="Midi~Midi.ChannelMessage.html">ChannelMessage</a>.</p>
       <p>All of the channels are general-purpose except for Channel10, which is the dedicated percussion channel. Any notes sent to that channel will play <a href="Midi~Midi.Percussion.html">percussion notes</a>, regardless of any <a href="Midi~Midi.OutputDevice.SendProgramChange.html">Program Change</a> messages sent on that channel.</p>
+      <p>This enum has extension methods, such as <a href="Midi~Midi.ChannelExtensionMethods.Name.html">Name</a> and <a href="Midi~Midi.ChannelExtensionMethods.IsValid.html">IsValid</a>, defined in <a href="Midi~Midi.ChannelExtensionMethods.html">ChannelExtensionMethods</a>. </p>
       <h4 class="dtH4">Members</h4>
       <div class="tablediv">
         <table class="dtTABLE" cellspacing="0">
@@ -73,7 +73,7 @@
         <p>
           <a>Copyright © 2009 Tom Lokovic</a>
         </p>
-        <p>Generated from assembly Midi [1.0.1.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
+        <p>Generated from assembly Midi [1.0.2.0] by <a href="http://ndoc3.sourceforget.net">NDoc3</a></p>
       </div>
     </div>
   </body>

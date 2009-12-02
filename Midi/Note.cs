@@ -9,9 +9,21 @@ namespace Midi
     /// MIDI Notes.
     /// </summary>
     /// <remarks>
-    /// Each note name includes the octave number, using the piano terminology where octave 4 includes Middle C.  Thus octaves
-    /// range from -1 to 9.  (This is different from "MIDI octaves", which range from -5 to 5.)
+    /// <para>MIDI defines 127 distinct notes, in semitone intervals, ranging from C five octaves
+    /// below middle C, up to G five octaves above middle C.  This covers several octaves above and
+    /// below the range of a normal 88-key piano.</para>
+    /// <para>These 127 notes are the only ones directly expressible in MIDI. Precise
+    /// variations in frequency can be achieved with <see cref="OutputDevice.SendPitchBend">Pitch
+    /// Bend</see> messages, though Pitch Bend messages apply to the whole channel at once.</para>
+    /// <para>In this enum, each note name includes the letter name, followed by Sharp if
+    /// necessary, followed by the octave number, where octaves are numbered with standard piano
+    /// terminology: Middle C is in octave four.  Thus octaves range from -1 to 9.  (This is
+    /// different from "MIDI octaves", which range from -5 to 5.)</para>
+    /// <para>This enum has extension methods, such as <see cref="NoteExtensionMethods.Name"/> and
+    /// <see cref="NoteExtensionMethods.IsValid"/>, defined in <see cref="NoteExtensionMethods"/>.
+    /// </para>
     /// </remarks>
+    /// <seealso cref="Interval"/>
     public enum Note
     {
         /// <summary>C in octave -1.</summary>
@@ -313,28 +325,28 @@ namespace Midi
         /// <summary>
         /// Array of note names within each octave starting at C, with sharps.
         /// </summary>
-        private static string[] NoteNamesWithSharps = new string[12] {
-            "C",
-            "C#",
-            "D",
-            "D#",
-            "E",
-            "F",
-            "F#",
-            "G",
-            "G#",
-            "A",
-            "A#",
-            "B",
-        };
+        private static string[] NoteNamesWithSharps =
+            new string[12] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
         /// <summary>
-        /// Returns the name of the specified note using sharps instead of flats.
+        /// Returns the letter name of the specified note, plus '#' if necessary.
         /// </summary>
         /// <param name="note">The note.</param>
-        /// <returns>The note's name.</returns>
-        /// For example, note 60 is "C4", and note 61 is "C#4".
+        /// <returns>The note's name.  For example, note 60 is "C", and note 61 is "C#".</returns>
+        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
         public static string Name(this Note note)
+        {
+            note.Validate();
+            return NoteNamesWithSharps[(int)note % 12];
+        }
+
+        /// <summary>
+        /// Returns the name of the specified note plus the octave number.
+        /// </summary>
+        /// <param name="note">The note.</param>
+        /// <returns>The note's name.  For example, note 60 is "C4", and note 61 is "C#4".</returns>
+        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
+        public static string NameWithOctave(this Note note)
         {
             note.Validate();
             return NoteNamesWithSharps[(int)note % 12] + ((int)note / 12 - 1).ToString();
