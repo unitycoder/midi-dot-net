@@ -1,6 +1,6 @@
 <project SchemaVersion="1.3">
     <assemblies>
-        <assembly location="C:\Documents and Settings\tdl\My Documents\Visual Studio 2008\Projects\midi-dot-net\Midi\bin\Release\Midi.dll" documentation="C:\Documents and Settings\tdl\My Documents\Visual Studio 2008\Projects\midi-dot-net\Midi\bin\Release\Midi.xml" />
+        <assembly location=".\bin\Release\Midi.dll" documentation=".\bin\Release\Midi.xml" />
     </assemblies>
     <namespaces>
         <namespace name="Midi">Classes providing MIDI support.</namespace>

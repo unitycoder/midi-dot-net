@@ -486,16 +486,15 @@ namespace Midi
     /// <summary>
     /// Pseudo-MIDI message used to arrange for a callback at a certain time.
     /// </summary>
-    /// This message can be scheduled on an output device just like any other message
-    /// (see MidiOutputDevice.Schedule()), though when its time comes and it gets "sent",
-    /// it does not actually get sent to the device.  Instead, the provided callback is
-    /// invoked.
-    ///
-    /// The idea is that the client can embed callback points in the music they've
-    /// scheduled, so that (if the device gets to that point in the music) the client has
-    /// an opportunity for some additional processing.
-    ///
-    /// The callback is invoked on the MidiOutputDevice's worker thread.
+    /// <remarks>
+    /// <para>This message can be scheduled with <see cref="Clock.Schedule(Message)">
+    /// Clock.Schedule</see> just like any other message.  When its time comes and it
+    /// gets "sent", it invokes the callback provided in the constructor.</para>
+    /// <para>The idea is that you can embed callback points into the music you've
+    /// scheduled, so that (if the clock gets to that point in the music) your code has
+    /// an opportunity for some additional processing.</para>
+    /// <para>The callback is invoked on the MidiOutputDevice's worker thread.</para>
+    /// </remarks>
     public class CallbackMessage : Message
     {
         /// <summary>

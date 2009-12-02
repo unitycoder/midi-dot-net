@@ -35,6 +35,10 @@
       <div class="syntax">
         <div>public class CallbackMessage<b> : <a href="Midi~Midi.Message.html">Message</a></b></div>
       </div>
+      <h4 class="dtH4">Remarks</h4>
+      <p>This message can be scheduled with <a href="Midi~Midi.Clock.Schedule1.html"> Clock.Schedule</a> just like any other message. When its time comes and it gets "sent", it invokes the callback provided in the constructor.</p>
+      <p>The idea is that you can embed callback points into the music you've scheduled, so that (if the clock gets to that point in the music) your code has an opportunity for some additional processing.</p>
+      <p>The callback is invoked on the MidiOutputDevice's worker thread.</p>
       <h4 class="dtH4">Requirements</h4>
       <p>
         <b>Namespace: </b>
