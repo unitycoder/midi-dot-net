@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta content="history" name="save" />
     <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
-    <title>ScalePattern Constructor</title>
+    <title>Scale.Pattern.ContainedInDescending Method</title>
     <xml>
     </xml>
     <link rel="stylesheet" type="text/css" href="MSDN.css" />
@@ -20,24 +20,21 @@
         </table>
       </div>
       <div id="TitleRow">
-        <h1 class="dtH1">ScalePattern Constructor</h1>
+        <h1 class="dtH1">Scale.Pattern.ContainedInDescending Method</h1>
       </div>
     </div>
     <div id="nstext">
-      <p> Cnnstructs a scale description. </p>
-      <div class="syntax">
-        <a href="Midi~Midi.ScalePattern.html">ScalePattern</a>(<br />   <a href="">string</a> <i>name</i>,<br />   <a href="">int</a>[] <i>ascendingDescendingPattern</i><br />);</div>
+      <p> Returns true if the given note is included in the descending part of the pattern. </p>
+      <div class="syntax">public <a href="">bool</a> ContainedInDescending(<br />   <a href="">int</a> <i>note</i><br />);</div>
       <h4 class="dtH4">Parameters</h4>
       <dl>
         <dt>
-          <i>name</i>
+          <i>note</i>
         </dt>
-        <dd>The name of the scale.</dd>
-        <dt>
-          <i>ascendingDescendingPattern</i>
-        </dt>
-        <dd>Array encoding the behavior of the scale as it ascends from the tonic up to the next tonic and back. The first element must be 0, to indicate beginning at the tonic. Then there must be a monotonically increasing sequence of notes, given in semitones-above-the-tonic. Then there must be a 12, to indicate arrival at the tonic above. Then there must be a monotonically decreasing sequence of notes, given in semitones-above-the-tonic. The last element must be 0, to indicate arrival back at the original tonic.</dd>
+        <dd>The note, given in semitones above the tonic.</dd>
       </dl>
+      <h4 class="dtH4">Return Value</h4>
+      <p>True if that note is in the descending pattern.</p>
       <h4 class="dtH4">Exceptions</h4>
       <div class="tablediv">
         <table class="dtTABLE" cellspacing="0">
@@ -47,15 +44,15 @@
           </tr>
           <tr valign="top">
             <td width="50%">
-              <a href="http://msdn.microsoft.com/en-us/library/System.ArgumentException(VS.90).aspx">ArgumentException</a>
+              <a href="http://msdn.microsoft.com/en-us/library/System.ArgumentOutOfRangeException(VS.90).aspx">ArgumentOutOfRangeException</a>
             </td>
-            <td width="50%">The pattern is invalid.</td>
+            <td width="50%">Note is not in [0..12].</td>
           </tr>
         </table>
       </div>
       <h4 class="dtH4">See Also</h4>
       <p>
-        <a href="Midi~Midi.ScalePattern.html">ScalePattern Class</a> | <a href="~Midi.html">Midi Namespace</a></p>
+        <a href="Midi~Midi.Scale.Pattern.html">Pattern Class</a> | <a href="~Midi.html">Midi Namespace</a></p>
       <hr />
       <div id="footer">
         <p>
