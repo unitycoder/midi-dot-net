@@ -36,7 +36,8 @@ namespace MidiExamples
         /// <summary>
         /// A dictionary mapping a console key to example instances.
         /// </summary>
-        static Dictionary<ConsoleKey, ExampleBase> examples = new Dictionary<ConsoleKey, ExampleBase>
+        static Dictionary<ConsoleKey, ExampleBase> examples =
+            new Dictionary<ConsoleKey, ExampleBase>
         {
             { ConsoleKey.A, new Example01()},
             { ConsoleKey.B, new Example02()},
