@@ -212,7 +212,7 @@ namespace Midi
         }
 
         /// <summary>
-        /// Constructs a scale from its pattern description and its tonic.
+        /// Constructs a scale from its tonic and its pattern.
         /// </summary>
         /// <param name="tonic"></param>
         /// <param name="pattern"></param>
