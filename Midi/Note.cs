@@ -360,6 +360,18 @@ namespace Midi
         }
 
         /// <summary>
+        /// Returns the name of the specified note.
+        /// </summary>
+        /// <param name="note">The note.</param>
+        /// <returns>The note's name.  For example, note 60 is "C4", and note 61 is "C#4".</returns>
+        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
+        public static string Name(this Note note)
+        {
+            note.Validate();
+            return note.Family().Name() + note.Octave().ToString();
+        }
+
+        /// <summary>
         /// Returns the family of the specified note.
         /// </summary>
         /// <param name="note">The note.</param>
@@ -372,15 +384,19 @@ namespace Midi
         }
 
         /// <summary>
-        /// Returns the name of the specified note.
+        /// Returns the number of semitones that note is above tonic.
         /// </summary>
         /// <param name="note">The note.</param>
-        /// <returns>The note's name.  For example, note 60 is "C4", and note 61 is "C#4".</returns>
-        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
-        public static string Name(this Note note)
+        /// <param name="tonic">The tonic.</param>
+        /// <returns>The number of semitones, always in [0..11].</returns>
+        public static int SemitonesAbove(this Note note, NoteFamily tonic)
         {
-            note.Validate();
-            return note.Family().Name() + note.Octave().ToString();
+            int result = ((int)note % 12 - (int)tonic);
+            if (result < 0)
+            {
+                result += 12;
+            }
+            return result;
         }
     }
 

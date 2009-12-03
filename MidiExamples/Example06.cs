@@ -74,25 +74,80 @@ namespace MidiExamples
                 this.clock = clock;
                 this.inputDevice = inputDevice;
                 this.outputDevice = outputDevice;
+                this.scaleToUse = ScaleToUse.Major;
                 if (inputDevice != null)
                 {
                     inputDevice.NoteOn += new InputDevice.NoteOnHandler(this.NoteOn);
                 }
             }
 
+            private enum ScaleToUse
+            {
+                Major,
+                NaturalMinor,
+                HarmonicMinor,
+                MelodicMinor,
+                Chromatic,
+                Last
+            }
+
+            public string GetScaletoUse()
+            {
+                return scaleToUse.ToString();
+            }
+
+            public void NextScale()
+            {
+                scaleToUse = (ScaleToUse)(((int)scaleToUse+1)%(int)ScaleToUse.Last);
+            }
+
+            public void PreviousScale()
+            {
+                scaleToUse = (ScaleToUse)(((int)scaleToUse - 1) % (int)ScaleToUse.Last);
+            }
+
             public void NoteOn(NoteOnMessage msg)
             {
-                Note[] scale = NoteUtil.MajorScaleStartingAt(msg.Note);
-                for (int i = 1; i < scale.Count(); ++i)
+                Scale scale;
+                switch (scaleToUse)
                 {
-                    clock.Schedule(new NoteOnOffMessage(outputDevice, msg.Channel, scale[i],
-                    msg.Velocity, msg.BeatTime + i, 0.99f));
+                    case ScaleToUse.Major :
+                        scale = new MajorScale(msg.Note.Family());
+                        break;
+                    case ScaleToUse.NaturalMinor :
+                        scale = new NaturalMinorScale(msg.Note.Family());
+                        break;
+                    case ScaleToUse.HarmonicMinor :
+                        scale = new HarmonicMinorScale(msg.Note.Family());
+                        break;
+                    case ScaleToUse.MelodicMinor :
+                        scale = new MelodicMinorScale(msg.Note.Family());
+                        break;
+                    case ScaleToUse.Chromatic :
+                        scale = new ChromaticScale(msg.Note.Family());
+                        break;
+                    default:
+                        throw new Exception("Invalid scale.");
+                }
+                List<Note> scaleNotes = scale.Traverse(msg.Note, msg.Note+12);
+                float delay = msg.BeatTime+1;
+                for (int i = 1; i < scaleNotes.Count; ++i, delay++)
+                {
+                    clock.Schedule(new NoteOnOffMessage(outputDevice, msg.Channel, scaleNotes[i],
+                    msg.Velocity, delay, 0.99f));
+                }
+                scaleNotes = scale.Traverse(msg.Note+12, msg.Note);
+                for (int i = 1; i < scaleNotes.Count; ++i, delay++)
+                {
+                    clock.Schedule(new NoteOnOffMessage(outputDevice, msg.Channel, scaleNotes[i],
+                    msg.Velocity, delay, 0.99f));
                 }
             }
 
             private Clock clock;
             private InputDevice inputDevice;
             private OutputDevice outputDevice;
+            private ScaleToUse scaleToUse;
         }
 
         public override void Run()
@@ -132,23 +187,37 @@ namespace MidiExamples
             while (!done)
             {
                 Console.Clear();
-                Console.WriteLine("BPM = {0}, Playing = {1}", clock.BeatsPerMinute,
-                    clock.IsRunning);
-                Console.WriteLine("Escape = Quit, '[' = slower, ']' = faster, 'P' = Toggle Play");
+                Console.WriteLine("BPM = {0}, Playing = {1}, Scale = {2}", clock.BeatsPerMinute,
+                    clock.IsRunning, scaler.GetScaletoUse());
+                Console.WriteLine("Escape : Quit");
+                Console.WriteLine("Down : Slower");
+                Console.WriteLine("Up: Faster");
+                Console.WriteLine("Left: Previous Scale");
+                Console.WriteLine("Right: Next Scale");
+                Console.WriteLine("Space = Toggle Play");
                 ConsoleKey key = Console.ReadKey(true).Key;
+                Note note;
                 if (key == ConsoleKey.Escape)
                 {
                     done = true;
                 }
-                else if (key == ConsoleKey.Oem4)
+                else if (key == ConsoleKey.DownArrow)
                 {
                     clock.BeatsPerMinute -= 2;
                 }
-                else if (key == ConsoleKey.Oem6)
+                else if (key == ConsoleKey.UpArrow)
                 {
                     clock.BeatsPerMinute += 2;
                 }
-                else if (key == ConsoleKey.P)
+                else if (key == ConsoleKey.RightArrow)
+                {
+                    scaler.NextScale();
+                }
+                else if (key == ConsoleKey.LeftArrow)
+                {
+                    scaler.PreviousScale();
+                }
+                else if (key == ConsoleKey.Spacebar)
                 {
                     if (clock.IsRunning)
                     {
@@ -178,6 +247,17 @@ namespace MidiExamples
                     clock.Schedule(msg2);
                     scaler.NoteOn(msg);
                 }
+                else if (ExampleUtil.IsMockNote(key, out note))
+                {
+                    NoteOnMessage noteOn = new NoteOnMessage(outputDevice, 0, note, 100,
+                        clock.BeatTime);
+                    NoteOffMessage noteOff = new NoteOffMessage(outputDevice, 0, note, 100,
+                        clock.BeatTime + 1);
+                    clock.Schedule(noteOn);
+                    clock.Schedule(noteOff);
+                    scaler.NoteOn(noteOn);
+                }
+
             }
 
             if (clock.IsRunning)
