@@ -47,6 +47,7 @@ namespace Midi
     /// <see cref="NoteExtensionMethods.IsValid"/>, defined in <see cref="NoteExtensionMethods"/>.
     /// </para>
     /// </remarks>
+    /// <seealso cref="Note"/>
     /// <seealso cref="Interval"/>
     public enum Note
     {
@@ -347,33 +348,127 @@ namespace Midi
         }
 
         /// <summary>
-        /// Array of note names within each octave starting at C, with sharps.
-        /// </summary>
-        private static string[] NoteNamesWithSharps =
-            new string[12] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-
-        /// <summary>
-        /// Returns the letter name of the specified note, plus '#' if necessary.
+        /// Returns the octave number of the given note.
         /// </summary>
         /// <param name="note">The note.</param>
-        /// <returns>The note's name.  For example, note 60 is "C", and note 61 is "C#".</returns>
+        /// <returns>The octave.  For example, "C4"'s octave is 4.</returns>
         /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
-        public static string Name(this Note note)
+        public static int Octave(this Note note)
         {
             note.Validate();
-            return NoteNamesWithSharps[(int)note % 12];
+            return (int)note / 12 - 1;
         }
 
         /// <summary>
-        /// Returns the name of the specified note plus the octave number.
+        /// Returns the family of the specified note.
+        /// </summary>
+        /// <param name="note">The note.</param>
+        /// <returns>The note's family.  For example, C4's family is C.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
+        public static NoteFamily Family(this Note note)
+        {
+            note.Validate();
+            return (NoteFamily)((int)note % 12);
+        }
+
+        /// <summary>
+        /// Returns the name of the specified note.
         /// </summary>
         /// <param name="note">The note.</param>
         /// <returns>The note's name.  For example, note 60 is "C4", and note 61 is "C#4".</returns>
         /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
-        public static string NameWithOctave(this Note note)
+        public static string Name(this Note note)
         {
             note.Validate();
-            return NoteNamesWithSharps[(int)note % 12] + ((int)note / 12 - 1).ToString();
+            return note.Family().Name() + note.Octave().ToString();
+        }
+    }
+
+    /// <summary>
+    /// MIDI Note Families.
+    /// </summary>
+    /// <remarks>
+    /// <para>A note's "family" is simply the note's name without regard to the specific octave.
+    /// So, for example, CSharp3, CSharp4, and CSharp5 are all part of the CSharp note family.
+    /// This enum lets us talk about the function or role of a note independent of the
+    /// particular octave.
+    /// </para>
+    /// <para>This enum has extension methods, such as <see cref="NoteFamilyExtensionMethods.Name"/>
+    /// and <see cref="NoteFamilyExtensionMethods.IsValid"/>, defined in
+    /// <see cref="NoteFamilyExtensionMethods"/>.
+    /// </para>
+    /// </remarks>
+    /// <seealso cref="Note"/>
+    public enum NoteFamily
+    {
+        /// <summary>Note Family "C"</summary>
+        C = 0,
+        /// <summary>Note Family "C#"</summary>
+        CSharp = 1,
+        /// <summary>Note Family "D"</summary>
+        D = 2,
+        /// <summary>Note Family "D#"</summary>
+        DSharp = 3,
+        /// <summary>Note Family "E"</summary>
+        E = 4,
+        /// <summary>Note Family "F"</summary>
+        F = 5,
+        /// <summary>Note Family "F#"</summary>
+        FSharp = 6,
+        /// <summary>Note Family "G"</summary>
+        G = 7,
+        /// <summary>Note Family "G#"</summary>
+        GSharp = 8,
+        /// <summary>Note Family "A"</summary>
+        A = 9,
+        /// <summary>Note Family "A#"</summary>
+        ASharp = 10,
+        /// <summary>Note Family "B"</summary>
+        B = 11
+    }
+
+    /// <summary>
+    /// Extension methods for the NoteFamily enum.
+    /// </summary>
+    public static class NoteFamilyExtensionMethods
+    {
+        /// <summary>
+        /// Returns true if the specified note family is valid.
+        /// </summary>
+        /// <param name="family">The family to test.</param>
+        public static bool IsValid(this NoteFamily family)
+        {
+            return (int)family >= 0 && (int)family < 12;
+        }
+
+        /// <summary>
+        /// Throws an exception if family is not valid.
+        /// </summary>
+        /// <param name="family">The family to validate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The family is out-of-range.</exception>
+        public static void Validate(this NoteFamily family)
+        {
+            if (!family.IsValid())
+            {
+                throw new ArgumentOutOfRangeException("NoteFamily out of range");
+            }
+        }
+
+        /// <summary>
+        /// Table of note family names.
+        /// </summary>
+        private static string[] NoteFamilyNames =
+            new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+        /// <summary>
+        /// Returns the human-readable name of a note family.
+        /// </summary>
+        /// <param name="family">The family.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The family is out-of-range.</exception>
+        public static string Name(this NoteFamily family)
+        {
+            family.Validate();
+            return NoteFamilyNames[(int)family];
         }
     }
 }
