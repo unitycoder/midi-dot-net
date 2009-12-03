@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta content="history" name="save" />
     <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
-    <title>Scale.ContainsWhenAscending Method</title>
+    <title>ScalePattern.ContainedInDescending Method</title>
     <xml>
     </xml>
     <link rel="stylesheet" type="text/css" href="MSDN.css" />
@@ -20,21 +20,21 @@
         </table>
       </div>
       <div id="TitleRow">
-        <h1 class="dtH1">Scale.ContainsWhenAscending Method</h1>
+        <h1 class="dtH1">ScalePattern.ContainedInDescending Method</h1>
       </div>
     </div>
     <div id="nstext">
-      <p> Returns true if note would be in this scale when ascending through the note. </p>
-      <div class="syntax">public <a href="">bool</a> ContainsWhenAscending(<br />   <a href="Midi~Midi.Note.html">Note</a> <i>note</i><br />);</div>
+      <p> Returns true if the given note is included in the descending part of the pattern. </p>
+      <div class="syntax">public <a href="">bool</a> ContainedInDescending(<br />   <a href="">int</a> <i>note</i><br />);</div>
       <h4 class="dtH4">Parameters</h4>
       <dl>
         <dt>
           <i>note</i>
         </dt>
-        <dd>The note</dd>
+        <dd>The note, given in semitones above the tonic.</dd>
       </dl>
       <h4 class="dtH4">Return Value</h4>
-      <p>True if note is included when ascending.</p>
+      <p>True if that note is in the descending pattern.</p>
       <h4 class="dtH4">Exceptions</h4>
       <div class="tablediv">
         <table class="dtTABLE" cellspacing="0">
@@ -46,13 +46,13 @@
             <td width="50%">
               <a href="http://msdn.microsoft.com/en-us/library/System.ArgumentOutOfRangeException(VS.90).aspx">ArgumentOutOfRangeException</a>
             </td>
-            <td width="50%">note is out-of-range.</td>
+            <td width="50%">Note is not in [0..12].</td>
           </tr>
         </table>
       </div>
       <h4 class="dtH4">See Also</h4>
       <p>
-        <a href="Midi~Midi.Scale.html">Scale Class</a> | <a href="~Midi.html">Midi Namespace</a></p>
+        <a href="Midi~Midi.ScalePattern.html">ScalePattern Class</a> | <a href="~Midi.html">Midi Namespace</a></p>
       <hr />
       <div id="footer">
         <p>

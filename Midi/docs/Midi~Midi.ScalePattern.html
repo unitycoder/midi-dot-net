@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta content="history" name="save" />
     <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
-    <title>Scale Class</title>
+    <title>ScalePattern Class</title>
     <xml>
     </xml>
     <link rel="stylesheet" type="text/css" href="MSDN.css" />
@@ -20,24 +20,23 @@
         </table>
       </div>
       <div id="TitleRow">
-        <h1 class="dtH1">Scale Class</h1>
+        <h1 class="dtH1">ScalePattern Class</h1>
       </div>
     </div>
     <div id="nstext">
-      <p> A scale based on a particular tonic. </p>
+      <p> Description of a scale's ascending/descending pattern through an octave. </p>
       <p>
-								For a list of all members of this type, see <a href="Midi~Midi.Scale~Members.html">Scale Members
+								For a list of all members of this type, see <a href="Midi~Midi.ScalePattern~Members.html">ScalePattern Members
 								</a>.
 							</p>
       <p>
         <a href="http://msdn.microsoft.com/en-us/library/System.Object(VS.90).aspx">System.Object</a>
-        <br />   <b>Scale</b></p>
+        <br />   <b>ScalePattern</b></p>
       <div class="syntax">
-        <div>public class Scale</div>
+        <div>public class ScalePattern</div>
       </div>
       <h4 class="dtH4">Remarks</h4>
-      <p>For our purposes, a scale is defined by a tonic and then the pattern that it uses to ascend up to the next tonic and then descend back to the original tonic. The tonic is described with a <a href="Midi~Midi.NoteFamily.html">NoteFamily</a> because it is not specific to any one octave. The ascending/descending pattern is provided by the <a href="Midi~Midi.ScalePattern.html">ScalePattern</a> class.</p>
-      <p>This class comes with a collection of predefined patterns, such as <a href="Midi~Midi.Scale.Major.html">Scale.Major</a> and <a href="Midi~Midi.Scale.HarmonicMinor.html"> Scale.HarmonicMinor</a>.</p>
+      <p> This class describes the general behavior of a scale as it ascends from a tonic up to the next tonic and back down again. It is described in terms of semitones relative to the tonic; to apply it to particular tonic, pass one of these to the constructor of <a href="Midi~Midi.Scale.html">Scale</a>. </p>
       <h4 class="dtH4">Requirements</h4>
       <p>
         <b>Namespace: </b>
@@ -48,7 +47,7 @@
 					</p>
       <h4 class="dtH4">See Also</h4>
       <p>
-        <a href="Midi~Midi.Scale~Members.html">Scale Members</a> | <a href="~Midi.html">Midi Namespace</a></p>
+        <a href="Midi~Midi.ScalePattern~Members.html">ScalePattern Members</a> | <a href="~Midi.html">Midi Namespace</a></p>
       <hr />
       <div id="footer">
         <p>

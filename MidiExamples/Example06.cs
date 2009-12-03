@@ -112,19 +112,19 @@ namespace MidiExamples
                 switch (scaleToUse)
                 {
                     case ScaleToUse.Major :
-                        scale = new MajorScale(msg.Note.Family());
+                        scale = new Scale(msg.Note.Family(), Scale.Major);
                         break;
                     case ScaleToUse.NaturalMinor :
-                        scale = new NaturalMinorScale(msg.Note.Family());
+                        scale = new Scale(msg.Note.Family(), Scale.NaturalMinor);
                         break;
                     case ScaleToUse.HarmonicMinor :
-                        scale = new HarmonicMinorScale(msg.Note.Family());
+                        scale = new Scale(msg.Note.Family(), Scale.HarmonicMinor);
                         break;
                     case ScaleToUse.MelodicMinor :
-                        scale = new MelodicMinorScale(msg.Note.Family());
+                        scale = new Scale(msg.Note.Family(), Scale.MelodicMinor);
                         break;
                     case ScaleToUse.Chromatic :
-                        scale = new ChromaticScale(msg.Note.Family());
+                        scale = new Scale(msg.Note.Family(), Scale.Chromatic);
                         break;
                     default:
                         throw new Exception("Invalid scale.");
