@@ -46,9 +46,9 @@ namespace Midi
         /// Description of a scale's ascending/descending pattern through an octave.
         /// </summary>
         /// <remarks>
-        /// This class describes the general behavior of a scale as it ascends from a tonic up to the
-        /// next tonic and back down again.  It is described in terms of semitones relative to the
-        /// tonic; to apply it to particular tonic, pass one of these to the constructor of
+        /// This class describes the general behavior of a scale as it ascends from a tonic up to
+        /// the next tonic and back down again.  It is described in terms of semitones relative to
+        /// the tonic; to apply it to particular tonic, pass one of these to the constructor of
         /// <see cref="Scale"/>.
         /// </remarks>
         public class Pattern
@@ -67,49 +67,19 @@ namespace Midi
             /// <summary>
             /// The ascending/descending sequence of the scale, given in the constructor. 
             /// </summary>
-            public int[] AscendingDescendingPattern
+            public int[] SemitoneSequence
             {
                 get
                 {
-                    return ascendingDescendingPattern;
+                    return semitoneSequence;
                 }
-            }
-
-            /// <summary>
-            /// Returns true if the given note is included in the ascending part of the pattern.
-            /// </summary>
-            /// <param name="note">The note, given in semitones above the tonic.</param>
-            /// <returns>True if that note is in the ascending pattern.</returns>
-            /// <exception cref="ArgumentOutOfRangeException">Note is not in [0..12].</exception>
-            public bool ContainedInAscending(int note)
-            {
-                if (note < 0 || note > 12)
-                {
-                    throw new ArgumentOutOfRangeException("Note out of range.");
-                }
-                return ascendingMask[note];
-            }
-
-            /// <summary>
-            /// Returns true if the given note is included in the descending part of the pattern.
-            /// </summary>
-            /// <param name="note">The note, given in semitones above the tonic.</param>
-            /// <returns>True if that note is in the descending pattern.</returns>
-            /// <exception cref="ArgumentOutOfRangeException">Note is not in [0..12].</exception>
-            public bool ContainedInDescending(int note)
-            {
-                if (note < 0 || note > 12)
-                {
-                    throw new ArgumentOutOfRangeException("Note out of range.");
-                }
-                return descendingMask[note];
             }
 
             /// <summary>
             /// Cnnstructs a scale description.
             /// </summary>
             /// <param name="name">The name of the scale.</param>
-            /// <param name="ascendingDescendingPattern">Array encoding the behavior of the scale as it
+            /// <param name="semitoneSequence">Array encoding the behavior of the scale as it
             /// ascends from the tonic up to the next tonic and back.  The first element must be 0, to
             /// indicate beginning at the tonic.  Then there must be a monotonically increasing sequence
             /// of notes, given in semitones-above-the-tonic.  Then there must be a 12, to indicate
@@ -117,88 +87,72 @@ namespace Midi
             /// notes, given in semitones-above-the-tonic.  The last element must be 0, to indicate
             /// arrival back at the original tonic.</param>
             /// <exception cref="ArgumentException">The pattern is invalid.</exception>
-            public Pattern(string name, int[] ascendingDescendingPattern)
+            public Pattern(string name, int[] semitoneSequence)
             {
                 this.name = name;
-                this.ascendingDescendingPattern = ascendingDescendingPattern;
-                this.ascendingMask =
-                    new bool[13] { true, false, false, false, false, false, false, false, false, false,
-                    false, false, true };
-                this.descendingMask =
-                    new bool[13] { true, false, false, false, false, false, false, false, false, false,
-                    false, false, true };
-                if (!ComputeMasks())
+                this.semitoneSequence = semitoneSequence;
+                if (!IsSequenceValid(semitoneSequence))
                 {
-                    throw new ArgumentException("Invalid pattern.");
+                    throw new ArgumentException("Invalid semitone sequence.");
                 }
             }
 
             /// <summary>
-            /// Fills ascendingMask and descendingMask based on ascendingDescendingPattern.
+            /// Returns true if the specified sequence is valid.
             /// </summary>
-            /// <returns>True if the operation succeeded, false if the pattern was invalid.</returns>
-            private bool ComputeMasks()
+            /// <param name="semitoneSequence">The sequence to test.</param>
+            /// <returns>True if it's valid.</returns>
+            private static bool IsSequenceValid(int[] semitoneSequence)
             {
                 // First make sure it's non-empty and starts at zero.
-                if (ascendingDescendingPattern == null || ascendingDescendingPattern.Length == 0 ||
-                    ascendingDescendingPattern[0] != 0)
+                if (semitoneSequence == null || semitoneSequence.Length == 0 ||
+                    semitoneSequence[0] != 0)
                 {
                     return false;
                 }
                 // Now run through the rest of the pattern and make sure it ascends and then descends,
                 // and populate the masks as we go.
                 bool ascending = true;
-                for (int i = 1; i < ascendingDescendingPattern.Length; ++i)
+                for (int i = 1; i < semitoneSequence.Length; ++i)
                 {
                     if (ascending)
                     {
                         // Make sure we've just gone up.
-                        if (ascendingDescendingPattern[i] <= ascendingDescendingPattern[i - 1])
+                        if (semitoneSequence[i] <= semitoneSequence[i - 1])
                         {
                             return false;
                         }
                         // Make sure we haven't gone up too far.
-                        if (ascendingDescendingPattern[i] > 12)
+                        if (semitoneSequence[i] > 12)
                         {
                             return false;
                         }
-                        // If we've reached 12, start descending, otherwise add this to the ascending
+                        // If we've reached 12, start descending.
                         // mask.
-                        if (ascendingDescendingPattern[i] == 12)
+                        if (semitoneSequence[i] == 12)
                         {
                             ascending = false;
-                        }
-                        else
-                        {
-                            // Add this to the ascending mask.
-                            ascendingMask[AscendingDescendingPattern[i]] = true;
                         }
                     }
                     else
                     {
                         // Make sure we've just gone down.
-                        if (ascendingDescendingPattern[i] >= ascendingDescendingPattern[i - 1])
+                        if (semitoneSequence[i] >= semitoneSequence[i - 1])
                         {
                             return false;
                         }
                         // Make sure we haven't gone down too far.
-                        if (ascendingDescendingPattern[i] < 0)
+                        if (semitoneSequence[i] < 0)
                         {
                             return false;
                         }
-                        // If we've reached 0, make sure we're the last element, otherwise add this
-                        // to the mask.
-                        if (ascendingDescendingPattern[i] == 0)
+                        // If we've reached 0, make sure we're the last element.
+                        if (semitoneSequence[i] == 0)
                         {
-                            if (i != ascendingDescendingPattern.Length - 1)
+                            if (i != semitoneSequence.Length - 1)
                             {
                                 return false;
                             }
-                        }
-                        else
-                        {
-                            // Add this to the descending mask.
-                            descendingMask[ascendingDescendingPattern[i]] = true;
                         }
                     }
                 }
@@ -206,10 +160,9 @@ namespace Midi
             }
 
             private string name;
-            private int[] ascendingDescendingPattern;
-            private readonly bool[] ascendingMask;
-            private readonly bool[] descendingMask;
+            private int[] semitoneSequence;
         }
+
 
         /// <summary>
         /// Constructs a scale from its tonic and its pattern.
@@ -220,6 +173,16 @@ namespace Midi
         {
             this.tonic = tonic;
             this.pattern = pattern;
+            this.ascendingMask =
+                new bool[13] { true, false, false, false, false, false, false, false, false, false,
+                    false, false, true };
+            this.descendingMask =
+                new bool[13] { true, false, false, false, false, false, false, false, false, false,
+                    false, false, true };
+            if (!ComputeMasks())
+            {
+                throw new ArgumentException("Invalid pattern.");
+            }
         }
  
         /// <summary>
@@ -261,6 +224,28 @@ namespace Midi
         }
 
         /// <summary>
+        /// The ascending sequence of notes in this scale.
+        /// </summary>
+        public NoteFamily[] AscendingNotes
+        {
+            get
+            {
+                return ascendingNotes;
+            }
+        }
+
+        /// <summary>
+        /// The descending sequence of notes in this scale.
+        /// </summary>
+        public NoteFamily[] DescendingNotes
+        {
+            get
+            {
+                return descendingNotes;
+            }
+        }
+
+        /// <summary>
         /// Returns true if note would be in this scale when ascending through the note.
         /// </summary>
         /// <param name="note">The note</param>
@@ -268,7 +253,7 @@ namespace Midi
         /// <exception cref="ArgumentOutOfRangeException">note is out-of-range.</exception>
         public bool ContainsWhenAscending(Note note)
         {
-            return pattern.ContainedInAscending(note.SemitonesAbove(Tonic));
+            return ascendingMask[note.SemitonesAbove(Tonic)];
         }
 
         /// <summary>
@@ -279,7 +264,7 @@ namespace Midi
         /// <exception cref="ArgumentOutOfRangeException">note is out-of-range.</exception>
         public bool ContainsWhenDescending(Note note)
         {
-            return pattern.ContainedInDescending(note.SemitonesAbove(Tonic));
+            return descendingMask[note.SemitonesAbove(Tonic)];
         }
 
         /// <summary>
@@ -340,7 +325,123 @@ namespace Midi
                   new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
                       11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 });
 
+        /// <summary>
+        /// Array of all the built-in scale patterns.
+        /// </summary>
+        public static Pattern[] Patterns = new Pattern[]
+        {
+            Major,
+            NaturalMinor,
+            HarmonicMinor,
+            MelodicMinor,
+            Chromatic
+        };
+
+        /// <summary>
+        /// Fills ascendingMask and descendingMask based on ascendingDescendingPattern.
+        /// </summary>
+        /// <returns>True if the operation succeeded, false if the pattern was invalid.</returns>
+        private bool ComputeMasks()
+        {
+            int[] semitoneSequence = pattern.SemitoneSequence;
+            int numAscendingNotes = 2;
+            int numDescendingNotes = 2;
+
+            // First make sure it's non-empty and starts at zero.
+            if (semitoneSequence == null || semitoneSequence.Length == 0 ||
+                semitoneSequence[0] != 0)
+            {
+                return false;
+            }
+            // Now run through the rest of the pattern and make sure it ascends and then descends,
+            // and populate the masks as we go.
+            bool ascending = true;
+            for (int i = 1; i < semitoneSequence.Length; ++i)
+            {
+                if (ascending)
+                {
+                    // Make sure we've just gone up.
+                    if (semitoneSequence[i] <= semitoneSequence[i - 1])
+                    {
+                        return false;
+                    }
+                    // Make sure we haven't gone up too far.
+                    if (semitoneSequence[i] > 12)
+                    {
+                        return false;
+                    }
+                    // If we've reached 12, start descending, otherwise add this to the ascending
+                    // mask.
+                    if (semitoneSequence[i] == 12)
+                    {
+                        ascending = false;
+                    }
+                    else
+                    {
+                        // Add this to the ascending mask.
+                        ascendingMask[semitoneSequence[i]] = true;
+                        numAscendingNotes++;
+                    }
+                }
+                else
+                {
+                    // Make sure we've just gone down.
+                    if (semitoneSequence[i] >= semitoneSequence[i - 1])
+                    {
+                        return false;
+                    }
+                    // Make sure we haven't gone down too far.
+                    if (semitoneSequence[i] < 0)
+                    {
+                        return false;
+                    }
+                    // If we've reached 0, make sure we're the last element, otherwise add this
+                    // to the mask.
+                    if (semitoneSequence[i] == 0)
+                    {
+                        if (i != semitoneSequence.Length - 1)
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        // Add this to the descending mask.
+                        descendingMask[semitoneSequence[i]] = true;
+                        numDescendingNotes++;
+                    }
+                }
+            }
+
+            ascendingNotes = new NoteFamily[numAscendingNotes];
+            descendingNotes = new NoteFamily[numDescendingNotes];
+
+            int numAdded = 0;
+            for (int i = 0; i <= 12; ++i)
+            {
+                if (ascendingMask[i])
+                {
+                    ascendingNotes[numAdded++] = (NoteFamily)(tonic + i).Wrapped();
+                }
+            }
+
+            numAdded = 0;
+            for (int i = 12; i >= 0; --i)
+            {
+                if (descendingMask[i])
+                {
+                    descendingNotes[numAdded++] = (NoteFamily)(tonic + i).Wrapped();
+                }
+            }
+
+            return true;
+        }
+
         private NoteFamily tonic;
         private Pattern pattern;
+        private bool[] ascendingMask;
+        private bool[] descendingMask;
+        private NoteFamily[] ascendingNotes;
+        private NoteFamily[] descendingNotes;
     }
 }
