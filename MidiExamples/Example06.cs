@@ -74,61 +74,31 @@ namespace MidiExamples
                 this.clock = clock;
                 this.inputDevice = inputDevice;
                 this.outputDevice = outputDevice;
-                this.scaleToUse = ScaleToUse.Major;
+                this.scaleToUse = 0;
                 if (inputDevice != null)
                 {
                     inputDevice.NoteOn += new InputDevice.NoteOnHandler(this.NoteOn);
                 }
             }
 
-            private enum ScaleToUse
-            {
-                Major,
-                NaturalMinor,
-                HarmonicMinor,
-                MelodicMinor,
-                Chromatic,
-                Last
-            }
-
             public string GetScaletoUse()
             {
-                return scaleToUse.ToString();
+                return Scale.Patterns[scaleToUse].Name;
             }
 
             public void NextScale()
             {
-                scaleToUse = (ScaleToUse)(((int)scaleToUse+1)%(int)ScaleToUse.Last);
+                scaleToUse = (scaleToUse + 1) % Scale.Patterns.Length;
             }
 
             public void PreviousScale()
             {
-                scaleToUse = (ScaleToUse)(((int)scaleToUse - 1) % (int)ScaleToUse.Last);
+                scaleToUse = (scaleToUse - 1) % Scale.Patterns.Length;
             }
 
             public void NoteOn(NoteOnMessage msg)
             {
-                Scale scale;
-                switch (scaleToUse)
-                {
-                    case ScaleToUse.Major :
-                        scale = new Scale(msg.Note.Family(), Scale.Major);
-                        break;
-                    case ScaleToUse.NaturalMinor :
-                        scale = new Scale(msg.Note.Family(), Scale.NaturalMinor);
-                        break;
-                    case ScaleToUse.HarmonicMinor :
-                        scale = new Scale(msg.Note.Family(), Scale.HarmonicMinor);
-                        break;
-                    case ScaleToUse.MelodicMinor :
-                        scale = new Scale(msg.Note.Family(), Scale.MelodicMinor);
-                        break;
-                    case ScaleToUse.Chromatic :
-                        scale = new Scale(msg.Note.Family(), Scale.Chromatic);
-                        break;
-                    default:
-                        throw new Exception("Invalid scale.");
-                }
+                Scale scale = new Scale(msg.Note.Family(), Scale.Patterns[scaleToUse]);
                 List<Note> scaleNotes = scale.Traverse(msg.Note, msg.Note+12);
                 float delay = msg.BeatTime+1;
                 for (int i = 1; i < scaleNotes.Count; ++i, delay++)
@@ -147,7 +117,7 @@ namespace MidiExamples
             private Clock clock;
             private InputDevice inputDevice;
             private OutputDevice outputDevice;
-            private ScaleToUse scaleToUse;
+            private int scaleToUse;
         }
 
         public override void Run()

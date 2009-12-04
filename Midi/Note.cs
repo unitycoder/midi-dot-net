@@ -458,6 +458,23 @@ namespace Midi
         }
 
         /// <summary>
+        /// Returns a copy of family which is made valid by wrapping if necessary.
+        /// </summary>
+        /// <param name="family">The family to wrap.</param>
+        /// <returns>The wrapped copy of family.</returns>
+        public static NoteFamily Wrapped(this NoteFamily family)
+        {
+            if ((int)family < 0)
+            {
+                return (NoteFamily)(11 - ((-(int)family - 1) % 12));
+            }
+            else
+            {
+                return (NoteFamily)((int)family % 12);
+            }
+        }
+
+        /// <summary>
         /// Throws an exception if family is not valid.
         /// </summary>
         /// <param name="family">The family to validate.</param>
