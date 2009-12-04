@@ -31,17 +31,19 @@ namespace Midi
     /// <summary>
     /// C# wrappers for the Win32 MIDI API.
     /// </summary>
-    /// Because .NET does not provide MIDI support itself, in C# we must use P/Invoke to wrap the Win32
-    /// API.  That API consists of the MMSystem.h C header and the winmm.dll library.  The API is described
-    /// in detail here: http://msdn.microsoft.com/en-us/library/ms712733(VS.85).aspx.  The P/Invoke
-    /// interop mechanism is described here: http://msdn.microsoft.com/en-us/library/aa288468(VS.71).aspx.
+    /// Because .NET does not provide MIDI support itself, in C# we must use P/Invoke to wrap the
+    /// Win32 API.  That API consists of the MMSystem.h C header and the winmm.dll library.  The API
+    /// is described in detail here: http://msdn.microsoft.com/en-us/library/ms712733(VS.85).aspx.
+    /// The P/Invoke interop mechanism is described here:
+    /// http://msdn.microsoft.com/en-us/library/aa288468(VS.71).aspx.
     ///
-    /// This file covers the subset of the MIDI protocol needed to manage input and output devices and send
-    /// and receive Note On/Off, Control Change, Pitch Bend and Program Change messages.  Other portions of
-    /// the MIDI protocol (such as sysex events) are supported in the Win32 API but are not wrapped here.
+    /// This file covers the subset of the MIDI protocol needed to manage input and output devices
+    /// and send and receive Note On/Off, Control Change, Pitch Bend and Program Change messages.
+    /// Other portions of the MIDI protocol (such as sysex events) are supported in the Win32 API
+    /// but are not wrapped here.
     ///
-    /// Some of the C functions are not typesafe when wrapped, so those wrappers are made private and typesafe
-    /// variants are provided.
+    /// Some of the C functions are not typesafe when wrapped, so those wrappers are made private
+    /// and typesafe variants are provided.
     static class Win32API
     {
         #region Constants
@@ -163,14 +165,29 @@ namespace Midi
 
         #endregion
 
-        #region Functions and structs for MIDI Output Devices
+        #region Handles
 
         /// <summary>
-        /// Returns the number of MIDI output devices on this system.
+        /// Win32 handle for a MIDI output device.
         /// </summary>
-        /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711627(VS.85).aspx
-        [DllImport("winmm.dll", SetLastError = true)]
-        public static extern UInt32 midiOutGetNumDevs();
+        [StructLayout(LayoutKind.Sequential)]
+        public struct HMIDIOUT
+        {
+            public Int32 handle;
+        }
+
+        /// <summary>
+        /// Win32 handle for a MIDI input device.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct HMIDIIN
+        {
+            public Int32 handle;
+        }
+
+        #endregion
+
+        #region Structs
 
         /// <summary>
         /// Struct representing the capabilities of an output device. 
@@ -192,6 +209,32 @@ namespace Midi
         }
 
         /// <summary>
+        /// Struct representing the capabilities of an input device. 
+        /// </summary>
+        /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711596(VS.85).aspx
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MIDIINCAPS
+        {
+            public UInt16 wMid;
+            public UInt16 wPid;
+            public UInt32 vDriverVersion;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = (int)MAXPNAMELEN)]
+            public string szPname;
+            public UInt32 dwSupport;
+        }
+
+        #endregion
+
+        #region Functions for MIDI Output
+
+        /// <summary>
+        /// Returns the number of MIDI output devices on this system.
+        /// </summary>
+        /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711627(VS.85).aspx
+        [DllImport("winmm.dll", SetLastError = true)]
+        public static extern UInt32 midiOutGetNumDevs();
+
+        /// <summary>
         /// Fills in the capabilities struct for a specific output device.
         /// </summary>
         /// NOTE: This is adapted from the original Win32 function in order to make it typesafe.
@@ -199,23 +242,16 @@ namespace Midi
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711621(VS.85).aspx
         public static MMRESULT midiOutGetDevCaps(UIntPtr uDeviceID, out MIDIOUTCAPS caps)
         {
-            return midiOutGetDevCaps(uDeviceID, out caps, (UInt32)Marshal.SizeOf(typeof(MIDIOUTCAPS)));
-        }
-
-        /// <summary>
-        /// Win32 handle for a MIDI output device.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct HMIDIOUT
-        {
-            public Int32 handle;
+            return midiOutGetDevCaps(uDeviceID, out caps,
+                (UInt32)Marshal.SizeOf(typeof(MIDIOUTCAPS)));
         }
 
         /// <summary>
         /// Callback invoked when a MIDI output device is opened, closed, or finished with a buffer.
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711637(VS.85).aspx
-        public delegate void MidiOutProc(HMIDIOUT hmo, MidiOutMessage wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2);
+        public delegate void MidiOutProc(HMIDIOUT hmo, MidiOutMessage wMsg, UIntPtr dwInstance,
+            UIntPtr dwParam1, UIntPtr dwParam2);
 
         /// <summary>
         /// Opens a MIDI output device.
@@ -264,7 +300,7 @@ namespace Midi
 
         #endregion
 
-        #region Functions and structs for MIDI Input Devices
+        #region Functions for MIDI Input
 
         /// <summary>
         /// Returns the number of MIDI input devices on this system.
@@ -274,21 +310,6 @@ namespace Midi
         public static extern UInt32 midiInGetNumDevs();
 
         /// <summary>
-        /// Struct representing the capabilities of an input device. 
-        /// </summary>
-        /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711596(VS.85).aspx
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MIDIINCAPS
-        {
-            public UInt16 wMid;
-            public UInt16 wPid;
-            public UInt32 vDriverVersion;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = (int)MAXPNAMELEN)]
-            public string szPname;
-            public UInt32 dwSupport;
-        }
-
-        /// <summary>
         /// Fills in the capabilities struct for a specific input device.
         /// </summary>
         /// NOTE: This is adapted from the original Win32 function in order to make it typesafe.
@@ -296,23 +317,16 @@ namespace Midi
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711604(VS.85).aspx
         public static MMRESULT midiInGetDevCaps(UIntPtr uDeviceID, out MIDIINCAPS caps)
         {
-            return midiInGetDevCaps(uDeviceID, out caps, (UInt32)Marshal.SizeOf(typeof(MIDIINCAPS)));
-        }
-
-        /// <summary>
-        /// Win32 handle for a MIDI input device.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct HMIDIIN
-        {
-            public Int32 handle;
+            return midiInGetDevCaps(uDeviceID, out caps,
+                (UInt32)Marshal.SizeOf(typeof(MIDIINCAPS)));
         }
 
         /// <summary>
         /// Callback invoked when a MIDI event is received from an input device.
         /// </summary>
         /// Win32 docs: http://msdn.microsoft.com/en-us/library/ms711612(VS.85).aspx
-        public delegate void MidiInProc(HMIDIIN hMidiIn, MidiInMessage wMsg, UIntPtr dwInstance, UIntPtr dwParam1, UIntPtr dwParam2);
+        public delegate void MidiInProc(HMIDIIN hMidiIn, MidiInMessage wMsg, UIntPtr dwInstance,
+            UIntPtr dwParam1, UIntPtr dwParam2);
 
         /// <summary>
         /// Opens a MIDI input device.
@@ -370,27 +384,32 @@ namespace Midi
 
         #region Non-Typesafe Bindings
 
-        // The bindings in this section are not typesafe, so we make them private and privide typesafe variants above.
+        // The bindings in this section are not typesafe, so we make them private and privide
+        // typesafe variants above.
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT midiOutGetDevCaps(UIntPtr uDeviceID, out MIDIOUTCAPS caps, UInt32 cbMidiOutCaps);
+        private static extern MMRESULT midiOutGetDevCaps(UIntPtr uDeviceID, out MIDIOUTCAPS caps,
+            UInt32 cbMidiOutCaps);
 
         [DllImport("winmm.dll", SetLastError = true)]
         private static extern MMRESULT midiOutOpen(out HMIDIOUT lphmo, UIntPtr uDeviceID,
             MidiOutProc dwCallback, UIntPtr dwCallbackInstance, MidiOpenFlags dwFlags);
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT midiOutGetErrorText(MMRESULT mmrError, StringBuilder lpText, UInt32 cchText);
+        private static extern MMRESULT midiOutGetErrorText(MMRESULT mmrError, StringBuilder lpText,
+            UInt32 cchText);
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT midiInGetDevCaps(UIntPtr uDeviceID, out MIDIINCAPS caps, UInt32 cbMidiInCaps);
+        private static extern MMRESULT midiInGetDevCaps(UIntPtr uDeviceID, out MIDIINCAPS caps,
+            UInt32 cbMidiInCaps);
 
         [DllImport("winmm.dll", SetLastError = true)]
         private static extern MMRESULT midiInOpen(out HMIDIIN lphMidiIn, UIntPtr uDeviceID,
             MidiInProc dwCallback, UIntPtr dwCallbackInstance, MidiOpenFlags dwFlags);
 
         [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT midiInGetErrorText(MMRESULT mmrError, StringBuilder lpText, UInt32 cchText);
+        private static extern MMRESULT midiInGetErrorText(MMRESULT mmrError, StringBuilder lpText,
+            UInt32 cchText);
 
         #endregion    
     }
