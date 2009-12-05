@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta content="history" name="save" />
     <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
-    <title>Scale.Pattern Constructor</title>
+    <title>Scale.Pattern.IsSequenceValid Method</title>
     <xml>
     </xml>
     <link rel="stylesheet" type="text/css" href="MSDN.css" />
@@ -20,39 +20,21 @@
         </table>
       </div>
       <div id="TitleRow">
-        <h1 class="dtH1">Scale.Pattern Constructor</h1>
+        <h1 class="dtH1">Scale.Pattern.IsSequenceValid Method</h1>
       </div>
     </div>
     <div id="nstext">
-      <p> Constructs a scale pattern. </p>
-      <div class="syntax">
-        <a href="Midi~Midi.Scale.Pattern.html">Pattern</a>(<br />   <a href="">string</a> <i>name</i>,<br />   <a href="">int</a>[] <i>semitoneSequence</i><br />);</div>
+      <p> Returns true if the specified sequence is valid. </p>
+      <div class="syntax">public static <a href="">bool</a> IsSequenceValid(<br />   <a href="">int</a>[] <i>semitoneSequence</i><br />);</div>
       <h4 class="dtH4">Parameters</h4>
       <dl>
         <dt>
-          <i>name</i>
-        </dt>
-        <dd>The name of the scale pattern.</dd>
-        <dt>
           <i>semitoneSequence</i>
         </dt>
-        <dd>Array encoding the behavior of the scale as it ascends from the tonic up to the next tonic and back. This must satisfy the requirements of <a href="Midi~Midi.Scale.Pattern.IsSequenceValid.html">IsSequenceValid</a>.</dd>
+        <dd>The sequence to test. The first element must be 0, to indicate beginning at the tonic. Then there must be a monotonically increasing sequence of notes, given in semitones-above-the-tonic. Then there must be a 12, to indicate arrival at the tonic above. Then there must be a monotonically decreasing sequence of notes, given in semitones-above-the-tonic. The last element must be 0, to indicate arrival back at the original tonic.</dd>
       </dl>
-      <h4 class="dtH4">Exceptions</h4>
-      <div class="tablediv">
-        <table class="dtTABLE" cellspacing="0">
-          <tr valign="top">
-            <th width="50%">Exception Type</th>
-            <th width="50%">Condition</th>
-          </tr>
-          <tr valign="top">
-            <td width="50%">
-              <a href="http://msdn.microsoft.com/en-us/library/System.ArgumentException(VS.90).aspx">ArgumentException</a>
-            </td>
-            <td width="50%">The pattern is invalid.</td>
-          </tr>
-        </table>
-      </div>
+      <h4 class="dtH4">Return Value</h4>
+      <p>True if the sequence is valid, false otherwise.</p>
       <h4 class="dtH4">See Also</h4>
       <p>
         <a href="Midi~Midi.Scale.Pattern.html">Pattern Class</a> | <a href="~Midi.html">Midi Namespace</a></p>
