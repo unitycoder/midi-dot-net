@@ -138,23 +138,93 @@ namespace Midi
             this.root = root;
             this.pattern = pattern;
             this.inversion = inversion;
+            this.invertedSequence = InvertSequence(pattern.SemitoneSequence, inversion);
+        }
+
+        /// <summary>
+        /// Returns an inverted copy of semitoneSequence (or the original if inversion = 0).
+        /// </summary>
+        /// <param name="semitoneSequence"></param>
+        /// <param name="inversion"></param>
+        /// <returns></returns>
+        private static int[] InvertSequence(int[] semitoneSequence, int inversion)
+        {
+            int[] result;
             if (inversion == 0)
             {
-                this.invertedSequence = pattern.SemitoneSequence;
+                result = semitoneSequence;
             }
             else
             {
-                int[] orig = pattern.SemitoneSequence;
-                this.invertedSequence = new int[orig.Length];
+                int[] orig = semitoneSequence;
+                result = new int[orig.Length];
                 for (int i = 0; i < orig.Length; ++i)
                 {
-                    this.invertedSequence[i] = orig[(inversion + i) % orig.Length];
+                    result[i] = orig[(inversion + i) % orig.Length];
                 }
                 for (int i = 0; i < orig.Length - inversion; ++i)
                 {
-                    this.invertedSequence[i] -= 12;
+                    result[i] -= 12;
                 }
             }
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a list of chords which match the set of input notes.
+        /// </summary>
+        /// <param name="notes">Notes being analyzed.</param>
+        /// <returns>A (possibly empty) list of chords.</returns>
+        public static List<Chord> FindMatchingChords(List<Note> notes)
+        {
+            Note[] sorted = notes.ToArray();
+            System.Array.Sort(sorted);
+            int[] semitonesAboveBass = new int[sorted.Length];
+            for (int i = 0; i < sorted.Length; ++i)
+            {
+                semitonesAboveBass[i] = sorted[i]-sorted[0];
+            }
+
+            List<Chord> result = new List<Chord>();
+            foreach (Pattern pattern in Patterns)
+            {
+                int[] semitoneSequence = pattern.SemitoneSequence;
+                if (semitoneSequence.Length != semitonesAboveBass.Length)
+                {
+                    continue;
+                }
+                for (int inversion = 0; inversion < semitoneSequence.Length; ++inversion)
+                {
+                    int[] invertedSequence = InvertSequence(semitoneSequence, inversion);
+                    int[] iSemitonesAboveBass = new int[invertedSequence.Length];
+                    for (int i = 0; i < invertedSequence.Length; ++i)
+                    {
+                        iSemitonesAboveBass[i] = invertedSequence[i] - invertedSequence[0];
+                    }
+                    bool equals = true;
+                    for (int i = 0; i < iSemitonesAboveBass.Length; ++i)
+                    {
+                        if (iSemitonesAboveBass[i] != semitonesAboveBass[i])
+                        {
+                            equals = false;
+                            break;
+                        }
+                    }
+                    if (equals)
+                    {
+                        if (inversion == 0)
+                        {
+                            result.Add(new Chord(sorted[0].Family(), pattern, inversion));
+                        }
+                        else
+                        {
+                            result.Add(new Chord(sorted[sorted.Length - inversion].Family(),
+                                pattern, inversion));
+                        }
+                    }
+                }
+            }
+            return result;
         }
 
         /// <summary>
