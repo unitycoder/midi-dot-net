@@ -78,10 +78,8 @@ namespace Midi
             /// Constructs a chord pattern.
             /// </summary>
             /// <param name="name">The name of the chord.</param>
-            /// <param name="semitoneSequence">Array encoding the notes in the chord.
-            /// The first element must be 0, to indicate beginning at the root note.  Then there
-            /// must be a monotonically increasing sequence of notes, given in
-            /// semitones-above-the-root.</param>
+            /// <param name="semitoneSequence">Array encoding the notes in the chord.  This
+            /// must satisfy the requirements of <see cref="IsSequenceValid"/>.</param>
             /// <exception cref="ArgumentException">The pattern is invalid.</exception>
             public Pattern(string name, int[] semitoneSequence)
             {
@@ -96,9 +94,11 @@ namespace Midi
             /// <summary>
             /// Returns true if the given sequence is valid.
             /// </summary>
-            /// <param name="semitoneSequence">The semitone sequence.</param>
-            /// <returns>True if it starts at zero and is monotonically increasing.</returns>
-            private static bool IsSequenceValid(int[] semitoneSequence)
+            /// <param name="semitoneSequence">The sequence to test.  The first element must be 0,
+            /// to indicate beginning at the root note.  Then there must be a monotonically
+            /// increasing sequence of notes, given in semitones-above-the-root.</param>
+            /// <returns>True if the sequence is valid, false otherwise.</returns>
+            public static bool IsSequenceValid(int[] semitoneSequence)
             {
                 if (semitoneSequence == null || semitoneSequence.Length == 0 ||
                     semitoneSequence[0] != 0)

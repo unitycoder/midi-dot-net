@@ -76,16 +76,12 @@ namespace Midi
             }
 
             /// <summary>
-            /// Cnnstructs a scale description.
+            /// Constructs a scale pattern.
             /// </summary>
-            /// <param name="name">The name of the scale.</param>
+            /// <param name="name">The name of the scale pattern.</param>
             /// <param name="semitoneSequence">Array encoding the behavior of the scale as it
-            /// ascends from the tonic up to the next tonic and back.  The first element must be 0, to
-            /// indicate beginning at the tonic.  Then there must be a monotonically increasing sequence
-            /// of notes, given in semitones-above-the-tonic.  Then there must be a 12, to indicate
-            /// arrival at the tonic above.  Then there must be a monotonically decreasing sequence of
-            /// notes, given in semitones-above-the-tonic.  The last element must be 0, to indicate
-            /// arrival back at the original tonic.</param>
+            /// ascends from the tonic up to the next tonic and back.  This must satisfy the
+            /// requirements of <see cref="IsSequenceValid"/>.</param>
             /// <exception cref="ArgumentException">The pattern is invalid.</exception>
             public Pattern(string name, int[] semitoneSequence)
             {
@@ -100,9 +96,14 @@ namespace Midi
             /// <summary>
             /// Returns true if the specified sequence is valid.
             /// </summary>
-            /// <param name="semitoneSequence">The sequence to test.</param>
-            /// <returns>True if it's valid.</returns>
-            private static bool IsSequenceValid(int[] semitoneSequence)
+            /// <param name="semitoneSequence">The sequence to test.  The first element must be 0,
+            /// to indicate beginning at the tonic.  Then there must be a monotonically increasing
+            /// sequence of notes, given in semitones-above-the-tonic.  Then there must be a 12, to
+            /// indicate arrival at the tonic above.  Then there must be a monotonically decreasing
+            /// sequence of notes, given in semitones-above-the-tonic.  The last element must be 0,
+            /// to indicate arrival back at the original tonic.</param>
+            /// <returns>True if the sequence is valid, false otherwise.</returns>
+            public static bool IsSequenceValid(int[] semitoneSequence)
             {
                 // First make sure it's non-empty and starts at zero.
                 if (semitoneSequence == null || semitoneSequence.Length == 0 ||
@@ -110,8 +111,8 @@ namespace Midi
                 {
                     return false;
                 }
-                // Now run through the rest of the pattern and make sure it ascends and then descends,
-                // and populate the masks as we go.
+                // Now run through the rest of the pattern and make sure it ascends and then
+                // descends.
                 bool ascending = true;
                 for (int i = 1; i < semitoneSequence.Length; ++i)
                 {
