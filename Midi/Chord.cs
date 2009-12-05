@@ -64,6 +64,21 @@ namespace Midi
             }
 
             /// <summary>
+            /// Shorthand string for this chord pattern.
+            /// </summary>
+            /// <remarks>
+            /// This is the string used in the abbreviated name for a chord, placed immediately
+            /// after the tonic and before the slashed inversion (if there is one).
+            /// </remarks>
+            public string Shorthand
+            {
+                get
+                {
+                    return shorthand;
+                }
+            }
+
+            /// <summary>
             /// The ascending note sequence of the chord, in semitones-above-the-root.
             /// </summary>
             public int[] SemitoneSequence
@@ -78,12 +93,16 @@ namespace Midi
             /// Constructs a chord pattern.
             /// </summary>
             /// <param name="name">The name of the chord.</param>
+            /// <param name="shorthand">The shorthand for the chord.  This is the string used in the
+            /// abbreviated name for a chord, placed immediately after the tonic and before the
+            /// slashed inversion (if there is one).</param>
             /// <param name="semitoneSequence">Array encoding the notes in the chord.  This
             /// must satisfy the requirements of <see cref="IsSequenceValid"/>.</param>
             /// <exception cref="ArgumentException">The pattern is invalid.</exception>
-            public Pattern(string name, int[] semitoneSequence)
+            public Pattern(string name, string shorthand, int[] semitoneSequence)
             {
                 this.name = name;
+                this.shorthand = shorthand;
                 this.semitoneSequence = semitoneSequence;
                 if (!IsSequenceValid(semitoneSequence))
                 {
@@ -116,6 +135,7 @@ namespace Midi
             }
 
             private string name;
+            private string shorthand;
             private int[] semitoneSequence;
         }
 
@@ -234,11 +254,12 @@ namespace Midi
         {
             get
             {
+                string result = root.Name() + pattern.Shorthand;
                 if (inversion != 0)
                 {
-                    return root.Name() + " " + pattern.Name + " over " + Bass.Name();
+                    result += "/" + Bass.Name();
                 }
-                return root.Name() + " " + pattern.Name;
+                return result;
             }
         }
 
@@ -285,14 +306,29 @@ namespace Midi
         }
 
         /// <summary>
-        /// Pattern for Major chord.
+        /// Pattern for Major chords.
         /// </summary>
-        public static Pattern Major = new Pattern("Major", new int[] { 0, 4, 7 });
+        public static Pattern Major = new Pattern("Major", "", new int[] { 0, 4, 7 });
 
         /// <summary>
-        /// Pattern for Minor chord.
+        /// Pattern for Minor chords.
         /// </summary>
-        public static Pattern Minor = new Pattern("Minor", new int[] { 0, 3, 7 });
+        public static Pattern Minor = new Pattern("Minor", "min", new int[] { 0, 3, 7 });
+
+        /// <summary>
+        /// Pattern for Seventh chords.
+        /// </summary>
+        public static Pattern Seventh = new Pattern("Seventh", "7", new int[] { 0, 4, 7, 10 });
+
+        /// <summary>
+        /// Pattern for Augmented chords.
+        /// </summary>
+        public static Pattern Augmented = new Pattern("Augmented", "aug", new int[] { 0, 4, 8 });
+
+        /// <summary>
+        /// Pattern for Diminished chords.
+        /// </summary>
+        public static Pattern Diminished = new Pattern("Diminished", "dim", new int[] { 0, 3, 6 });
 
         /// <summary>
         /// Array of all the built-in chord patterns.
@@ -300,7 +336,10 @@ namespace Midi
         public static Pattern[] Patterns = new Pattern[]
         {
             Major,
-            Minor
+            Minor,
+            Seventh,
+            Augmented,
+            Diminished
         };
 
         private NoteFamily root;
