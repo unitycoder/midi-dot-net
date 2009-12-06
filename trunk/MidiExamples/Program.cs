@@ -44,7 +44,7 @@ namespace MidiExamples
             { ConsoleKey.C, new Example03()},
 //            { ConsoleKey.D, new Example04()},
 //            { ConsoleKey.E, new Example05()}
-            { ConsoleKey.F, new Example06()}
+            { ConsoleKey.F, new Example06()},
             { ConsoleKey.G, new Example07()}
         };
 
