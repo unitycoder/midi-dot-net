@@ -68,8 +68,7 @@ namespace MidiExamples
 
         public override void Run()
         {
-            // Utility function prompts user to choose an output device (or if there is only one,
-            // returns that one).
+            // Prompt user to choose an output device (or if there is only one, use that one).
             OutputDevice outputDevice = ExampleUtil.ChooseOutputDeviceFromConsole();
             if (outputDevice == null)
             {
