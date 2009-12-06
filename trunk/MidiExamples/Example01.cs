@@ -27,6 +27,9 @@ using Midi;
 
 namespace MidiExamples
 {
+    /// <summary>
+    /// Prints information about MIDI input and output devices.
+    /// </summary>
     class Example01 : ExampleBase
     {
         public Example01()

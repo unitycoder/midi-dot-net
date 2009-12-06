@@ -28,6 +28,15 @@ using System.Threading;
 
 namespace MidiExamples
 {
+    /// <summary>
+    /// Demonstrates simple single-threaded output.
+    /// </summary>
+    /// <remarks>
+    /// This example uses the OutputDevice.Send* methods directly to generate output.  It uses
+    /// Thread.Sleep for timing, which isn't practical in real applications because it blocks
+    /// the main thread, forcing the user to sit and wait.  See Example03.cs for a more realistic
+    /// example using Clock for scheduling.
+    /// </remarks>
     class Example02 : ExampleBase
     {
         public Example02()
