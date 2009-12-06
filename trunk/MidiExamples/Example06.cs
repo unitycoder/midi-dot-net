@@ -83,6 +83,9 @@ namespace MidiExamples
                 }
             }
 
+            /// <summary>
+            /// Toggle between playing chords and playing scales.
+            /// </summary>
             public void ToggleMode()
             {
                 lock(this)
@@ -302,13 +305,22 @@ namespace MidiExamples
                 }
                 else if (ExampleUtil.IsMockNote(key, out note))
                 {
+                    // We've hit a QUERTY key which is meant to simulate a MIDI note, so
+                    // send the Note On to the output device and tell the arpeggiator.
                     NoteOnMessage noteOn = new NoteOnMessage(outputDevice, 0, note, 100,
                         clock.BeatTime);
+                    clock.Schedule(noteOn);
+                    arpeggiator.NoteOn(noteOn);
+                    // We don't get key release events for the console, so schedule a
+                    // simulated Note Off one beat from now.
                     NoteOffMessage noteOff = new NoteOffMessage(outputDevice, 0, note, 100,
                         clock.BeatTime + 1);
-                    clock.Schedule(noteOn);
-                    clock.Schedule(noteOff);
-                    arpeggiator.NoteOn(noteOn);
+                    CallbackMessage.CallbackType noteOffCallback = beatTime =>
+                    {
+                        arpeggiator.NoteOff(noteOff);
+                        return null;
+                    };
+                    clock.Schedule(new CallbackMessage(noteOffCallback, noteOff.BeatTime));
                 }
             }
 
