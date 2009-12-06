@@ -142,20 +142,20 @@ namespace Midi
         /// <summary>
         /// Constructs a chord from its root note, pattern, and inversion.
         /// </summary>
-        /// <param name="root">The root note of the chord.</param>
+        /// <param name="rootNoteFamily">The root note of the chord.</param>
         /// <param name="pattern">The chord pattern.</param>
         /// <param name="inversion">The inversion, in [0..N-1] where N is the number of notes
         /// in pattern.</param>
         /// <exception cref="ArgumentOutOfRangeException">root is invalid or inversion is out of
         /// range.</exception>
-        public Chord(NoteFamily root, Pattern pattern, int inversion)
+        public Chord(NoteFamily rootNoteFamily, Pattern pattern, int inversion)
         {
-            root.Validate();
+            rootNoteFamily.Validate();
             if (inversion < 0 || inversion >= pattern.SemitoneSequence.Length)
             {
                 throw new ArgumentOutOfRangeException("inversion out of range.");
             }
-            this.root = root;
+            this.rootNoteFamily = rootNoteFamily;
             this.pattern = pattern;
             this.inversion = inversion;
             this.invertedSequence = InvertSequence(pattern.SemitoneSequence, inversion);
@@ -254,10 +254,10 @@ namespace Midi
         {
             get
             {
-                string result = root.Name() + pattern.Shorthand;
+                string result = rootNoteFamily.Name() + pattern.Shorthand;
                 if (inversion != 0)
                 {
-                    result += "/" + Bass.Name();
+                    result += "/" + BassNoteFamily.Name();
                 }
                 return result;
             }
@@ -266,43 +266,64 @@ namespace Midi
         /// <summary>
         /// The root note of the chord.
         /// </summary>
-        public NoteFamily Root
+        public NoteFamily RootNoteFamily
         {
             get
             {
-                return root;
+                return rootNoteFamily;
             }
         }
 
         /// <summary>
         /// The bass note of the chord.
         /// </summary>
-        public NoteFamily Bass
+        public NoteFamily BassNoteFamily
         {
             get
             {
-                return (root + invertedSequence[0]).Wrapped();
+                return (rootNoteFamily + invertedSequence[0]).Wrapped();
             }
         }
 
         /// <summary>
-        /// The sequence of notes in this chord.
+        /// The sequence of note families in this chord.
         /// </summary>
         /// <remarks>
         /// The result is in terms of note families (ie, not octave-specific).  The order in the
         /// result is based on the inversion, so the root note may not come first.
         /// </remarks>
-        public NoteFamily[] Notes
+        public NoteFamily[] NoteFamilies
         {
             get
             {
                 NoteFamily[] result = new NoteFamily[invertedSequence.Length];
                 for (int i = 0; i < result.Length; ++i)
                 {
-                    result[i] = (root + invertedSequence[i]).Wrapped();
+                    result[i] = (rootNoteFamily + invertedSequence[i]).Wrapped();
                 }
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Returns the notes in this chord when given a specific root note.
+        /// </summary>
+        /// <param name="root">The specific root note, whose family must be the same as this
+        /// chord's RootNote.</param>
+        /// <returns>The notes in the chord.</returns>
+        /// <exception cref="ArgumentException">root is from the wrong family.</exception>
+        public Note[] Notes(Note root)
+        {
+            if (root.Family() != RootNoteFamily)
+            {
+                throw new ArgumentException("Wrong note family.");
+            }
+            Note[] result = new Note[invertedSequence.Length];
+            for (int i = 0; i < invertedSequence.Length; ++i)
+            {
+                result[i] = root + invertedSequence[i];
+            }
+            return result;
         }
 
         /// <summary>
@@ -342,7 +363,7 @@ namespace Midi
             Diminished
         };
 
-        private NoteFamily root;
+        private NoteFamily rootNoteFamily;
         private Pattern pattern;
         int inversion;
         int[] invertedSequence;

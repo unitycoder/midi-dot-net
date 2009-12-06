@@ -50,7 +50,6 @@
     <Compile Include="Example03.cs" />
     <Compile Include="Example06.cs" />
     <Compile Include="ExampleBase.cs" />
-    <Compile Include="Example07.cs" />
     <Compile Include="ExampleUtil.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

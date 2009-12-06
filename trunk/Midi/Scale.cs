@@ -225,24 +225,36 @@ namespace Midi
         }
 
         /// <summary>
-        /// The ascending sequence of notes in this scale.
+        /// The ascending sequence of note families in this scale.
         /// </summary>
-        public NoteFamily[] AscendingNotes
+        public NoteFamily[] AscendingNoteFamilies
         {
             get
             {
-                return ascendingNotes;
+                NoteFamily[] result = new NoteFamily[semitoneSequencePeak + 1];
+                for (int i = 0; i < result.Length; ++i)
+                {
+                    result[i] = (tonic + pattern.SemitoneSequence[i]).Wrapped();
+                }
+                return result;
             }
         }
 
         /// <summary>
-        /// The descending sequence of notes in this scale.
+        /// The descending sequence of note families in this scale.
         /// </summary>
-        public NoteFamily[] DescendingNotes
+        public NoteFamily[] DescendingNoteFamilies
         {
             get
             {
-                return descendingNotes;
+                NoteFamily[] result =
+                    new NoteFamily[pattern.SemitoneSequence.Length - semitoneSequencePeak];
+                for (int i = 0; i <= result.Length; ++i)
+                {
+                    result[i] =
+                        (tonic + pattern.SemitoneSequence[semitoneSequencePeak + i]).Wrapped();
+                }
+                return result;
             }
         }
 
@@ -345,8 +357,6 @@ namespace Midi
         private bool ComputeMasks()
         {
             int[] semitoneSequence = pattern.SemitoneSequence;
-            int numAscendingNotes = 2;
-            int numDescendingNotes = 2;
 
             // First make sure it's non-empty and starts at zero.
             if (semitoneSequence == null || semitoneSequence.Length == 0 ||
@@ -376,12 +386,12 @@ namespace Midi
                     if (semitoneSequence[i] == 12)
                     {
                         ascending = false;
+                        semitoneSequencePeak = i;
                     }
                     else
                     {
                         // Add this to the ascending mask.
                         ascendingMask[semitoneSequence[i]] = true;
-                        numAscendingNotes++;
                     }
                 }
                 else
@@ -409,32 +419,9 @@ namespace Midi
                     {
                         // Add this to the descending mask.
                         descendingMask[semitoneSequence[i]] = true;
-                        numDescendingNotes++;
                     }
                 }
             }
-
-            ascendingNotes = new NoteFamily[numAscendingNotes];
-            descendingNotes = new NoteFamily[numDescendingNotes];
-
-            int numAdded = 0;
-            for (int i = 0; i <= 12; ++i)
-            {
-                if (ascendingMask[i])
-                {
-                    ascendingNotes[numAdded++] = (NoteFamily)(tonic + i).Wrapped();
-                }
-            }
-
-            numAdded = 0;
-            for (int i = 12; i >= 0; --i)
-            {
-                if (descendingMask[i])
-                {
-                    descendingNotes[numAdded++] = (NoteFamily)(tonic + i).Wrapped();
-                }
-            }
-
             return true;
         }
 
@@ -442,7 +429,6 @@ namespace Midi
         private Pattern pattern;
         private bool[] ascendingMask;
         private bool[] descendingMask;
-        private NoteFamily[] ascendingNotes;
-        private NoteFamily[] descendingNotes;
+        private int semitoneSequencePeak;
     }
 }

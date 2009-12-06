@@ -29,75 +29,32 @@ using System.Collections.Generic;
 
 namespace MidiExamples
 {
+    /// <summary>
+    /// Simple drum machine.
+    /// </summary>
+    /// <remarks>
+    /// This example creates a simple drum machine controlled by the QWERTY keyboard and using
+    /// OutputDevice.SendPercussion().
+    /// </remarks>
     class Example03 : ExampleBase
     {
         public Example03()
             : base("Example03.cs", "Alphabetic keys play MIDI percussion sounds.")
         { }
 
-        // Key mappings for the first 26 MIDI percussion notes, used when Shift isn't pressed.
-        private static Dictionary<ConsoleKey, Percussion> unshiftedNotes =
-            new Dictionary<ConsoleKey, Percussion>
-        {
-            {ConsoleKey.Q, Percussion.BassDrum1},
-            {ConsoleKey.W, Percussion.BassDrum2},
-            {ConsoleKey.E, Percussion.SideStick},
-            {ConsoleKey.R, Percussion.SnareDrum1},
-            {ConsoleKey.T, Percussion.HandClap},
-            {ConsoleKey.Y, Percussion.SnareDrum2},
-            {ConsoleKey.U, Percussion.LowTom2},
-            {ConsoleKey.I, Percussion.ClosedHiHat},
-            {ConsoleKey.O, Percussion.LowTom1},
-            {ConsoleKey.P, Percussion.PedalHiHat},
-            {ConsoleKey.A, Percussion.MidTom2},
-            {ConsoleKey.S, Percussion.OpenHiHat},
-            {ConsoleKey.D, Percussion.MidTom1},
-            {ConsoleKey.F, Percussion.HighTom2},
-            {ConsoleKey.G, Percussion.CrashCymbal1},
-            {ConsoleKey.H, Percussion.HighTom1},
-            {ConsoleKey.J, Percussion.RideCymbal1},
-            {ConsoleKey.K, Percussion.ChineseCymbal},
-            {ConsoleKey.L, Percussion.RideBell},
-            {ConsoleKey.Z, Percussion.Tambourine},
-            {ConsoleKey.X, Percussion.SplashCymbal},
-            {ConsoleKey.C, Percussion.Cowbell},
-            {ConsoleKey.V, Percussion.CrashCymbal2},
-            {ConsoleKey.B, Percussion.VibraSlap},
-            {ConsoleKey.N, Percussion.RideCymbal2},
-            {ConsoleKey.M, Percussion.HighBongo}
+        // Defines QUERTY order so that the percussion sounds can map to the keyboard in
+        // that order.
+        private static ConsoleKey[] QwertyOrder  = new ConsoleKey[] {
+            ConsoleKey.Q, ConsoleKey.W, ConsoleKey.E, ConsoleKey.R, ConsoleKey.T, ConsoleKey.Y, 
+            ConsoleKey.U, ConsoleKey.I, ConsoleKey.O, ConsoleKey.P, ConsoleKey.A, ConsoleKey.S, 
+            ConsoleKey.D, ConsoleKey.F, ConsoleKey.G, ConsoleKey.H, ConsoleKey.J, ConsoleKey.K, 
+            ConsoleKey.L, ConsoleKey.Z, ConsoleKey.X, ConsoleKey.C, ConsoleKey.V, ConsoleKey.B, 
+            ConsoleKey.N, ConsoleKey.M 
         };
-
-        // Key mappings for the rest of the MIDI percussion notes, used when Shift is pressed.
-        private static Dictionary<ConsoleKey, Percussion> shiftedNotes =
-            new Dictionary<ConsoleKey, Percussion>
-        {
-            {ConsoleKey.Q, Percussion.LowBongo},
-            {ConsoleKey.W, Percussion.MuteHighConga},
-            {ConsoleKey.E, Percussion.OpenHighConga},
-            {ConsoleKey.R, Percussion.LowConga},
-            {ConsoleKey.T, Percussion.HighTimbale},
-            {ConsoleKey.Y, Percussion.LowTimbale},
-            {ConsoleKey.U, Percussion.HighAgogo},
-            {ConsoleKey.I, Percussion.LowAgogo},
-            {ConsoleKey.O, Percussion.Cabasa},
-            {ConsoleKey.P, Percussion.Maracas},
-            {ConsoleKey.A, Percussion.ShortWhistle},
-            {ConsoleKey.S, Percussion.LongWhistle},
-            {ConsoleKey.D, Percussion.ShortGuiro},
-            {ConsoleKey.F, Percussion.LongGuiro},
-            {ConsoleKey.G, Percussion.Claves},
-            {ConsoleKey.H, Percussion.HighWoodBlock},
-            {ConsoleKey.J, Percussion.LowWoodBlock},
-            {ConsoleKey.K, Percussion.MuteCuica},
-            {ConsoleKey.L, Percussion.OpenCuica},
-            {ConsoleKey.Z, Percussion.MuteTriangle},
-            {ConsoleKey.X, Percussion.OpenTriangle}
-             };
 
         public override void Run()
         {
-            // Utility function prompts user to choose an output device (or if there is only one,
-            // returns that one).
+            // Prompt the user to choose an output device (or if there is only one, use that one).
             OutputDevice outputDevice = ExampleUtil.ChooseOutputDeviceFromConsole();
             if (outputDevice == null)
             {
@@ -106,6 +63,21 @@ namespace MidiExamples
                 return;
             }
             outputDevice.Open();
+
+            // Generate two maps from console keys to percussion sounds: one for when alphabetic
+            // keys are pressed and one for when they're pressed with shift.
+            Dictionary<ConsoleKey, Percussion> unshiftedKeys =
+                new Dictionary<ConsoleKey, Percussion>();
+            Dictionary<ConsoleKey, Percussion> shiftedKeys =
+                new Dictionary<ConsoleKey, Percussion>();
+            for (int i = 0; i < 26; ++i)
+            {
+                unshiftedKeys[QwertyOrder[i]] = Percussion.BassDrum1 + i;
+                if (i < 20)
+                {
+                    shiftedKeys[QwertyOrder[i]] = Percussion.BassDrum1 + 26 + i;
+                }
+            }
 
             Console.WriteLine("Press alphabetic keys (with and without SHIFT) to play MIDI "+
                 "percussion sounds.");
@@ -121,18 +93,18 @@ namespace MidiExamples
                 }
                 else if ((keyInfo.Modifiers & ConsoleModifiers.Shift) != 0)
                 {
-                    if (shiftedNotes.ContainsKey(keyInfo.Key))
+                    if (shiftedKeys.ContainsKey(keyInfo.Key))
                     {
-                        Percussion note = shiftedNotes[keyInfo.Key];
+                        Percussion note = shiftedKeys[keyInfo.Key];
                         Console.Write("\rNote {0} ({1})         ", (int)note, note.Name());
                         outputDevice.SendPercussion(note, 90);
                     }
                 }
                 else
                 {
-                    if (unshiftedNotes.ContainsKey(keyInfo.Key))
+                    if (unshiftedKeys.ContainsKey(keyInfo.Key))
                     {
-                        Percussion note = unshiftedNotes[keyInfo.Key];
+                        Percussion note = unshiftedKeys[keyInfo.Key];
                         Console.Write("\rNote {0} ({1})         ", (int)note, note.Name());
                         outputDevice.SendPercussion(note, 90);
                     }
