@@ -169,7 +169,7 @@ namespace Midi
             {
                 CheckNotOpen();
                 CheckReturnCode(Win32API.midiInOpen(out handle, deviceId,
-                    new Win32API.MidiInProc(InputCallback), (UIntPtr)0));
+                    inputCallbackDelegate, (UIntPtr)0));
                 isOpen = true;
             }
         }
@@ -355,6 +355,7 @@ namespace Midi
         {
             this.deviceId = deviceId;
             this.caps = caps;
+            this.inputCallbackDelegate = new Win32API.MidiInProc(this.InputCallback);
             this.isOpen = false;
             this.clock = null;
         }
@@ -464,10 +465,13 @@ namespace Midi
         private static Object staticLock = new Object();
         private static InputDevice[] installedDevices = null;
 
-        // The fields initialized in the constructor never change after construction,
-        // so they don't need to be guarded by a lock.
+        // These fields initialized in the constructor never change after construction,
+        // so they don't need to be guarded by a lock.  We keep a reference to the
+        // callback delegate because we pass it to unmanaged code (midiInOpen) and unmanaged code
+        // cannot prevent the garbage collector from collecting the delegate.
         private UIntPtr deviceId;
         private Win32API.MIDIINCAPS caps;
+        private Win32API.MidiInProc inputCallbackDelegate;
 
         // Access to the Open/Close state is guarded by lock(this).
         private bool isOpen;
