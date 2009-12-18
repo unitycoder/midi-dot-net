@@ -43,24 +43,24 @@ namespace MidiExamples
             : base("Example02.cs", "Simple MIDI output example.")
         { }
 
-        void PlayRunUpKeyboard(OutputDevice outputDevice, Predicate<Note> predicate,
+        void PlayRunUpKeyboard(OutputDevice outputDevice, Predicate<Pitch> predicate,
             int millisecondsBetween)
         {
-            Note previousNote = (Note)(-1);
-            for (Note note = Note.A0; note < Note.C8; ++note)
+            Pitch previousNote = (Pitch)(-1);
+            for (Pitch pitch = Pitch.A0; pitch < Pitch.C8; ++pitch)
             {
-                if (predicate(note))
+                if (predicate(pitch))
                 {
-                    if (previousNote != (Note)(-1))
+                    if (previousNote != (Pitch)(-1))
                     {
                         outputDevice.SendNoteOff(Channel.Channel1, previousNote, 80);
                     }
-                    outputDevice.SendNoteOn(Channel.Channel1, note, 80);
+                    outputDevice.SendNoteOn(Channel.Channel1, pitch, 80);
                     Thread.Sleep(millisecondsBetween);
-                    previousNote = note;
+                    previousNote = pitch;
                 }
             }
-            if (previousNote != (Note)(-1))
+            if (previousNote != (Pitch)(-1))
             {
                 outputDevice.SendNoteOff(Channel.Channel1, previousNote, 80);
             }
@@ -82,11 +82,11 @@ namespace MidiExamples
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
             outputDevice.SendPitchBend(Channel.Channel1, 8192);
             // Play C, E, G in half second intervals.
-            outputDevice.SendNoteOn(Channel.Channel1, Note.C4, 80);
+            outputDevice.SendNoteOn(Channel.Channel1, Pitch.C4, 80);
             Thread.Sleep(500);
-            outputDevice.SendNoteOn(Channel.Channel1, Note.E4, 80);
+            outputDevice.SendNoteOn(Channel.Channel1, Pitch.E4, 80);
             Thread.Sleep(500);
-            outputDevice.SendNoteOn(Channel.Channel1, Note.G4, 80);
+            outputDevice.SendNoteOn(Channel.Channel1, Pitch.G4, 80);
             Thread.Sleep(500);
 
             // Now apply the sustain pedal.
@@ -94,9 +94,9 @@ namespace MidiExamples
 
             // Now release the C chord notes, but they should keep ringing because of the sustain
             // pedal.
-            outputDevice.SendNoteOff(Channel.Channel1, Note.C4, 80);
-            outputDevice.SendNoteOff(Channel.Channel1, Note.E4, 80);
-            outputDevice.SendNoteOff(Channel.Channel1, Note.G4, 80);
+            outputDevice.SendNoteOff(Channel.Channel1, Pitch.C4, 80);
+            outputDevice.SendNoteOff(Channel.Channel1, Pitch.E4, 80);
+            outputDevice.SendNoteOff(Channel.Channel1, Pitch.G4, 80);
 
             // Now bend the pitches down.
             for (int i = 0; i < 17; ++i)
@@ -112,20 +112,20 @@ namespace MidiExamples
 
             Console.WriteLine("Playing the first two bars of Mary Had a Little Lamb...");
             Clock clock = new Clock(120);
-            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 0));
-            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 1));
-            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.D4, 80, 1));
-            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.D4, 80, 2));
-            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.C4, 80, 2));
-            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.C4, 80, 3));
-            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.D4, 80, 3));
-            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.D4, 80, 4));
-            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 4));
-            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 5));
-            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 5));
-            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 6));
-            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Note.E4, 80, 6));
-            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Note.E4, 80, 7));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Pitch.E4, 80, 0));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Pitch.E4, 80, 1));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Pitch.D4, 80, 1));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Pitch.D4, 80, 2));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Pitch.C4, 80, 2));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Pitch.C4, 80, 3));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Pitch.D4, 80, 3));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Pitch.D4, 80, 4));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Pitch.E4, 80, 4));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Pitch.E4, 80, 5));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Pitch.E4, 80, 5));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Pitch.E4, 80, 6));
+            clock.Schedule(new NoteOnMessage(outputDevice, Channel.Channel1, Pitch.E4, 80, 6));
+            clock.Schedule(new NoteOffMessage(outputDevice, Channel.Channel1, Pitch.E4, 80, 7));
             clock.Start();
             Thread.Sleep(5000);
             clock.Stop();

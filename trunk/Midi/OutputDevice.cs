@@ -135,19 +135,19 @@ namespace Midi
         /// Sends a Note On message to this MIDI output device.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        /// <param name="note">The note.</param>
+        /// <param name="pitch">The pitch.</param>
         /// <param name="velocity">The velocity 0..127.</param>
-        /// <exception cref="ArgumentOutOfRangeException">channel, note, or velocity is
+        /// <exception cref="ArgumentOutOfRangeException">channel, pitch, or velocity is
         /// out-of-range.</exception>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The message cannot be sent.</exception>
-        public void SendNoteOn(Channel channel, Note note, int velocity)
+        public void SendNoteOn(Channel channel, Pitch pitch, int velocity)
         {
             lock (this)
             {
                 CheckOpen();
                 CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOn(channel,
-                    note, velocity)));
+                    pitch, velocity)));
             }
         }
 
@@ -155,19 +155,19 @@ namespace Midi
         /// Sends a Note Off message to this MIDI output device.
         /// </summary>
         /// <param name="channel">The channel.</param>
-        /// <param name="note">The note.</param>
+        /// <param name="pitch">The pitch.</param>
         /// <param name="velocity">The velocity 0..127.</param>
         /// <exception cref="ArgumentOutOfRangeException">channel, note, or velocity is
         /// out-of-range.</exception>
         /// <exception cref="InvalidOperationException">The device is not open.</exception>
         /// <exception cref="DeviceException">The message cannot be sent.</exception>
-        public void SendNoteOff(Channel channel, Note note, int velocity)
+        public void SendNoteOff(Channel channel, Pitch pitch, int velocity)
         {
             lock (this)
             {
                 CheckOpen();
                 CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOff(channel,
-                    note, velocity)));
+                    pitch, velocity)));
             }
         }
 
@@ -189,7 +189,7 @@ namespace Midi
             {
                 CheckOpen();
                 CheckReturnCode(Win32API.midiOutShortMsg(handle, ShortMsg.EncodeNoteOn(
-                    Channel.Channel10, (Note)percussion,
+                    Channel.Channel10, (Pitch)percussion,
                     velocity)));
             }
         }

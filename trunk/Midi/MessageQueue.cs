@@ -51,7 +51,7 @@ namespace Midi
         {
             // If the list is empty or message is later than any message we already have, we can add this
             // as a new timeslice to the end.
-            if (IsEmpty || message.BeatTime > messages.Last.Value[0].BeatTime)
+            if (IsEmpty || message.Time > messages.Last.Value[0].Time)
             {
                 List<Message> timeslice = new List<Message>();
                 timeslice.Add(message);
@@ -60,16 +60,16 @@ namespace Midi
             }
             // We need to scan through the list to find where this should be inserted.
             LinkedListNode<List<Message>> node = messages.Last;
-            while (node.Previous != null && node.Value[0].BeatTime > message.BeatTime) {
+            while (node.Previous != null && node.Value[0].Time > message.Time) {
                 node = node.Previous;
             }
             // At this point, node refers to a LinkedListNode which either has the correct
             // timestamp, or else a new timeslice needs to be added before or after node.
-            if (node.Value[0].BeatTime < message.BeatTime) {
+            if (node.Value[0].Time < message.Time) {
                 List<Message> timeslice = new List<Message>();
                 timeslice.Add(message);
                 messages.AddAfter(node, timeslice);
-            } else if (node.Value[0].BeatTime > message.BeatTime) {
+            } else if (node.Value[0].Time > message.Time) {
                 List<Message> timeslice = new List<Message>();
                 timeslice.Add(message);
                 messages.AddBefore(node, timeslice);
@@ -109,7 +109,7 @@ namespace Midi
                 {
                     throw new InvalidOperationException("queue is empty");
                 }
-                return messages.First.Value[0].BeatTime;
+                return messages.First.Value[0].Time;
             }
         }
 

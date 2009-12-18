@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MidiExamples", "MidiExample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midi", "Midi\Midi.csproj", "{F60D8B7B-2D2E-4B94-A736-3783FFE1A25C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MidiUnitTests", "MidiUnitTests\MidiUnitTests.csproj", "{EFE2A922-4927-4D76-ADC6-983D44B2FD4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{F60D8B7B-2D2E-4B94-A736-3783FFE1A25C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F60D8B7B-2D2E-4B94-A736-3783FFE1A25C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F60D8B7B-2D2E-4B94-A736-3783FFE1A25C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFE2A922-4927-4D76-ADC6-983D44B2FD4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFE2A922-4927-4D76-ADC6-983D44B2FD4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFE2A922-4927-4D76-ADC6-983D44B2FD4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFE2A922-4927-4D76-ADC6-983D44B2FD4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
