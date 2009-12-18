@@ -34,10 +34,10 @@ namespace Midi
     /// </summary>
     /// <remarks>
     /// <para>This enum is simply for making interval operations more explicit.  When adding to or
-    /// subtracting from the <see cref="Note"/> enum, one can either use ints...</para>
-    /// <code>Note n = Note.C4 + 5;</code>
+    /// subtracting from the <see cref="Pitch"/> enum, one can either use ints...</para>
+    /// <code>Pitch p = Pitch.C4 + 5;</code>
     /// <para>...or use the Interval enum, cast to int...</para>
-    /// <code>Note n = Note.C4 + (int)Interval.PerfectFourth;</code>
+    /// <code>Pitch p = Pitch.C4 + (int)Interval.PerfectFourth;</code>
     /// <para>These two examples are equivalent.  The benefit of the latter is simply that it makes
     /// the intention more explicit.</para>
     /// <para>This enum has extension methods, such as <see cref="IntervalExtensionMethods.Name"/>,

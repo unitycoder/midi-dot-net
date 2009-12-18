@@ -91,7 +91,7 @@ namespace Midi
         /// <param name="beatsPerMinute">The initial beats-per-minute, which can be changed later.
         /// </param>
         /// <remarks>
-        /// <para>When constructed, the clock is not running, and so <see cref="BeatTime"/> will
+        /// <para>When constructed, the clock is not running, and so <see cref="Time"/> will
         /// return zero.  Call <see cref="Start"/> when you are ready for the clock to start
         /// progressing (and scheduled messages to actually trigger).
         /// </para>
@@ -131,11 +131,11 @@ namespace Midi
         /// method or a <see cref="CallbackMessage"/>), it returns the precise time at which the
         /// message was scheduled.</para>
         /// <para>For example, suppose a callback was scheduled for time T, and the scheduler
-        /// managed to call that callback at time T+delta.  In the callback, BeatTime will
-        /// return T for the duration of the callback.  In any other thread, BeatTime would
+        /// managed to call that callback at time T+delta.  In the callback, Time will
+        /// return T for the duration of the callback.  In any other thread, Time would
         /// return approximately T+delta.</para>
         /// </remarks>
-        public float BeatTime
+        public float Time
         {
             get
             {
@@ -344,7 +344,7 @@ namespace Midi
         /// <param name="message">The message to schedule.</param>
         /// <remarks>
         /// <para>This method schedules a message to be sent at the time indicated in the message's
-        /// <see cref="Message.BeatTime"/> property.  It may be called at any time, whether
+        /// <see cref="Message.Time"/> property.  It may be called at any time, whether
         /// the clock is running or not.  The message will not be sent until the clock progresses
         /// to the specified time.  (If the clock is never started, or is paused before that time
         /// and not re-started, then the message will never be sent.)</para>
@@ -429,14 +429,7 @@ namespace Midi
                             List<Message> timeslice = threadMessageQueue.PopEarliest();
                             foreach (Message message in timeslice)
                             {
-                                Message[] moreMessages = message.SendNow();
-                                if (moreMessages != null)
-                                {
-                                    foreach (Message message2 in moreMessages)
-                                    {
-                                        threadMessageQueue.AddMessage(message2);
-                                    }
-                                }
+                                message.SendNow();
                             }
                         }
                     }

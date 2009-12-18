@@ -34,7 +34,7 @@
         <dd>The message to schedule.</dd>
       </dl>
       <h4 class="dtH4">Remarks</h4>
-      <p>This method schedules a message to be sent at the time indicated in the message's <a href="Midi~Midi.Message.BeatTime.html">BeatTime</a> property. It may be called at any time, whether the clock is running or not. The message will not be sent until the clock progresses to the specified time. (If the clock is never started, or is paused before that time and not re-started, then the message will never be sent.)</p>
+      <p>This method schedules a message to be sent at the time indicated in the message's <a href="Midi~Midi.Message.Time.html">Time</a> property. It may be called at any time, whether the clock is running or not. The message will not be sent until the clock progresses to the specified time. (If the clock is never started, or is paused before that time and not re-started, then the message will never be sent.)</p>
       <p>If a message is scheduled for a time that has already passed, then the scheduler will send the message at the first opportunity.</p>
       <h4 class="dtH4">See Also</h4>
       <p>

@@ -28,480 +28,218 @@ using System.Linq;
 using System.Text;
 
 namespace Midi
-{
+{    
     /// <summary>
-    /// MIDI Notes.
+    /// A letter and accidental, which together form an octave-independent note name.
     /// </summary>
     /// <remarks>
-    /// <para>MIDI defines 127 distinct notes, in semitone intervals, ranging from C five octaves
-    /// below middle C, up to G five octaves above middle C.  This covers several octaves above and
-    /// below the range of a normal 88-key piano.</para>
-    /// <para>These 127 notes are the only ones directly expressible in MIDI. Precise
-    /// variations in frequency can be achieved with <see cref="OutputDevice.SendPitchBend">Pitch
-    /// Bend</see> messages, though Pitch Bend messages apply to the whole channel at once.</para>
-    /// <para>In this enum, each note name includes the letter name, followed by Sharp if
-    /// necessary, followed by the octave number, where octaves are numbered with standard piano
-    /// terminology: Middle C is in octave four.  Thus octaves range from -1 to 9.  (This is
-    /// different from "MIDI octaves", which range from -5 to 5.)</para>
-    /// <para>This enum has extension methods, such as <see cref="NoteExtensionMethods.Name"/> and
-    /// <see cref="NoteExtensionMethods.IsValid"/>, defined in <see cref="NoteExtensionMethods"/>.
-    /// </para>
+    /// <para>This class lets you define a note name by combining a letters A-G with accidentals
+    /// (sharps and flats).  Examples of names are D, B#, and Gbb.  This is the conventional
+    /// way to refer to notes in an octave independent way.</para>
+    /// <para>Each name unambiguously identifies a note (modulo octave), but each note has
+    /// potentially many names.  For example, the names F, E#, D###, and Gbb all refer to the
+    /// same note, though the last two names are unlikely to be used in practice.</para>
     /// </remarks>
-    /// <seealso cref="Note"/>
-    /// <seealso cref="Interval"/>
-    public enum Note
+    public struct Note
     {
-        /// <summary>C in octave -1.</summary>
-        CNeg1 = 0,
-        /// <summary>C# in octave -1.</summary>
-        CSharpNeg1 = 1,
-        /// <summary>D in octave -1.</summary>
-        DNeg1 = 2,
-        /// <summary>D# in octave -1.</summary>
-        DSharpNeg1 = 3,
-        /// <summary>E in octave -1.</summary>
-        ENeg1 = 4,
-        /// <summary>F in octave -1.</summary>
-        FNeg1 = 5,
-        /// <summary>F# in octave -1.</summary>
-        FSharpNeg1 = 6,
-        /// <summary>G in octave -1.</summary>
-        GNeg1 = 7,
-        /// <summary>G# in octave -1.</summary>
-        GSharpNeg1 = 8,
-        /// <summary>A in octave -1.</summary>
-        ANeg1 = 9,
-        /// <summary>A# in octave -1.</summary>
-        ASharpNeg1 = 10,
-        /// <summary>B in octave -1.</summary>
-        BNeg1 = 11,
+        /// <summary>Double-flat accidental value.</summary>
+        public static int DoubleFlat = -2;
 
-        /// <summary>C in octave 0.</summary>
-        C0 = 12,
-        /// <summary>C# in octave 0.</summary>
-        CSharp0 = 13,
-        /// <summary>D in octave 0.</summary>
-        D0 = 14,
-        /// <summary>D# in octave 0.</summary>
-        DSharp0 = 15,
-        /// <summary>E in octave 0.</summary>
-        E0 = 16,
-        /// <summary>F in octave 0.</summary>
-        F0 = 17,
-        /// <summary>F# in octave 0.</summary>
-        FSharp0 = 18,
-        /// <summary>G in octave 0.</summary>
-        G0 = 19,
-        /// <summary>G# in octave 0.</summary>
-        GSharp0 = 20,
-        /// <summary>A in octave 0.</summary>
-        A0 = 21,
-        /// <summary>A# in octave 0, usually the lowest key on an 88-key keyboard.</summary>
-        ASharp0 = 22,
-        /// <summary>B in octave 0.</summary>
-        B0 = 23,
+        /// <summary>Flat accidental value.</summary>
+        public static int Flat = -1;
 
-        /// <summary>C in octave 1.</summary>
-        C1 = 24,
-        /// <summary>C# in octave 1.</summary>
-        CSharp1 = 25,
-        /// <summary>D in octave 1.</summary>
-        D1 = 26,
-        /// <summary>D# in octave 1.</summary>
-        DSharp1 = 27,
-        /// <summary>E in octave 1.</summary>
-        E1 = 28,
-        /// <summary>F in octave 1.</summary>
-        F1 = 29,
-        /// <summary>F# in octave 1.</summary>
-        FSharp1 = 30,
-        /// <summary>G in octave 1.</summary>
-        G1 = 31,
-        /// <summary>G# in octave 1.</summary>
-        GSharp1 = 32,
-        /// <summary>A in octave 1.</summary>
-        A1 = 33,
-        /// <summary>A# in octave 1.</summary>
-        ASharp1 = 34,
-        /// <summary>B in octave 1.</summary>
-        B1 = 35,
+        /// <summary>Natural accidental value.</summary>
+        public static int Natural = 0;
 
-        /// <summary>C in octave 2.</summary>
-        C2 = 36,
-        /// <summary>C# in octave 2.</summary>
-        CSharp2 = 37,
-        /// <summary>D in octave 2.</summary>
-        D2 = 38,
-        /// <summary>D# in octave 2.</summary>
-        DSharp2 = 39,
-        /// <summary>E in octave 2.</summary>
-        E2 = 40,
-        /// <summary>F in octave 2.</summary>
-        F2 = 41,
-        /// <summary>F# in octave 2.</summary>
-        FSharp2 = 42,
-        /// <summary>G in octave 2.</summary>
-        G2 = 43,
-        /// <summary>G# in octave 2.</summary>
-        GSharp2 = 44,
-        /// <summary>A in octave 2.</summary>
-        A2 = 45,
-        /// <summary>A# in octave 2.</summary>
-        ASharp2 = 46,
-        /// <summary>B in octave 2.</summary>
-        B2 = 47,
+        /// <summary>Sharp accidental value.</summary>
+        public static int Sharp = 1;
 
-        /// <summary>C in octave 3.</summary>
-        C3 = 48,
-        /// <summary>C# in octave 3.</summary>
-        CSharp3 = 49,
-        /// <summary>D in octave 3.</summary>
-        D3 = 50,
-        /// <summary>D# in octave 3.</summary>
-        DSharp3 = 51,
-        /// <summary>E in octave 3.</summary>
-        E3 = 52,
-        /// <summary>F in octave 3.</summary>
-        F3 = 53,
-        /// <summary>F# in octave 3.</summary>
-        FSharp3 = 54,
-        /// <summary>G in octave 3.</summary>
-        G3 = 55,
-        /// <summary>G# in octave 3.</summary>
-        GSharp3 = 56,
-        /// <summary>A in octave 3.</summary>
-        A3 = 57,
-        /// <summary>A# in octave 3.</summary>
-        ASharp3 = 58,
-        /// <summary>B in octave 3.</summary>
-        B3 = 59,
-
-        /// <summary>C in octave 4, also known as Middle C.</summary>
-        C4 = 60,
-        /// <summary>C# in octave 4.</summary>
-        CSharp4 = 61,
-        /// <summary>D in octave 4.</summary>
-        D4 = 62,
-        /// <summary>D# in octave 4.</summary>
-        DSharp4 = 63,
-        /// <summary>E in octave 4.</summary>
-        E4 = 64,
-        /// <summary>F in octave 4.</summary>
-        F4 = 65,
-        /// <summary>F# in octave 4.</summary>
-        FSharp4 = 66,
-        /// <summary>G in octave 4.</summary>
-        G4 = 67,
-        /// <summary>G# in octave 4.</summary>
-        GSharp4 = 68,
-        /// <summary>A in octave 4.</summary>
-        A4 = 69,
-        /// <summary>A# in octave 4.</summary>
-        ASharp4 = 70,
-        /// <summary>B in octave 4.</summary>
-        B4 = 71,
-
-        /// <summary>C in octave 5.</summary>
-        C5 = 72,
-        /// <summary>C# in octave 5.</summary>
-        CSharp5 = 73,
-        /// <summary>D in octave 5.</summary>
-        D5 = 74,
-        /// <summary>D# in octave 5.</summary>
-        DSharp5 = 75,
-        /// <summary>E in octave 5.</summary>
-        E5 = 76,
-        /// <summary>F in octave 5.</summary>
-        F5 = 77,
-        /// <summary>F# in octave 5.</summary>
-        FSharp5 = 78,
-        /// <summary>G in octave 5.</summary>
-        G5 = 79,
-        /// <summary>G# in octave 5.</summary>
-        GSharp5 = 80,
-        /// <summary>A in octave 5.</summary>
-        A5 = 81,
-        /// <summary>A# in octave 5.</summary>
-        ASharp5 = 82,
-        /// <summary>B in octave 5.</summary>
-        B5 = 83,
-
-        /// <summary>C in octave 6.</summary>
-        C6 = 84,
-        /// <summary>C# in octave 6.</summary>
-        CSharp6 = 85,
-        /// <summary>D in octave 6.</summary>
-        D6 = 86,
-        /// <summary>D# in octave 6.</summary>
-        DSharp6 = 87,
-        /// <summary>E in octave 6.</summary>
-        E6 = 88,
-        /// <summary>F in octave 6.</summary>
-        F6 = 89,
-        /// <summary>F# in octave 6.</summary>
-        FSharp6 = 90,
-        /// <summary>G in octave 6.</summary>
-        G6 = 91,
-        /// <summary>G# in octave 6.</summary>
-        GSharp6 = 92,
-        /// <summary>A in octave 6.</summary>
-        A6 = 93,
-        /// <summary>A# in octave 6.</summary>
-        ASharp6 = 94,
-        /// <summary>B in octave 6.</summary>
-        B6 = 95,
-
-        /// <summary>C in octave 7.</summary>
-        C7 = 96,
-        /// <summary>C# in octave 7.</summary>
-        CSharp7 = 97,
-        /// <summary>D in octave 7.</summary>
-        D7 = 98,
-        /// <summary>D# in octave 7.</summary>
-        DSharp7 = 99,
-        /// <summary>E in octave 7.</summary>
-        E7 = 100,
-        /// <summary>F in octave 7.</summary>
-        F7 = 101,
-        /// <summary>F# in octave 7.</summary>
-        FSharp7 = 102,
-        /// <summary>G in octave 7.</summary>
-        G7 = 103,
-        /// <summary>G# in octave 7.</summary>
-        GSharp7 = 104,
-        /// <summary>A in octave 7.</summary>
-        A7 = 105,
-        /// <summary>A# in octave 7.</summary>
-        ASharp7 = 106,
-        /// <summary>B in octave 7.</summary>
-        B7 = 107,
-
-        /// <summary>C in octave 8, usually the highest key on an 88-key keyboard.</summary>
-        C8 = 108,
-        /// <summary>C# in octave 8.</summary>
-        CSharp8 = 109,
-        /// <summary>D in octave 8.</summary>
-        D8 = 110,
-        /// <summary>D# in octave 8.</summary>
-        DSharp8 = 111,
-        /// <summary>E in octave 8.</summary>
-        E8 = 112,
-        /// <summary>F in octave 8.</summary>
-        F8 = 113,
-        /// <summary>F# in octave 8.</summary>
-        FSharp8 = 114,
-        /// <summary>G in octave 8.</summary>
-        G8 = 115,
-        /// <summary>G# in octave 8.</summary>
-        GSharp8 = 116,
-        /// <summary>A in octave 8.</summary>
-        A8 = 117,
-        /// <summary>A# in octave 8.</summary>
-        ASharp8 = 118,
-        /// <summary>B in octave 8.</summary>
-        B8 = 119,
-
-        /// <summary>C in octave 9.</summary>
-        C9 = 120,
-        /// <summary>C# in octave 9.</summary>
-        CSharp9 = 121,
-        /// <summary>D in octave 9.</summary>
-        D9 = 122,
-        /// <summary>D# in octave 9.</summary>
-        DSharp9 = 123,
-        /// <summary>E in octave 9.</summary>
-        E9 = 124,
-        /// <summary>F in octave 9.</summary>
-        F9 = 125,
-        /// <summary>F# in octave 9.</summary>
-        FSharp9 = 126,
-        /// <summary>G in octave 9.</summary>
-        G9 = 127
-    }
-
-    /// <summary>
-    /// Extension methods for the Note enum.
-    /// </summary>
-    public static class NoteExtensionMethods
-    {
-        /// <summary>
-        /// Returns true if note is valid.
-        /// </summary>
-        /// <param name="note">The note to test.</param>
-        /// <returns>True if the note is valid.</returns>
-        public static bool IsValid(this Note note)
-        {
-            return (int)note >= 0 && (int)note < 128;
-        }
+        /// <summary>Double-sharp accidental value.</summary>
+        public static int DoubleSharp = 2;
 
         /// <summary>
-        /// Throws an exception if note is invalid.
+        /// Constructs a note name from a letter.
         /// </summary>
-        /// <param name="note">The note to validate.</param>
-        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
-        public static void Validate(this Note note)
+        /// <param name="letter">The letter, which must be in ['A'..'G'].</param>
+        /// <exception cref="ArgumentOutOfRangeException">letter is out of range.</exception>
+        public Note(char letter) : this(letter, Natural) { }
+
+        /// <summary>
+        /// Constructs a note name from a letter and accidental.
+        /// </summary>
+        /// <param name="letter">The letter, which must be in ['A'..'G'].</param>
+        /// <param name="accidental">The accidental.  Zero means natural, positive values are
+        /// sharp by that many semitones, and negative values are flat by that many semitones.
+        /// Likely values are <see cref="Natural"/> (0), <see cref="Sharp"/> (1),
+        /// <see cref="DoubleSharp"/> (2), <see cref="Flat"/> (-1), and <see cref="DoubleFlat"/>
+        /// (-2).</param>
+        /// <exception cref="ArgumentOutOfRangeException">letter is out of range.</exception>
+        public Note(char letter, int accidental)
         {
-            if (!note.IsValid())
+            if (letter < 'A' || letter > 'G')
             {
-                throw new ArgumentOutOfRangeException("Note out of range");
+                throw new ArgumentOutOfRangeException("letter out of range.");
             }
+            this.letter = letter;
+            this.accidental = accidental;
+            this.positionInOctave = (LetterToNote[letter - 'A'] + accidental).PositionInOctave();
         }
 
-        /// <summary>
-        /// Returns the octave number of the given note.
-        /// </summary>
-        /// <param name="note">The note.</param>
-        /// <returns>The octave.  For example, "C4"'s octave is 4.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
-        public static int Octave(this Note note)
-        {
-            note.Validate();
-            return (int)note / 12 - 1;
-        }
+        /// <summary>The letter for this note name, in ['A'..'G'].</summary>
+        public char Letter { get { return letter; } }
+
+        /// <summary>The accidental for this note name.</summary>
+        /// <remarks>
+        /// <para>Zero means natural, positive values are
+        /// sharp by that many semitones, and negative values are flat by that many semitones.
+        /// Likely values are <see cref="Natural"/> (0), <see cref="Sharp"/> (1),
+        /// <see cref="DoubleSharp"/> (2), <see cref="Flat"/> (-1), and <see cref="DoubleFlat"/>
+        /// (-2).</para>
+        /// </remarks>
+        public int Accidental { get { return accidental; } }
+
+        /// <summary>This note's position in the octave, where octaves start at each C.</summary>
+        public int PositionInOctave { get { return positionInOctave; } }
 
         /// <summary>
-        /// Returns the name of the specified note.
+        /// ToString returns the note name.
         /// </summary>
-        /// <param name="note">The note.</param>
-        /// <returns>The note's name.  For example, note 60 is "C4", and note 61 is "C#4".</returns>
-        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
-        public static string Name(this Note note)
+        /// <returns>The note name with '#' for sharp and 'b' for flat.  For example, "G", "A#",
+        /// "Cb", "Fbb".</returns>
+        public override string ToString()
         {
-            note.Validate();
-            return note.Family().Name() + note.Octave().ToString();
-        }
-
-        /// <summary>
-        /// Returns the family of the specified note.
-        /// </summary>
-        /// <param name="note">The note.</param>
-        /// <returns>The note's family.  For example, C4's family is C.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">The note is out-of-range.</exception>
-        public static NoteFamily Family(this Note note)
-        {
-            note.Validate();
-            return (NoteFamily)((int)note % 12);
-        }
-
-        /// <summary>
-        /// Returns the number of semitones that note is above tonic.
-        /// </summary>
-        /// <param name="note">The note.</param>
-        /// <param name="tonic">The tonic.</param>
-        /// <returns>The number of semitones, always in [0..11].</returns>
-        public static int SemitonesAbove(this Note note, NoteFamily tonic)
-        {
-            int result = ((int)note % 12 - (int)tonic);
-            if (result < 0)
+            if (accidental > 0)
             {
-                result += 12;
+                return new string(letter, 1) + new string('#', accidental);
             }
-            return result;
-        }
-    }
-
-    /// <summary>
-    /// MIDI Note Families.
-    /// </summary>
-    /// <remarks>
-    /// <para>A note's "family" is simply the note's name without regard to the specific octave.
-    /// So, for example, CSharp3, CSharp4, and CSharp5 are all part of the CSharp note family.
-    /// This enum lets us talk about the function or role of a note independent of the
-    /// particular octave.
-    /// </para>
-    /// <para>This enum has extension methods, such as <see cref="NoteFamilyExtensionMethods.Name"/>
-    /// and <see cref="NoteFamilyExtensionMethods.IsValid"/>, defined in
-    /// <see cref="NoteFamilyExtensionMethods"/>.
-    /// </para>
-    /// </remarks>
-    /// <seealso cref="Note"/>
-    public enum NoteFamily
-    {
-        /// <summary>Note Family "C"</summary>
-        C = 0,
-        /// <summary>Note Family "C#"</summary>
-        CSharp = 1,
-        /// <summary>Note Family "D"</summary>
-        D = 2,
-        /// <summary>Note Family "D#"</summary>
-        DSharp = 3,
-        /// <summary>Note Family "E"</summary>
-        E = 4,
-        /// <summary>Note Family "F"</summary>
-        F = 5,
-        /// <summary>Note Family "F#"</summary>
-        FSharp = 6,
-        /// <summary>Note Family "G"</summary>
-        G = 7,
-        /// <summary>Note Family "G#"</summary>
-        GSharp = 8,
-        /// <summary>Note Family "A"</summary>
-        A = 9,
-        /// <summary>Note Family "A#"</summary>
-        ASharp = 10,
-        /// <summary>Note Family "B"</summary>
-        B = 11
-    }
-
-    /// <summary>
-    /// Extension methods for the NoteFamily enum.
-    /// </summary>
-    public static class NoteFamilyExtensionMethods
-    {
-        /// <summary>
-        /// Returns true if the specified note family is valid.
-        /// </summary>
-        /// <param name="family">The family to test.</param>
-        public static bool IsValid(this NoteFamily family)
-        {
-            return (int)family >= 0 && (int)family < 12;
-        }
-
-        /// <summary>
-        /// Returns a copy of family which is made valid by wrapping if necessary.
-        /// </summary>
-        /// <param name="family">The family to wrap.</param>
-        /// <returns>The wrapped copy of family.</returns>
-        public static NoteFamily Wrapped(this NoteFamily family)
-        {
-            if ((int)family < 0)
+            else if (accidental < 0)
             {
-                return (NoteFamily)(11 - ((-(int)family - 1) % 12));
+                return new string(letter, 1) + new string('b', -accidental);
             }
             else
             {
-                return (NoteFamily)((int)family % 12);
+                return new string(letter, 1);
             }
         }
 
         /// <summary>
-        /// Throws an exception if family is not valid.
+        /// Returns true if this note name is enharmonic with otherNote.
         /// </summary>
-        /// <param name="family">The family to validate.</param>
-        /// <exception cref="ArgumentOutOfRangeException">The family is out-of-range.</exception>
-        public static void Validate(this NoteFamily family)
+        /// <param name="otherNote">Another note.</param>
+        /// <returns>True if the names can refer to the same pitch.</returns>
+        public bool IsEharmonicWith(Note otherNote)
         {
-            if (!family.IsValid())
+            return this.positionInOctave == otherNote.positionInOctave;
+        }
+
+        /// <summary>
+        /// Returns the pitch for this note in the specified octave.
+        /// </summary>
+        /// <param name="octave">The octave, where octaves begin at each C and Middle C is the
+        /// first note in octave 4.</param>
+        /// <returns>The pitch with this name in the specified octave.</returns>
+        public Pitch PitchInOctave(int octave)
+        {
+            return (Pitch)(positionInOctave + 12 * (octave + 1));
+        }
+
+        /// <summary>
+        /// Returns the pitch for this note that is at or above nearPitch.
+        /// </summary>
+        /// <param name="nearPitch">The pitch from which the search is based.</param>
+        /// <returns>The pitch for this note at or above nearPitch.</returns>
+        public Pitch PitchAtOrAbove(Pitch nearPitch)
+        {
+            int semitoneDelta = positionInOctave - nearPitch.PositionInOctave();
+            if (semitoneDelta < 0)
             {
-                throw new ArgumentOutOfRangeException("NoteFamily out of range");
+                semitoneDelta += 12;
             }
+            return nearPitch + semitoneDelta;
         }
 
         /// <summary>
-        /// Table of note family names.
+        /// Returns the pitch for this note that is at or below nearPitch.
         /// </summary>
-        private static string[] NoteFamilyNames =
-            new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-
-        /// <summary>
-        /// Returns the human-readable name of a note family.
-        /// </summary>
-        /// <param name="family">The family.</param>
-        /// <exception cref="ArgumentOutOfRangeException">The family is out-of-range.</exception>
-        public static string Name(this NoteFamily family)
+        /// <param name="nearPitch">The pitch from which the search is based.</param>
+        /// <returns>The pitch for this note at or below nearPitch.</returns>
+        public Pitch PitchAtOrBelow(Pitch nearPitch)
         {
-            family.Validate();
-            return NoteFamilyNames[(int)family];
+            int semitoneDelta = positionInOctave - nearPitch.PositionInOctave();
+            if (semitoneDelta > 0)
+            {
+                semitoneDelta -= 12;
+            }
+            return nearPitch + semitoneDelta;
         }
+
+        /// <summary>
+        /// Returns the number of semitones it takes to move up to the next otherNote.
+        /// </summary>
+        /// <param name="otherNote">The other note.</param>
+        /// <returns>The number of semitones.</returns>
+        public int SemitonesUpTo(Note otherNote)
+        {
+            int semitoneDelta = otherNote.positionInOctave - positionInOctave;
+            if (semitoneDelta < 0)
+            {
+                semitoneDelta += 12;
+            }
+            return semitoneDelta;
+        }
+
+        /// <summary>
+        /// Returns the number of semitones it takes to move down to the next otherNote.
+        /// </summary>
+        /// <param name="otherNote">The other note.</param>
+        /// <returns>The number of semitones.</returns>
+        public int SemitonesDownTo(Note otherNote)
+        {
+            int semitoneDelta = positionInOctave - otherNote.positionInOctave;
+            if (semitoneDelta < 0)
+            {
+                semitoneDelta += 12;
+            }
+            return semitoneDelta;
+        }
+
+        /// <summary>Equality operator does value comparison.</summary>
+        public static bool operator ==(Note a, Note b) { return a.Equals(b); }
+
+        /// <summary>Inequality operator does value comparison.</summary>
+        public static bool operator !=(Note a, Note b) { return !a.Equals(b); }
+
+        /// <summary>
+        /// Value equality for Note.
+        /// </summary>
+        public override bool Equals(System.Object obj)
+        {
+            if (!(obj is Note))
+            {
+                return false;
+            }
+            Note other = (Note)obj;
+            return this.letter == other.letter && this.accidental == other.accidental;
+        }
+
+        /// <summary>
+        /// Hash code.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return this.letter.GetHashCode() + this.accidental.GetHashCode();
+        }
+
+        /// <summary>
+        /// Table mapping (letter-'A') to the Note in octave -1, used to compute positionInOctave.
+        /// </summary>
+        private static Pitch[] LetterToNote = new Pitch[] {
+            Pitch.ANeg1, Pitch.BNeg1, Pitch.CNeg1, Pitch.DNeg1, Pitch.ENeg1, Pitch.FNeg1,
+            Pitch.GNeg1
+        };
+
+        private char letter;
+        int accidental;
+        private int positionInOctave;
     }
 }

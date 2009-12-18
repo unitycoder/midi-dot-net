@@ -47,7 +47,7 @@ namespace Midi
     /// </para>
     /// <para>As each message is received, it is assigned a timestamp in one of two ways.  If
     /// <see cref="StartReceiving"/> is called with a <see cref="Clock"/>, then each message is
-    /// assigned a time by querying the clock's <see cref="Clock.BeatTime"/> property.  If
+    /// assigned a time by querying the clock's <see cref="Clock.Time"/> property.  If
     /// <see cref="StartReceiving"/> is called with null, then each message is assigned a time
     /// based on the number of seconds since <see cref="StartReceiving"/> was called.</para>
     /// </remarks>
@@ -215,7 +215,7 @@ namespace Midi
         /// <summary>
         /// Starts this input device receiving messages.
         /// </summary>
-        /// <param name="clock">If non-null, the clock's <see cref="Clock.BeatTime"/> property will
+        /// <param name="clock">If non-null, the clock's <see cref="Clock.Time"/> property will
         /// be used to assign a timestamp to each incoming message.  If null, timestamps will be in
         /// seconds since StartReceiving() was called.</param>
         /// <exception cref="InvalidOperationException">The device is not open or is already
@@ -389,7 +389,7 @@ namespace Midi
                 if (wMsg == Win32API.MidiInMessage.MIM_DATA)
                 {
                     Channel channel;
-                    Note note;
+                    Pitch pitch;
                     int velocity;
                     Control control;
                     int value;
@@ -399,20 +399,20 @@ namespace Midi
                     {
                         if (NoteOn != null)
                         {
-                            ShortMsg.DecodeNoteOn(dwParam1, dwParam2, out channel, out note,
+                            ShortMsg.DecodeNoteOn(dwParam1, dwParam2, out channel, out pitch,
                                 out velocity, out win32Timestamp);
-                            NoteOn(new NoteOnMessage(this, channel, note, velocity,
-                                clock == null ? win32Timestamp/1000f : clock.BeatTime));
+                            NoteOn(new NoteOnMessage(this, channel, pitch, velocity,
+                                clock == null ? win32Timestamp/1000f : clock.Time));
                         }
                     }
                     else if (ShortMsg.IsNoteOff(dwParam1, dwParam2))
                     {
                         if (NoteOff != null)
                         {
-                            ShortMsg.DecodeNoteOff(dwParam1, dwParam2, out channel, out note,
+                            ShortMsg.DecodeNoteOff(dwParam1, dwParam2, out channel, out pitch,
                                 out velocity, out win32Timestamp);
-                            NoteOff(new NoteOffMessage(this, channel, note, velocity,
-                                clock == null ? win32Timestamp / 1000f : clock.BeatTime));
+                            NoteOff(new NoteOffMessage(this, channel, pitch, velocity,
+                                clock == null ? win32Timestamp / 1000f : clock.Time));
                         }
                     }
                     else if (ShortMsg.IsControlChange(dwParam1, dwParam2))
@@ -422,7 +422,7 @@ namespace Midi
                             ShortMsg.DecodeControlChange(dwParam1, dwParam2, out channel,
                                 out control, out value, out win32Timestamp);
                             ControlChange(new ControlChangeMessage(this, channel, control, value,
-                                clock == null ? win32Timestamp / 1000f : clock.BeatTime));
+                                clock == null ? win32Timestamp / 1000f : clock.Time));
                         }
                     }
                     else if (ShortMsg.IsProgramChange(dwParam1, dwParam2))
@@ -432,7 +432,7 @@ namespace Midi
                             ShortMsg.DecodeProgramChange(dwParam1, dwParam2, out channel,
                                 out instrument, out win32Timestamp);
                             ProgramChange(new ProgramChangeMessage(this, channel, instrument,
-                                clock == null ? win32Timestamp / 1000f : clock.BeatTime));
+                                clock == null ? win32Timestamp / 1000f : clock.Time));
                         }
                     }
                     else if (ShortMsg.IsPitchBend(dwParam1, dwParam2))
@@ -442,7 +442,7 @@ namespace Midi
                             ShortMsg.DecodePitchBend(dwParam1, dwParam2, out channel,
                                 out value, out win32Timestamp);
                             PitchBend(new PitchBendMessage(this, channel, value,
-                                clock == null ? win32Timestamp / 1000f : clock.BeatTime));
+                                clock == null ? win32Timestamp / 1000f : clock.Time));
                         }
                     }
                     else

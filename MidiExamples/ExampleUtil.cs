@@ -134,19 +134,19 @@ namespace MidiExamples
 
         /// <summary>
         /// If the specified key is one of the computer keys used for mock MIDI input, returns true
-        /// and sets note to the value.
+        /// and sets pitch to the value.
         /// </summary>
         /// <param name="key">The computer key pressed.</param>
-        /// <param name="note">The note it mocks.</param>
+        /// <param name="pitch">The pitch it mocks.</param>
         /// <returns></returns>
-        public static bool IsMockNote(ConsoleKey key, out Note note)
+        public static bool IsMockPitch(ConsoleKey key, out Pitch pitch)
         {
             if (mockKeys.ContainsKey(key))
             {
-                note = (Note)mockKeys[key];
+                pitch = (Pitch)mockKeys[key];
                 return true;
             }
-            note = 0;
+            pitch = 0;
             return false;
         }
     }

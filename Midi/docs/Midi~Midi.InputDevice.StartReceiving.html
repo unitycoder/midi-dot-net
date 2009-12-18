@@ -31,7 +31,7 @@
         <dt>
           <i>clock</i>
         </dt>
-        <dd>If non-null, the clock's <a href="Midi~Midi.Clock.BeatTime.html">BeatTime</a> property will be used to assign a timestamp to each incoming message. If null, timestamps will be in seconds since StartReceiving() was called.</dd>
+        <dd>If non-null, the clock's <a href="Midi~Midi.Clock.Time.html">Time</a> property will be used to assign a timestamp to each incoming message. If null, timestamps will be in seconds since StartReceiving() was called.</dd>
       </dl>
       <h4 class="dtH4">Remarks</h4>
       <p>This method launches a background thread to listen for input events, and as events are received, the event handlers are invoked on that background thread. Event handlers should be written to work from a background thread. (For example, if they want to update the GUI, they may need to BeginInvoke to arrange for GUI updates to happen on the correct thread.)</p>

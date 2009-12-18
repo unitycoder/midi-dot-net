@@ -28,176 +28,299 @@ using System.Collections.Generic;
 namespace Midi
 {
     /// <summary>
+    /// Description of a chord's pattern starting at the root note.
+    /// </summary>
+    /// <remarks>
+    /// This class describes the ascending sequence of notes included in a chord, starting with
+    /// the root note.  It is described in terms of semitones relative to root and letters
+    /// relative to the root.  To apply it to particular tonic, pass one of these to the
+    /// constructor of <see cref="Chord"/>.
+    /// </remarks>
+    public class ChordPattern
+    {
+        #region Properties
+
+        /// <summary>
+        /// The name of the chord pattern.
+        /// </summary>
+        public string Name { get { return name; } }
+
+        /// <summary>
+        /// Abbreviation for this chord pattern.
+        /// </summary>
+        /// <remarks>
+        /// This is the string used in the abbreviated name for a chord, placed immediately
+        /// after the tonic and before the slashed inversion (if there is one).  For example,
+        /// for minor chords the abbreviation is "m", as in "Am".
+        /// </remarks>
+        public string Abbreviation { get { return abbreviation; } }
+
+        /// <summary>
+        /// The ascending note sequence of the chord, in semitones-above-the-root.
+        /// </summary>
+        /// <remarks>
+        /// <para>This sequence starts at zero (for the root) and is monotonically
+        /// increasing, each element representing a pitch in semitones above the root.</para>
+        /// </remarks>
+        public int[] Ascent { get { return ascent; } }
+
+        /// <summary>
+        /// The sequence of letters in the chord.
+        /// </summary>
+        /// <remarks>
+        /// <para>This array describes what sequence of letters appears in this chord.  Each
+        /// element is a "letter offset", a positive integer that tell you how many letters to
+        /// move up from the root for that note.  It must start at zero, representing the
+        /// letter for the root note.</para>
+        /// </remarks>
+        public int[] LetterOffsets { get { return letterOffsets; } }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructs a chord pattern.
+        /// </summary>
+        /// <param name="name">The name of the chord pattern.</param>
+        /// <param name="abbreviation">The abbreviation for the chord.  See the
+        /// <see cref="Abbreviation"/> property for details.</param>
+        /// <param name="ascent">Array encoding the notes in the chord.  See the
+        /// <see cref="Ascent"/> property for details.</param>
+        /// <param name="letterOffsets">Array encoding the sequence of letters in the chord.
+        /// Must be the same length as ascent.  See the <see cref="LetterOffsets"/> property for
+        /// details.</param>
+        /// <exception cref="ArgumentException">ascent or letterOffsets is invalid, or they have
+        /// different lengths.</exception>
+        /// <exception cref="ArgumentNullException">an argument is null.</exception>
+        public ChordPattern(string name, string abbreviation, int[] ascent, int[] letterOffsets)
+        {
+            if (name == null || abbreviation == null || ascent == null || letterOffsets == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (ascent.Length != letterOffsets.Length || !IsSequenceValid(ascent) ||
+                !IsSequenceValid(letterOffsets))
+            {
+                throw new ArgumentException();
+            }
+            this.name = String.Copy(name);
+            this.abbreviation = String.Copy(abbreviation);
+            this.ascent = new int[ascent.Length];
+            Array.Copy(ascent, this.ascent, ascent.Length);
+            this.letterOffsets = new int[letterOffsets.Length];
+            Array.Copy(letterOffsets, this.LetterOffsets, letterOffsets.Length);
+        }
+
+        #endregion
+
+        #region Operators, Equality, Hash Codes
+
+        /// <summary>
+        /// ToString returns the pattern name.
+        /// </summary>
+        /// <returns>The pattern's name, such as "Major" or "Minor".</returns>
+        public override string ToString() { return name; }
+
+        /// <summary>
+        /// Equality operator does value equality.
+        /// </summary>
+        public static bool operator ==(ChordPattern a, ChordPattern b)
+        {
+            return System.Object.ReferenceEquals(a, b) || a.Equals(b);
+        }
+
+        /// <summary>
+        /// Inequality operator does value inequality.
+        /// </summary>
+        public static bool operator !=(ChordPattern a, ChordPattern b)
+        {
+            return !(a == b);
+        }
+
+        /// <summary>
+        /// Value equality.
+        /// </summary>
+        public override bool Equals(System.Object obj)
+        {
+            ChordPattern other = obj as ChordPattern;
+            if ((Object)other == null)
+            {
+                return false;
+            }
+            if (!this.name.Equals(other.name))
+            {
+                return false;
+            }
+            if (!this.abbreviation.Equals(other.abbreviation))
+            {
+                return false;
+            }
+            if (this.ascent.Length != other.ascent.Length)
+            {
+                for (int i = 0; i < this.ascent.Length; ++i)
+                {
+                    if (this.ascent[i] != other.ascent[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            if (this.letterOffsets.Length != other.letterOffsets.Length)
+            {
+                for (int i = 0; i < this.letterOffsets.Length; ++i)
+                {
+                    if (this.letterOffsets[i] != other.letterOffsets[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Hash code.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            // TODO
+            return 0;
+        }
+
+        #endregion
+
+        #region Private
+
+        /// <summary>
+        /// Returns true if sequence has at least two elements, starts at zero, and is monotonically
+        /// increasing.
+        /// </summary>
+        private bool IsSequenceValid(int[] sequence)
+        {
+            // Make sure it is non-empty and starts at zero.
+            if (sequence.Length < 2 || sequence[0] != 0)
+            {
+                return false;
+            }
+            // Make sure it's monotonically increasing.
+            for (int i = 1; i < sequence.Length; ++i)
+            {
+                if (sequence[i] <= sequence[i - 1])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private string name;
+        private string abbreviation;
+        private int[] ascent;
+        private int[] letterOffsets;
+
+        #endregion
+    }
+
+    /// <summary>
     /// A chord.
     /// </summary>
     /// <remarks>
-    /// <para>A chord is defined by its root note, the chord pattern, and the inversion.  The
-    /// root note is described with a <see cref="NoteFamily"/> because we want to be able to talk
-    /// about the chord independent of any one octave.  The pattern is given by the
-    /// <see cref="Pattern"/> nested class.  The inversion is an integer indicating how many
-    /// rotations the pattern has undergone.
+    /// <para>A chord is defined by its root note, the sequence of semitones, the sequence of
+    /// letters, and the inversion.  The root note is described with a <see cref="Note"/>
+    /// because we want to be able to talk about the chord independent of any one octave.  The
+    /// pattern of semitones and letters is given by the <see cref="Pattern"/> nested class.  The
+    /// inversion is an integer indicating how many rotations the pattern has undergone.
     /// </para>
     /// <para>This class comes with a collection of predefined chord patterns, such as
     /// <see cref="Major"/> and <see cref="Chord.Minor"/>.</para>
     /// </remarks>
     public class Chord
     {
+        #region Properties
+
         /// <summary>
-        /// Description of a chord's pattern starting at the root note.
+        /// The name of this chord.
         /// </summary>
-        /// <remarks>
-        /// This class describes the ascending sequence of notes included in a chord, starting with
-        /// the root note.  It is described in terms of semitones relative to root; to apply it to
-        /// particular tonic, pass one of these to the constructor of <see cref="Chord"/>.
-        /// </remarks>
-        public class Pattern
+        public string Name
         {
-            /// <summary>
-            /// The name of the chord being described.
-            /// </summary>
-            public string Name
+            get
             {
-                get
+                if (inversion == 0)
                 {
-                    return name;
+                    return String.Format("{0}{1}", root, pattern.Abbreviation);
+                }
+                else
+                {
+                    return String.Format("{0}{1}/{2}", root, pattern.Abbreviation, noteSequence[0]);
+
                 }
             }
-
-            /// <summary>
-            /// Shorthand string for this chord pattern.
-            /// </summary>
-            /// <remarks>
-            /// This is the string used in the abbreviated name for a chord, placed immediately
-            /// after the tonic and before the slashed inversion (if there is one).
-            /// </remarks>
-            public string Shorthand
-            {
-                get
-                {
-                    return shorthand;
-                }
-            }
-
-            /// <summary>
-            /// The ascending note sequence of the chord, in semitones-above-the-root.
-            /// </summary>
-            public int[] SemitoneSequence
-            {
-                get
-                {
-                    return semitoneSequence;
-                }
-            }
-
-            /// <summary>
-            /// Constructs a chord pattern.
-            /// </summary>
-            /// <param name="name">The name of the chord.</param>
-            /// <param name="shorthand">The shorthand for the chord.  This is the string used in the
-            /// abbreviated name for a chord, placed immediately after the tonic and before the
-            /// slashed inversion (if there is one).</param>
-            /// <param name="semitoneSequence">Array encoding the notes in the chord.  This
-            /// must satisfy the requirements of <see cref="IsSequenceValid"/>.</param>
-            /// <exception cref="ArgumentException">The pattern is invalid.</exception>
-            public Pattern(string name, string shorthand, int[] semitoneSequence)
-            {
-                this.name = name;
-                this.shorthand = shorthand;
-                this.semitoneSequence = semitoneSequence;
-                if (!IsSequenceValid(semitoneSequence))
-                {
-                    throw new ArgumentException("Invalid pattern.");
-                }
-            }
-
-            /// <summary>
-            /// Returns true if the given sequence is valid.
-            /// </summary>
-            /// <param name="semitoneSequence">The sequence to test.  The first element must be 0,
-            /// to indicate beginning at the root note.  Then there must be a monotonically
-            /// increasing sequence of notes, given in semitones-above-the-root.</param>
-            /// <returns>True if the sequence is valid, false otherwise.</returns>
-            public static bool IsSequenceValid(int[] semitoneSequence)
-            {
-                if (semitoneSequence == null || semitoneSequence.Length == 0 ||
-                    semitoneSequence[0] != 0)
-                {
-                    return false;
-                }
-                for (int i = 1; i < semitoneSequence.Length; ++i)
-                {
-                    if (semitoneSequence[i] <= semitoneSequence[i - 1])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            private string name;
-            private string shorthand;
-            private int[] semitoneSequence;
         }
+        
+        /// <summary>The root note of this chord.</summary>
+        public Note Root { get { return root; } }
+
+        /// <summary>The bass note of this chord.</summary>
+        public Note Bass { get { return noteSequence[0]; } }
+
+        /// <summary>The pattern of this chord.</summary>
+        public ChordPattern Pattern { get { return pattern; } }
+        
+        /// <summary>The inversion of this chord.</summary>
+        public int Inversion { get { return inversion; } }
+
+        /// <summary>
+        /// The sequence of notes in this chord.
+        /// </summary>
+        public Note[] NoteSequence { get { return noteSequence; } }
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Constructs a chord from its root note, pattern, and inversion.
         /// </summary>
-        /// <param name="rootNoteFamily">The root note of the chord.</param>
+        /// <param name="root">The root note of the chord.</param>
         /// <param name="pattern">The chord pattern.</param>
         /// <param name="inversion">The inversion, in [0..N-1] where N is the number of notes
         /// in pattern.</param>
-        /// <exception cref="ArgumentOutOfRangeException">root is invalid or inversion is out of
-        /// range.</exception>
-        public Chord(NoteFamily rootNoteFamily, Pattern pattern, int inversion)
+        /// <exception cref="ArgumentNullException">pattern is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">inversion is out of range.</exception>
+        public Chord(Note root, ChordPattern pattern, int inversion)
         {
-            rootNoteFamily.Validate();
-            if (inversion < 0 || inversion >= pattern.SemitoneSequence.Length)
+            if (pattern == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (inversion < 0 || inversion >= pattern.Ascent.Length)
             {
                 throw new ArgumentOutOfRangeException("inversion out of range.");
             }
-            this.rootNoteFamily = rootNoteFamily;
+            this.root = root;
             this.pattern = pattern;
             this.inversion = inversion;
-            this.invertedSequence = InvertSequence(pattern.SemitoneSequence, inversion);
+            this.positionInOctaveToContains = new bool[12];
+            Note[] uninvertedSequence = new Note[pattern.Ascent.Length];
+            Build(root, pattern, this.positionInOctaveToContains,
+                uninvertedSequence);
+            this.noteSequence = new Note[pattern.Ascent.Length];
+            RotateArrayLeft(uninvertedSequence, this.noteSequence, inversion);
         }
 
-        /// <summary>
-        /// Returns an inverted copy of semitoneSequence (or the original if inversion = 0).
-        /// </summary>
-        /// <param name="semitoneSequence"></param>
-        /// <param name="inversion"></param>
-        /// <returns></returns>
-        private static int[] InvertSequence(int[] semitoneSequence, int inversion)
-        {
-            int[] result;
-            if (inversion == 0)
-            {
-                result = semitoneSequence;
-            }
-            else
-            {
-                int[] orig = semitoneSequence;
-                result = new int[orig.Length];
-                for (int i = 0; i < orig.Length; ++i)
-                {
-                    result[i] = orig[(inversion + i) % orig.Length];
-                }
-                for (int i = 0; i < orig.Length - inversion; ++i)
-                {
-                    result[i] -= 12;
-                }
-            }
-            return result;
-        }
+        #endregion
+
+        #region Chord/Pitch Interaction
 
         /// <summary>
-        /// Returns a list of chords which match the set of input notes.
+        /// Returns a list of chords which match the set of input pitches.
         /// </summary>
-        /// <param name="notes">Notes being analyzed.</param>
+        /// <param name="pitches">Notes being analyzed.</param>
         /// <returns>A (possibly empty) list of chords.</returns>
-        public static List<Chord> FindMatchingChords(List<Note> notes)
+        public static List<Chord> FindMatchingChords(List<Pitch> pitches)
         {
-            Note[] sorted = notes.ToArray();
+            Pitch[] sorted = pitches.ToArray();
             System.Array.Sort(sorted);
             int[] semitonesAboveBass = new int[sorted.Length];
             for (int i = 0; i < sorted.Length; ++i)
@@ -206,16 +329,24 @@ namespace Midi
             }
 
             List<Chord> result = new List<Chord>();
-            foreach (Pattern pattern in Patterns)
+            foreach (ChordPattern pattern in Patterns)
             {
-                int[] semitoneSequence = pattern.SemitoneSequence;
+                int[] semitoneSequence = pattern.Ascent;
                 if (semitoneSequence.Length != semitonesAboveBass.Length)
                 {
                     continue;
                 }
                 for (int inversion = 0; inversion < semitoneSequence.Length; ++inversion)
                 {
-                    int[] invertedSequence = InvertSequence(semitoneSequence, inversion);
+                    int[] invertedSequence = new int[semitoneSequence.Length];
+                    RotateArrayLeft(semitoneSequence, invertedSequence, inversion);
+                    if (inversion != 0)
+                    {
+                        for (int i = 0; i < semitoneSequence.Length - inversion; ++i)
+                        {
+                            invertedSequence[i] -= 12;
+                        }
+                    }
                     int[] iSemitonesAboveBass = new int[invertedSequence.Length];
                     for (int i = 0; i < invertedSequence.Length; ++i)
                     {
@@ -234,11 +365,11 @@ namespace Midi
                     {
                         if (inversion == 0)
                         {
-                            result.Add(new Chord(sorted[0].Family(), pattern, inversion));
+                            result.Add(new Chord(sorted[0].CommonNote(), pattern, inversion));
                         }
                         else
                         {
-                            result.Add(new Chord(sorted[sorted.Length - inversion].Family(),
+                            result.Add(new Chord(sorted[sorted.Length - inversion].CommonNote(),
                                 pattern, inversion));
                         }
                     }
@@ -248,113 +379,53 @@ namespace Midi
         }
 
         /// <summary>
-        /// The name of this chord.
+        /// Returns true if this chord contains the specified pitch.
         /// </summary>
-        public string Name
+        /// <param name="pitch">The pitch to test.</param>
+        /// <returns>True if this chord contains the pitch.</returns>
+        public bool Contains(Pitch pitch)
         {
-            get
-            {
-                string result = rootNoteFamily.Name() + pattern.Shorthand;
-                if (inversion != 0)
-                {
-                    result += "/" + BassNoteFamily.Name();
-                }
-                return result;
-            }
+            return positionInOctaveToContains[pitch.PositionInOctave()];
         }
 
-        /// <summary>
-        /// The root note of the chord.
-        /// </summary>
-        public NoteFamily RootNoteFamily
-        {
-            get
-            {
-                return rootNoteFamily;
-            }
-        }
+        #endregion
 
-        /// <summary>
-        /// The bass note of the chord.
-        /// </summary>
-        public NoteFamily BassNoteFamily
-        {
-            get
-            {
-                return (rootNoteFamily + invertedSequence[0]).Wrapped();
-            }
-        }
-
-        /// <summary>
-        /// The sequence of note families in this chord.
-        /// </summary>
-        /// <remarks>
-        /// The result is in terms of note families (ie, not octave-specific).  The order in the
-        /// result is based on the inversion, so the root note may not come first.
-        /// </remarks>
-        public NoteFamily[] NoteFamilies
-        {
-            get
-            {
-                NoteFamily[] result = new NoteFamily[invertedSequence.Length];
-                for (int i = 0; i < result.Length; ++i)
-                {
-                    result[i] = (rootNoteFamily + invertedSequence[i]).Wrapped();
-                }
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// Returns the notes in this chord when given a specific root note.
-        /// </summary>
-        /// <param name="root">The specific root note, whose family must be the same as this
-        /// chord's RootNote.</param>
-        /// <returns>The notes in the chord.</returns>
-        /// <exception cref="ArgumentException">root is from the wrong family.</exception>
-        public Note[] Notes(Note root)
-        {
-            if (root.Family() != RootNoteFamily)
-            {
-                throw new ArgumentException("Wrong note family.");
-            }
-            Note[] result = new Note[invertedSequence.Length];
-            for (int i = 0; i < invertedSequence.Length; ++i)
-            {
-                result[i] = root + invertedSequence[i];
-            }
-            return result;
-        }
+        #region Predefined Chord Patterns
 
         /// <summary>
         /// Pattern for Major chords.
         /// </summary>
-        public static Pattern Major = new Pattern("Major", "", new int[] { 0, 4, 7 });
+        public static ChordPattern Major =
+            new ChordPattern("Major", "", new int[] { 0, 4, 7 }, new int[] { 0, 2, 4 });
 
         /// <summary>
         /// Pattern for Minor chords.
         /// </summary>
-        public static Pattern Minor = new Pattern("Minor", "min", new int[] { 0, 3, 7 });
+        public static ChordPattern Minor =
+            new ChordPattern("Minor", "m", new int[] { 0, 3, 7 }, new int[] { 0, 2, 4 });
 
         /// <summary>
         /// Pattern for Seventh chords.
         /// </summary>
-        public static Pattern Seventh = new Pattern("Seventh", "7", new int[] { 0, 4, 7, 10 });
+        public static ChordPattern Seventh =
+            new ChordPattern("Seventh", "7", new int[] { 0, 4, 7, 10 }, new int[] { 0, 2, 4, 6 });
 
         /// <summary>
         /// Pattern for Augmented chords.
         /// </summary>
-        public static Pattern Augmented = new Pattern("Augmented", "aug", new int[] { 0, 4, 8 });
+        public static ChordPattern Augmented =
+            new ChordPattern("Augmented", "aug", new int[] { 0, 4, 8 }, new int[] { 0, 2, 4 });
 
         /// <summary>
         /// Pattern for Diminished chords.
         /// </summary>
-        public static Pattern Diminished = new Pattern("Diminished", "dim", new int[] { 0, 3, 6 });
+        public static ChordPattern Diminished =
+            new ChordPattern("Diminished", "dim", new int[] { 0, 3, 6 }, new int[] { 0, 2, 4 });
 
         /// <summary>
         /// Array of all the built-in chord patterns.
         /// </summary>
-        public static Pattern[] Patterns = new Pattern[]
+        public static ChordPattern[] Patterns = new ChordPattern[]
         {
             Major,
             Minor,
@@ -363,9 +434,114 @@ namespace Midi
             Diminished
         };
 
-        private NoteFamily rootNoteFamily;
-        private Pattern pattern;
+        #endregion
+
+        #region Operators, Equality, Hash Codes
+
+        /// <summary>
+        /// ToString returns the chord name.
+        /// </summary>
+        /// <returns>The chord's name.</returns>
+        public override string ToString() { return Name; }
+
+        /// <summary>
+        /// Equality operator does value equality because Chord is immutable.
+        /// </summary>
+        public static bool operator ==(Chord a, Chord b)
+        {
+            return System.Object.ReferenceEquals(a, b) || a.Equals(b);
+        }
+
+        /// <summary>
+        /// Inequality operator does value inequality because Chord is immutable.
+        /// </summary>
+        public static bool operator !=(Chord a, Chord b)
+        {
+            return !(System.Object.ReferenceEquals(a, b) || a.Equals(b));
+        }
+
+        /// <summary>
+        /// Value equality.
+        /// </summary>
+        public override bool Equals(System.Object obj)
+        {
+            Chord c = obj as Chord;
+            if ((Object)c == null)
+            {
+                return false;
+            }
+
+            return base.Equals(obj) || (this.root == c.root && this.pattern == c.pattern &&
+                this.inversion == c.inversion);
+        }
+
+        /// <summary>
+        /// Hash code.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return this.root.GetHashCode() + this.inversion.GetHashCode() +
+                this.pattern.GetHashCode();
+        }
+
+        #endregion
+
+        #region Private
+
+        private static void Build(Note root, ChordPattern pattern,
+            bool[] positionInOctaveToContains, Note[] noteSequence)
+        {
+            for (int i = 0; i < 12; ++i)
+            {
+                positionInOctaveToContains[i] = false;
+            }
+            Pitch rootPitch = root.PitchInOctave(0);
+            for (int i = 0; i < pattern.Ascent.Length; ++i)
+            {
+                Pitch pitch = rootPitch + pattern.Ascent[i];
+                char letter = (char)(pattern.LetterOffsets[i] + (int)(root.Letter));
+                while (letter > 'G')
+                {
+                    letter = (char)((int)letter - 7);
+                }
+                noteSequence[i] = pitch.NoteWithLetter(letter);
+                positionInOctaveToContains[pitch.PositionInOctave()] = true;
+            }
+        }
+
+        /// <summary>
+        /// Fills dest with a rotated version of source.
+        /// </summary>
+        /// <param name="source">The source array.</param>
+        /// <param name="dest">The dest array, which must have the same length and underlying type
+        /// as source.</param>
+        /// <param name="rotation">The number of elements to rotate to the left by.</param>
+        private static void RotateArrayLeft(Array source, Array dest, int rotation)
+        {
+            if (source.Length != dest.Length)
+            {
+                throw new ArgumentException("source and dest lengths differ.");
+            }
+            if (rotation == 0)
+            {
+                source.CopyTo(dest, 0);
+            }
+            else
+            {
+                for (int i = 0; i < source.Length; ++i)
+                {
+                    dest.SetValue(source.GetValue((rotation + i) % source.Length), i);
+                }
+            }
+        }
+
+        private Note root;
+        private ChordPattern pattern;
         int inversion;
-        int[] invertedSequence;
+        private bool[] positionInOctaveToContains; // for each PositionInOctave, true if that pitch
+                                                   // is contained in this chord.
+        private Note[] noteSequence; // the note sequence of the scale.
+
+        #endregion
     }
 }

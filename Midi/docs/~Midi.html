@@ -61,7 +61,7 @@
           </tr>
           <tr valign="top">
             <td width="50%">
-              <a href="Midi~Midi.Chord.Pattern.html">Chord.Pattern</a>
+              <a href="Midi~Midi.ChordPattern.html">ChordPattern</a>
             </td>
             <td width="50%"> Description of a chord's pattern starting at the root note. </td>
           </tr>
@@ -127,18 +127,6 @@
           </tr>
           <tr valign="top">
             <td width="50%">
-              <a href="Midi~Midi.NoteExtensionMethods.html">NoteExtensionMethods</a>
-            </td>
-            <td width="50%"> Extension methods for the Note enum. </td>
-          </tr>
-          <tr valign="top">
-            <td width="50%">
-              <a href="Midi~Midi.NoteFamilyExtensionMethods.html">NoteFamilyExtensionMethods</a>
-            </td>
-            <td width="50%"> Extension methods for the NoteFamily enum. </td>
-          </tr>
-          <tr valign="top">
-            <td width="50%">
               <a href="Midi~Midi.NoteMessage.html">NoteMessage</a>
             </td>
             <td width="50%"> Base class for messages relevant to a specific note. </td>
@@ -187,6 +175,12 @@
           </tr>
           <tr valign="top">
             <td width="50%">
+              <a href="Midi~Midi.PitchExtensionMethods.html">PitchExtensionMethods</a>
+            </td>
+            <td width="50%"> Extension methods for the Pitch enum. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
               <a href="Midi~Midi.ProgramChangeMessage.html">ProgramChangeMessage</a>
             </td>
             <td width="50%"> Program Change message. </td>
@@ -195,13 +189,28 @@
             <td width="50%">
               <a href="Midi~Midi.Scale.html">Scale</a>
             </td>
-            <td width="50%"> A scale based on a particular tonic. </td>
+            <td width="50%"> A scale based on a pattern and a tonic note. </td>
           </tr>
           <tr valign="top">
             <td width="50%">
-              <a href="Midi~Midi.Scale.Pattern.html">Scale.Pattern</a>
+              <a href="Midi~Midi.ScalePattern.html">ScalePattern</a>
             </td>
-            <td width="50%"> Description of a scale's ascending/descending pattern through an octave. </td>
+            <td width="50%"> Description of a scale's pattern as it ascends through an octave. </td>
+          </tr>
+        </table>
+      </div>
+      <h3 class="dtH3">Structures</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Structure</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Midi~Midi.Note.html">Note</a>
+            </td>
+            <td width="50%"> A letter and accidental, which together form an octave-independent note name. </td>
           </tr>
         </table>
       </div>
@@ -283,21 +292,15 @@
           </tr>
           <tr valign="top">
             <td width="50%">
-              <a href="Midi~Midi.Note.html">Note</a>
-            </td>
-            <td width="50%"> MIDI Notes. </td>
-          </tr>
-          <tr valign="top">
-            <td width="50%">
-              <a href="Midi~Midi.NoteFamily.html">NoteFamily</a>
-            </td>
-            <td width="50%"> MIDI Note Families. </td>
-          </tr>
-          <tr valign="top">
-            <td width="50%">
               <a href="Midi~Midi.Percussion.html">Percussion</a>
             </td>
             <td width="50%"> General MIDI percussion note. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Midi~Midi.Pitch.html">Pitch</a>
+            </td>
+            <td width="50%"> Pitches supported by MIDI. </td>
           </tr>
         </table>
       </div>

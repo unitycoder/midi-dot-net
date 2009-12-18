@@ -52,8 +52,8 @@ namespace MidiExamples
                 this.clock = clock;
                 this.currentChordPattern = 0;
                 this.currentScalePattern = 0;
-                this.playingChords = true;
-                this.lastSequenceForNote = new Dictionary<Note,Note[]>();
+                this.playingChords = false;
+                this.lastSequenceForPitch = new Dictionary<Pitch, List<Pitch>>();
 
                 if (inputDevice != null)
                 {
@@ -132,40 +132,51 @@ namespace MidiExamples
             {
                 lock (this)
                 {
-                    Note[] notes;
+                    List<Pitch> pitches = new List<Pitch>();
                     if (playingChords)
                     {
-                        Chord chord = new Chord(msg.Note.Family(),
+                        Chord chord = new Chord(msg.Pitch.CommonNote(),
                             Chord.Patterns[currentChordPattern], 0);
-                        notes = chord.Notes(msg.Note);
+                        Pitch p = msg.Pitch;
+                        for (int i = 0; i < chord.NoteSequence.Length; ++i)
+                        {
+                            p = chord.NoteSequence[i].PitchAtOrAbove(p);
+                            pitches.Add(p);
+                        }
                     }
                     else
                     {
-                        Scale scale = new Scale(msg.Note.Family(),
+                        Scale scale = new Scale(msg.Pitch.CommonNote(),
                             Scale.Patterns[currentScalePattern]);
-                        notes = scale.Traverse(msg.Note, msg.Note + 12).ToArray();
+                        Pitch p = msg.Pitch;
+                        for (int i = 0; i < scale.NoteSequence.Length; ++i)
+                        {
+                            p = scale.NoteSequence[i].PitchAtOrAbove(p);
+                            pitches.Add(p);
+                        }
+                        pitches.Add(msg.Pitch + 12);
                     }
-                    lastSequenceForNote[msg.Note] = notes;
-                    for (int i = 1; i < notes.Length; ++i)
+                    lastSequenceForPitch[msg.Pitch] = pitches;
+                    for (int i = 1; i < pitches.Count; ++i)
                     {
                         clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel,
-                            notes[i], msg.Velocity, msg.BeatTime + i));
+                            pitches[i], msg.Velocity, msg.Time + i));
                     }
                 }
             }
 
             public void NoteOff(NoteOffMessage msg)
             {
-                if (!lastSequenceForNote.ContainsKey(msg.Note))
+                if (!lastSequenceForPitch.ContainsKey(msg.Pitch))
                 {
                     return;
                 }
-                Note[] notes = lastSequenceForNote[msg.Note];
-                lastSequenceForNote.Remove(msg.Note);
-                for (int i = 1; i < notes.Length; ++i)
+                List<Pitch> pitches = lastSequenceForPitch[msg.Pitch];
+                lastSequenceForPitch.Remove(msg.Pitch);
+                for (int i = 1; i < pitches.Count; ++i)
                 {
                     clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel,
-                        notes[i], msg.Velocity, msg.BeatTime + i));
+                        pitches[i], msg.Velocity, msg.Time + i));
                 }
             }
 
@@ -175,7 +186,7 @@ namespace MidiExamples
             private int currentChordPattern;
             private int currentScalePattern;
             private bool playingChords;
-            private Dictionary<Note, Note[]> lastSequenceForNote;
+            private Dictionary<Pitch, List<Pitch>> lastSequenceForPitch;
         }
 
         class Drummer
@@ -198,12 +209,11 @@ namespace MidiExamples
                 clock.Schedule(messagesForOneMeasure, 0);
             }
             
-            private Message[] CallbackHandler(float beatTime)
+            private void CallbackHandler(float time)
             {
                 // Round up to the next measure boundary.
-                float timeOfNextMeasure = beatTime + beatsPerMeasure;
+                float timeOfNextMeasure = time + beatsPerMeasure;
                 clock.Schedule(messagesForOneMeasure, timeOfNextMeasure);
-                return null;
             }
 
             private Clock clock;
@@ -258,7 +268,7 @@ namespace MidiExamples
                 Console.WriteLine("Space = Toggle Play");
                 Console.WriteLine("Enter = Toggle Scales/Chords");
                 ConsoleKey key = Console.ReadKey(true).Key;
-                Note note;
+                Pitch pitch;
                 if (key == ConsoleKey.Escape)
                 {
                     done = true;
@@ -303,24 +313,24 @@ namespace MidiExamples
                 {
                     arpeggiator.ToggleMode();
                 }
-                else if (ExampleUtil.IsMockNote(key, out note))
+                else if (ExampleUtil.IsMockPitch(key, out pitch))
                 {
                     // We've hit a QUERTY key which is meant to simulate a MIDI note, so
                     // send the Note On to the output device and tell the arpeggiator.
-                    NoteOnMessage noteOn = new NoteOnMessage(outputDevice, 0, note, 100,
-                        clock.BeatTime);
+                    NoteOnMessage noteOn = new NoteOnMessage(outputDevice, 0, pitch, 100,
+                        clock.Time);
                     clock.Schedule(noteOn);
                     arpeggiator.NoteOn(noteOn);
                     // We don't get key release events for the console, so schedule a
                     // simulated Note Off one beat from now.
-                    NoteOffMessage noteOff = new NoteOffMessage(outputDevice, 0, note, 100,
-                        clock.BeatTime + 1);
+                    NoteOffMessage noteOff = new NoteOffMessage(outputDevice, 0, pitch, 100,
+                        clock.Time + 1);
                     CallbackMessage.CallbackType noteOffCallback = beatTime =>
                     {
                         arpeggiator.NoteOff(noteOff);
-                        return null;
                     };
-                    clock.Schedule(new CallbackMessage(noteOffCallback, noteOff.BeatTime));
+                    clock.Schedule(new CallbackMessage(beatTime => arpeggiator.NoteOff(noteOff),
+                        noteOff.Time));
                 }
             }
 

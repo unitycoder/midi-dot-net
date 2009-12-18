@@ -40,7 +40,7 @@ namespace MidiExamples
             public Summarizer(InputDevice inputDevice)
             {
                 this.inputDevice = inputDevice;
-                notesPressed = new Dictionary<Note, bool>();
+                pitchesPressed = new Dictionary<Pitch, bool>();
                 inputDevice.NoteOn += new InputDevice.NoteOnHandler(this.NoteOn);
                 inputDevice.NoteOff += new InputDevice.NoteOffHandler(this.NoteOff);
                 PrintStatus();
@@ -54,21 +54,20 @@ namespace MidiExamples
                 Console.WriteLine();
 
                 // Print the currently pressed notes.
-                List<Note> notes = new List<Note>(notesPressed.Keys);
-                notes.Sort();
+                List<Pitch> pitches = new List<Pitch>(pitchesPressed.Keys);
+                pitches.Sort();
                 Console.Write("Notes: ");
-                foreach (Note note in notes)
+                foreach (Pitch pitch in pitches)
                 {
-                    Console.Write("{0} ", note.Name());
+                    Console.Write("{0} ", pitch.CommonNote()) ;
                 }
                 Console.WriteLine();
-
                 // Print the currently held down chord.
-                List<Chord> chords = Chord.FindMatchingChords(notes);
+                List<Chord> chords = Chord.FindMatchingChords(pitches);
                 Console.Write("Chords: ");
                 foreach (Chord chord in chords)
                 {
-                    Console.Write("{0} ", chord.Name);
+                    Console.Write("{0} ", chord);
                 }
                 Console.WriteLine(); 
             }
@@ -77,7 +76,7 @@ namespace MidiExamples
             {
                 lock (this)
                 {
-                    notesPressed[msg.Note] = true;
+                    pitchesPressed[msg.Pitch] = true;
                     PrintStatus();
                 }
             }
@@ -86,13 +85,13 @@ namespace MidiExamples
             {
                 lock (this)
                 {
-                    notesPressed.Remove(msg.Note);
+                    pitchesPressed.Remove(msg.Pitch);
                     PrintStatus();
                 }
             }
 
             private InputDevice inputDevice;
-            private Dictionary<Note, bool> notesPressed;
+            private Dictionary<Pitch, bool> pitchesPressed;
         }
 
         public override void Run()
