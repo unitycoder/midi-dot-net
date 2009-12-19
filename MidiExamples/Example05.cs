@@ -60,23 +60,28 @@ namespace MidiExamples
                 for (int i = 0; i < pitches.Count; ++i)
                 {
                     Pitch pitch = pitches[i];
-                    if (i == 0)
+                    if (i > 0)
                     {
                         Console.Write(", ");
                     }
                     Console.Write("{0}", pitch.NotePreferringSharps());
-                    if (pitch.NotePreferringFlats() != pitch.NotePreferringFlats())
+                    if (pitch.NotePreferringSharps() != pitch.NotePreferringFlats())
                     {
-                        Console.Write(" or {1}", pitch.NotePreferringFlats());
+                        Console.Write(" or {0}", pitch.NotePreferringFlats());
                     }
                 }
                 Console.WriteLine();
                 // Print the currently held down chord.
                 List<Chord> chords = Chord.FindMatchingChords(pitches);
                 Console.Write("Chords: ");
-                foreach (Chord chord in chords)
+                for (int i = 0; i < chords.Count; ++i)
                 {
-                    Console.Write("{0} ", chord);
+                    Chord chord = chords[i];
+                    if (i > 0)
+                    {
+                        Console.Write(", ");
+                    }
+                    Console.Write("{0}", chord);
                 }
                 Console.WriteLine(); 
             }
