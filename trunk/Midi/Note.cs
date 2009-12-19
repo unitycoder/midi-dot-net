@@ -30,7 +30,7 @@ using System.Text;
 namespace Midi
 {    
     /// <summary>
-    /// A letter and accidental, which together form an octave-independent note name.
+    /// A letter and accidental, which together form an octave-independent note.
     /// </summary>
     /// <remarks>
     /// <para>This class lets you define a note name by combining a letters A-G with accidentals
@@ -58,11 +58,38 @@ namespace Midi
         public static int DoubleSharp = 2;
 
         /// <summary>
-        /// Constructs a note name from a letter.
+        /// Constructs a note from a letter.
         /// </summary>
         /// <param name="letter">The letter, which must be in ['A'..'G'].</param>
         /// <exception cref="ArgumentOutOfRangeException">letter is out of range.</exception>
         public Note(char letter) : this(letter, Natural) { }
+
+        /// <summary>
+        /// Constructs a note from a string.
+        /// </summary>
+        /// <param name="name">The name to parse.  Must begin with a letter in ['A'..'G'],
+        /// then optionally be followed by a series of '#' (sharps) or a series of 'b' (flats).
+        /// </param>
+        /// <exception cref="ArgumentNullException">name is null.</exception>
+        /// <exception cref="ArgumentException">name cannot be parsed.</exception>
+        public Note(string name)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException("name is null.");
+            }
+            if (name.Length == 0)
+            {
+                throw new ArgumentException("name is empty.");
+            }
+            int pos = 0;
+            this = ParseNote(name, ref pos);
+            if (name.Length > pos)
+            {
+                throw new ArgumentException(String.Format("unexpected character '{0}'.",
+                    name[pos]));                
+            }
+        }
 
         /// <summary>
         /// Constructs a note name from a letter and accidental.
@@ -120,6 +147,50 @@ namespace Midi
             {
                 return new string(letter, 1);
             }
+        }
+
+        /// <summary>
+        /// Parses a Note from s, starting at position pos.
+        /// </summary>
+        /// <param name="s">The string to parse from.</param>
+        /// <param name="pos">The position to start at.  On success, advances pos to after the
+        /// end of the note.</param>
+        /// <returns>The note.</returns>
+        /// <exception cref="ArgumentException">A note cannot be parsed.</exception>
+        /// <remarks>
+        /// <para>This function must find a valid letter at s[pos], and then optionally a
+        /// sequence of '#' (sharps) or 'b' (flats).  It finds as many of the accidental as it can
+        /// and then stops at the first character that can't be part of the accidental.</para>
+        /// </remarks>
+        public static Note ParseNote(string s, ref int pos)
+        {
+            int p = pos;
+            if (s[p] < 'A' || s[p] > 'G')
+            {
+                throw new ArgumentException(String.Format("invalid note letter: '{0}'", s[p]));
+            }
+            char letter = s[p];
+            p++;
+            // Parse the accidental.
+            int accidental = 0;
+            if (s.Length > p && s[p] == '#')
+            {
+                while (p < s.Length && s[p] == '#')
+                {
+                    accidental++;
+                    p++;
+                }
+            }
+            else if (s.Length > p && s[p] == 'b')
+            {
+                while (p < s.Length && s[p] == 'b')
+                {
+                    accidental--;
+                    p++;
+                }
+            }
+            pos = p;
+            return new Note(letter, accidental);
         }
 
         /// <summary>

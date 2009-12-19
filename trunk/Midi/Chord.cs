@@ -158,22 +158,24 @@ namespace Midi
             }
             if (this.ascent.Length != other.ascent.Length)
             {
-                for (int i = 0; i < this.ascent.Length; ++i)
+                return false;
+            }
+            for (int i = 0; i < this.ascent.Length; ++i)
+            {
+                if (this.ascent[i] != other.ascent[i])
                 {
-                    if (this.ascent[i] != other.ascent[i])
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
             if (this.letterOffsets.Length != other.letterOffsets.Length)
             {
-                for (int i = 0; i < this.letterOffsets.Length; ++i)
+                return false;
+            }
+            for (int i = 0; i < this.letterOffsets.Length; ++i)
+            {
+                if (this.letterOffsets[i] != other.letterOffsets[i])
                 {
-                    if (this.letterOffsets[i] != other.letterOffsets[i])
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
             return true;
@@ -309,6 +311,82 @@ namespace Midi
             RotateArrayLeft(uninvertedSequence, this.noteSequence, inversion);
         }
 
+        /// <summary>
+        /// Constructs a chord from a string.
+        /// </summary>
+        /// <param name="name">The name to parse.  This is the same format as the Name property:
+        /// a letter in ['A'..'G'], an optional series of accidentals (#'s or b's), then an
+        /// optional inversion specified as a '/' folloewd by another note name.  If the
+        /// inversion is present it must be one of the notes in the chord.</param>
+        /// <exception cref="ArgumentNullException">name is null.</exception>
+        /// <exception cref="ArgumentException">cannot parse a chord from name.</exception>
+        public Chord(string name)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException("name is null.");
+            }
+            if (name.Length == 0)
+            {
+                throw new ArgumentException("name is empty.");
+            }
+            int pos = 0;
+            this.root = Note.ParseNote(name, ref pos);
+            this.pattern = null;
+            foreach (ChordPattern p in Chord.Patterns)
+            {
+                if (pos + p.Abbreviation.Length > name.Length)
+                {
+                    continue;
+                }
+                if (String.Compare(name, pos, p.Abbreviation, 0, p.Abbreviation.Length) != 0)
+                {
+                    continue;
+                }
+                if (pos + p.Abbreviation.Length == name.Length ||
+                    name[pos+p.Abbreviation.Length] == '/')
+                {
+                    pos += p.Abbreviation.Length;
+                    this.pattern = p;
+                    break;
+                }
+            }
+            if (this.pattern == null)
+            {
+                throw new ArgumentException("name does not match a known chord pattern.");
+            }
+            // At this point, we know the note and pattern (but not yet the inversion).  Build
+            // the chord prior to inversion.
+            this.positionInOctaveToContains = new bool[12];
+            Note[] uninvertedSequence = new Note[pattern.Ascent.Length];
+            Build(root, pattern, this.positionInOctaveToContains,
+                uninvertedSequence);
+            this.noteSequence = new Note[pattern.Ascent.Length];
+            // Now see if there's an inversion.
+            this.inversion = 0;
+            if (pos < name.Length)
+            {
+                if (name[pos] != '/')
+                {
+                    throw new ArgumentException(String.Format("unexpected character '{0}' in name.",
+                        name[pos]));
+                }
+                pos++;
+                Note bass = Note.ParseNote(name, ref pos);
+                if (name.Length > pos)
+                {
+                    throw new ArgumentException(String.Format("unexpected character '{0}' in name.",
+                        name[pos]));
+                }
+                this.inversion = Array.IndexOf(uninvertedSequence, bass);
+                if (inversion == -1)
+                {
+                    throw new ArgumentException("invalid bass note for inversion.");
+                }
+            }
+            RotateArrayLeft(uninvertedSequence, this.noteSequence, inversion);            
+        }
+
         #endregion
 
         #region Chord/Pitch Interaction
@@ -363,6 +441,9 @@ namespace Midi
                     }
                     if (equals)
                     {
+                        // TODO: Calling CommonNote() here is a problem.  We need to try it with
+                        // a couple nearby letters to make sure we find the one with the fewest
+                        // accidentals.
                         if (inversion == 0)
                         {
                             result.Add(new Chord(sorted[0].CommonNote(), pattern, inversion));
