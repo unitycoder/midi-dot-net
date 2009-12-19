@@ -316,7 +316,7 @@ namespace Midi
         /// </summary>
         /// <param name="name">The name to parse.  This is the same format as the Name property:
         /// a letter in ['A'..'G'], an optional series of accidentals (#'s or b's), then an
-        /// optional inversion specified as a '/' folloewd by another note name.  If the
+        /// optional inversion specified as a '/' followed by another note name.  If the
         /// inversion is present it must be one of the notes in the chord.</param>
         /// <exception cref="ArgumentNullException">name is null.</exception>
         /// <exception cref="ArgumentException">cannot parse a chord from name.</exception>
@@ -441,17 +441,14 @@ namespace Midi
                     }
                     if (equals)
                     {
-                        // TODO: Calling CommonNote() here is a problem.  We need to try it with
-                        // a couple nearby letters to make sure we find the one with the fewest
-                        // accidentals.
-                        if (inversion == 0)
+                        Pitch rootPitch =
+                            inversion == 0 ? sorted[0] : sorted[sorted.Length - inversion];
+                        Note rootNote = rootPitch.NotePreferringSharps();
+                        result.Add(new Chord(rootNote, pattern, inversion));
+                        if (rootPitch.NotePreferringFlats() != rootNote)
                         {
-                            result.Add(new Chord(sorted[0].CommonNote(), pattern, inversion));
-                        }
-                        else
-                        {
-                            result.Add(new Chord(sorted[sorted.Length - inversion].CommonNote(),
-                                pattern, inversion));
+                            Note otherRootNote = rootPitch.NotePreferringFlats();
+                            result.Add(new Chord(otherRootNote, pattern, inversion));
                         }
                     }
                 }

@@ -44,7 +44,7 @@ namespace Midi
     /// octave 4.  (Note that this is different from "MIDI octaves", which have Middle C in
     /// octave 0.)</para>
     /// <para>This enum has extension methods, such as
-    /// <see cref="PitchExtensionMethods.CommonNote"/> and
+    /// <see cref="PitchExtensionMethods.NotePreferringSharps"/> and
     /// <see cref="PitchExtensionMethods.IsInMidiRange"/>, defined in
     /// <see cref="PitchExtensionMethods"/>.
     /// </para>
@@ -360,8 +360,8 @@ namespace Midi
             return p < 0 ? 11 - ((-p - 1) % 12) : p % 12;
         }
 
-        /// <summary>Maps PositionInOctave() to a Note.</summary>
-        private static Note[] PositionInOctaveToNote = new Note[]
+        /// <summary>Maps PositionInOctave() to a Note preferring sharps.</summary>
+        private static Note[] PositionInOctaveToNotesPreferringSharps = new Note[]
         {
             new Note('C'), new Note('C', Note.Sharp),
             new Note('D'), new Note('D', Note.Sharp),
@@ -372,14 +372,40 @@ namespace Midi
             new Note('B')
         };
 
+        /// <summary>Maps PositionInOctave() to a Note preferring flats.</summary>
+        private static Note[] PositionInOctaveToNotesPreferringFlats = new Note[]
+        {
+            new Note('C'), new Note('D', Note.Flat),
+            new Note('D'), new Note('E', Note.Flat),
+            new Note('E'),
+            new Note('F'), new Note('G', Note.Flat),
+            new Note('G'), new Note('A', Note.Flat),
+            new Note('A'), new Note('B', Note.Flat),
+            new Note('B')
+        };
+
         /// <summary>
-        /// Returns one of the notes that resolves to this pitch.
+        /// Returns the simplest note that resolves to this pitch, preferring sharps where needed.
         /// </summary>
         /// <param name="pitch">The pitch.</param>
-        /// <returns>One of the notes that resolves to this pitch.</returns>
-        public static Note CommonNote(this Pitch pitch)
+        /// <returns>The simplest note for that pitch.  If that pitch is a "white key", the note
+        /// is simply a letter with no accidentals (and is the same as
+        /// <see cref="NotePreferringFlats"/>).  Otherwise the note has a sharp.</returns>
+        public static Note NotePreferringSharps(this Pitch pitch)
         {
-            return PositionInOctaveToNote[pitch.PositionInOctave()];
+            return PositionInOctaveToNotesPreferringSharps[pitch.PositionInOctave()];
+        }
+
+        /// <summary>
+        /// Returns the simplest note that resolves to this pitch, preferring flats where needed.
+        /// </summary>
+        /// <param name="pitch">The pitch.</param>
+        /// <returns>The simplest note for that pitch.  If that pitch is a "white key", the note
+        /// is simply a letter with no accidentals (and is the same as
+        /// <see cref="NotePreferringSharps"/>).  Otherwise the note has a flat.</returns>
+        public static Note NotePreferringFlats(this Pitch pitch)
+        {
+            return PositionInOctaveToNotesPreferringFlats[pitch.PositionInOctave()];
         }
 
         /// <summary>
@@ -396,7 +422,7 @@ namespace Midi
             {
                 throw new ArgumentOutOfRangeException();
             }
-            Note pitchNote = pitch.CommonNote();
+            Note pitchNote = pitch.NotePreferringSharps();
             Note letterNote = new Note(letter);
             int upTo = letterNote.SemitonesUpTo(pitchNote);
             int downTo = letterNote.SemitonesDownTo(pitchNote);

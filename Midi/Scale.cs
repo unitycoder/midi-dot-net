@@ -401,7 +401,7 @@ namespace Midi
                 }
                 else
                 {
-                    note = pitch.CommonNote();
+                    note = pitch.NotePreferringSharps();
                 }
                 noteSequence[i] = note;
                 positionInOctaveToSequenceIndex[pitch.PositionInOctave()] = i;

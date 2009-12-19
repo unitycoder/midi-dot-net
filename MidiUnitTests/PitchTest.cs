@@ -58,13 +58,16 @@ namespace MidiUnitTests
         }
 
         [Test]
-        public void CommonNoteTest()
+        public void PitchToNoteTest()
         {
-            Assert.AreEqual(Pitch.C4.CommonNote(), new Note('C', Note.Natural));
-            Assert.AreEqual(Pitch.CSharp4.CommonNote(), new Note('C', Note.Sharp));
-            Assert.AreEqual(Pitch.B3.CommonNote(), new Note('B', Note.Natural));
-            Assert.AreEqual(((Pitch)(0)).CommonNote(), new Note('C', Note.Natural));
-            Assert.AreEqual(((Pitch)(-1)).CommonNote(), new Note('B', Note.Natural));
+            Assert.AreEqual(Pitch.C4.NotePreferringSharps(), new Note('C', Note.Natural));
+            Assert.AreEqual(Pitch.C4.NotePreferringFlats(), new Note('C', Note.Natural));
+            Assert.AreEqual(Pitch.CSharp4.NotePreferringSharps(), new Note('C', Note.Sharp));
+            Assert.AreEqual(Pitch.CSharp4.NotePreferringFlats(), new Note('D', Note.Flat));
+            Assert.AreEqual(Pitch.B3.NotePreferringSharps(), new Note('B', Note.Natural));
+            Assert.AreEqual(Pitch.B3.NotePreferringFlats(), new Note('B', Note.Natural));
+            Assert.AreEqual(((Pitch)(0)).NotePreferringSharps(), new Note('C', Note.Natural));
+            Assert.AreEqual(((Pitch)(-1)).NotePreferringSharps(), new Note('B', Note.Natural));
         }
 
         [Test]
