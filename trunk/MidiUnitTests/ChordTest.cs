@@ -186,7 +186,7 @@ namespace MidiUnitTests
         /// <summary>
         /// Returns a comma-separated string with the note names of c's NoteSequence.
         /// </summary>
-        private string SequenceString(Chord c)
+        private static string SequenceString(Chord c)
         {
             string result = "";
             for (int i = 0; i < c.NoteSequence.Length; ++i)
