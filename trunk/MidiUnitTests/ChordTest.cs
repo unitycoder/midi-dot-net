@@ -24,6 +24,7 @@
 
 using System;
 using Midi;
+using System.Collections.Generic;
 
 namespace MidiUnitTests
 {
@@ -137,21 +138,48 @@ namespace MidiUnitTests
         }
 
         [Test]
-        public void RandomChords()
+        public void TestAllChords()
         {
-            // Generate a bunch of random chords, and make sure that the Name property, when
-            // parsed, generates an equivalent chord.  This ensures that our parsing and our
-            // name generation are inverses of each other.  Also make sure that FindMatchingChords,
-            // when called on the NoteSequence, contains the chord.
-            Random random = new Random();
-            for (int i = 0; i < 10000; ++i)
+            // This test runs over every possible note/pattern/inversion combination over
+            // pitches in a range extending beyond the MIDI range, and performs several
+            // consistency checks on every one of those chords.
+
+            // For every pitch in the range...
+            for (Pitch pitch = (Pitch)(-50); pitch < (Pitch)200; ++pitch)
             {
-                char letter = (char)(random.Next((int)'A', (int)'H'));
-                int accidental = random.Next(-2, 3);
-                ChordPattern pattern = Chord.Patterns[random.Next(0, Chord.Patterns.Length)];
-                int inversion = random.Next(0, pattern.Ascent.Length);
-                Chord c = new Chord(new Note(letter, accidental), pattern, inversion);
-                Assert.AreEqual(c, new Chord(c.Name));
+                // Find the one or two common notes for this pitch.
+                List<Note> notes = new List<Note>();
+                notes.Add(pitch.NotePreferringSharps());
+                if (pitch.NotePreferringFlats() != pitch.NotePreferringSharps())
+                {
+                    notes.Add(pitch.NotePreferringFlats());                    
+                }
+                // For the one or two notes for this pitch...
+                foreach (Note note in notes)
+                {
+                    // For every chord pattern...
+                    foreach (ChordPattern pattern in Chord.Patterns)
+                    {
+                        // For every legal inversion of the pattern...
+                        for (int inversion = 0; inversion < pattern.Ascent.Length; ++inversion)
+                        {
+                            // Construct the chord.
+                            Chord c = new Chord(note, pattern, inversion);
+                            // Make sure the chord's name, when parsed, is equivalent to the chord.
+                            Assert.AreEqual(c, new Chord(c.Name));
+                            // Generated a set of pitches based on the chord, starting at or above
+                            // the original pitch.
+                            Pitch p = pitch;
+                            List<Pitch> pitches = new List<Pitch>();
+                            foreach (Note n in c.NoteSequence)
+                            {
+                                p = n.PitchAtOrAbove(p);
+                                pitches.Add(p);
+                            }
+                            Assert.True(Chord.FindMatchingChords(pitches).Contains(c));
+                        }
+                    }
+                }
             }
         }
 

@@ -135,7 +135,7 @@ namespace MidiExamples
                     List<Pitch> pitches = new List<Pitch>();
                     if (playingChords)
                     {
-                        Chord chord = new Chord(msg.Pitch.CommonNote(),
+                        Chord chord = new Chord(msg.Pitch.NotePreferringSharps(),
                             Chord.Patterns[currentChordPattern], 0);
                         Pitch p = msg.Pitch;
                         for (int i = 0; i < chord.NoteSequence.Length; ++i)
@@ -146,7 +146,7 @@ namespace MidiExamples
                     }
                     else
                     {
-                        Scale scale = new Scale(msg.Pitch.CommonNote(),
+                        Scale scale = new Scale(msg.Pitch.NotePreferringSharps(),
                             Scale.Patterns[currentScalePattern]);
                         Pitch p = msg.Pitch;
                         for (int i = 0; i < scale.NoteSequence.Length; ++i)

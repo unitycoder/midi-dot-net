@@ -57,9 +57,18 @@ namespace MidiExamples
                 List<Pitch> pitches = new List<Pitch>(pitchesPressed.Keys);
                 pitches.Sort();
                 Console.Write("Notes: ");
-                foreach (Pitch pitch in pitches)
+                for (int i = 0; i < pitches.Count; ++i)
                 {
-                    Console.Write("{0} ", pitch.CommonNote()) ;
+                    Pitch pitch = pitches[i];
+                    if (i == 0)
+                    {
+                        Console.Write(", ");
+                    }
+                    Console.Write("{0}", pitch.NotePreferringSharps());
+                    if (pitch.NotePreferringFlats() != pitch.NotePreferringFlats())
+                    {
+                        Console.Write(" or {1}", pitch.NotePreferringFlats());
+                    }
                 }
                 Console.WriteLine();
                 // Print the currently held down chord.
