@@ -125,6 +125,7 @@ namespace MidiExamples
             ExampleUtil.PressAnyKeyToContinue();
             inputDevice.StopReceiving();
             inputDevice.Close();
+            inputDevice.RemoveAllEventHandlers();
         }
     }
 }

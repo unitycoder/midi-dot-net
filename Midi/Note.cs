@@ -33,12 +33,12 @@ namespace Midi
     /// A letter and accidental, which together form an octave-independent note.
     /// </summary>
     /// <remarks>
-    /// <para>This class lets you define a note name by combining a letters A-G with accidentals
-    /// (sharps and flats).  Examples of names are D, B#, and Gbb.  This is the conventional
+    /// <para>This class lets you define a note by combining a letters A-G with accidentals
+    /// (sharps and flats).  Examples of notes are D, B#, and Gbb.  This is the conventional
     /// way to refer to notes in an octave independent way.</para>
-    /// <para>Each name unambiguously identifies a note (modulo octave), but each note has
-    /// potentially many names.  For example, the names F, E#, D###, and Gbb all refer to the
-    /// same note, though the last two names are unlikely to be used in practice.</para>
+    /// <para>Each note unambiguously identifies a pitch (modulo octave), but each pitch has
+    /// potentially many notes.  For example, the notes F, E#, D###, and Gbb all resolve to the
+    /// same pitch, though the last two names are unlikely to be used in practice.</para>
     /// </remarks>
     public struct Note
     {

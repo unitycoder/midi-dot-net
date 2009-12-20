@@ -348,6 +348,7 @@ namespace MidiExamples
             if (inputDevice != null)
             {
                 inputDevice.Close();
+                inputDevice.RemoveAllEventHandlers();
             }
 
             // All done.
