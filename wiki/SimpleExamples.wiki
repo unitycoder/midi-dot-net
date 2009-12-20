@@ -10,7 +10,7 @@ This snippet opens the first MIDI output device, sends a note On event, and then
 {{{
 OutputDevice outputDevice = OutputDevice.InstalledDevices[0];
 outputDevice.Open();
-outputDevice.SendNoteOn(Channel.Channel1, Note.C4, 80);  // Middle C, velocity 80
+outputDevice.SendNoteOn(Channel.Channel1, Pitch.C4, 80);  // Middle C, velocity 80
 outputDevice.SendPitchBend(Channel.Channel1, 7000);  // 8192 is centered, so 7000 is bent down
 ...
 }}}
@@ -23,7 +23,7 @@ This snippet opens the first MIDI input device, registers a !NoteOn event listen
 
 {{{
 public static void NoteOn(NoteOnMessage msg) {
-   Console.WriteLine(msg.Note.Name);
+   Console.WriteLine(msg.Pitch.NotePreferringSharps());
 }
 ...
 InputDevice inputDevice = InputDevice.InstalledDevices[0];
@@ -54,13 +54,13 @@ class Arpeggiator {
     }
 
     public void NoteOn(NoteOnMessage msg) {
-        clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Note + 4,  msg.Velocity, msg.BeatTime + 1));
-        clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Note + 7, msg.Velocity, msg.BeatTime + 2));
+        clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Pitch + 4,  msg.Velocity, msg.BeatTime + 1));
+        clock.Schedule(new NoteOnMessage(outputDevice, msg.Channel, msg.Pitch + 7, msg.Velocity, msg.BeatTime + 2));
     }
 
     public void NoteOff(NoteOffMessage msg) {
-        clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Note + 4, msg.Velocity, msg.BeatTime + 1));
-        clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Note + 7, msg.Velocity, msg.BeatTime + 2));
+        clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Pitch + 4, msg.Velocity, msg.BeatTime + 1));
+        clock.Schedule(new NoteOffMessage(outputDevice, msg.Channel, msg.Pitch + 7, msg.Velocity, msg.BeatTime + 2));
     }
 
     private InputDevice inputDevice;
