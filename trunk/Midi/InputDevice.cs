@@ -112,6 +112,18 @@ namespace Midi
         /// </summary>
         public event PitchBendHandler PitchBend;
 
+        /// <summary>
+        /// Removes all event handlers from the input events on this device.
+        /// </summary>
+        public void RemoveAllEventHandlers()
+        {
+            NoteOn = null;
+            NoteOff = null;
+            ControlChange = null;
+            ProgramChange = null;
+            PitchBend = null;
+        }
+
         #endregion
 
         #region Public Methods and Properties

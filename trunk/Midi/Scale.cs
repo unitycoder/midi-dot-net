@@ -123,12 +123,13 @@ namespace Midi
             }
             if (this.ascent.Length != other.ascent.Length)
             {
-                for (int i = 0; i < this.ascent.Length; ++i)
+                return false;
+            }
+            for (int i = 0; i < this.ascent.Length; ++i)
+            {
+                if (this.ascent[i] != other.ascent[i])
                 {
-                    if (this.ascent[i] != other.ascent[i])
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
             return true;
@@ -187,6 +188,17 @@ namespace Midi
     public class Scale
     {
         #region Properties
+
+        /// <summary>
+        /// The scale's human-readable name, such as "G# Major" or "Eb Melodic Minor (ascending)".
+        /// </returns>
+        public string Name
+        {
+            get
+            {
+                return String.Format("{0} {1}", tonic, pattern);
+            }
+        }
 
         /// <summary>The tonic of this scale.</summary>
         public Note Tonic { get { return tonic; } }
@@ -319,10 +331,7 @@ namespace Midi
         /// </summary>
         /// <returns>The scale's name, such as "G# Major" or "Eb Melodic Minor (ascending)".
         /// </returns>
-        public override string ToString()
-        {
-            return String.Format("{0} {1}", tonic, pattern);
-        }
+        public override string ToString() { return Name; }
 
         /// <summary>
         /// Equality operator does value equality because Scale is immutable.

@@ -43,13 +43,12 @@ namespace MidiExamples
             : base("Example02.cs", "Simple MIDI output example.")
         { }
 
-        void PlayRunUpKeyboard(OutputDevice outputDevice, Predicate<Pitch> predicate,
-            int millisecondsBetween)
+        void PlayChordRun(OutputDevice outputDevice, Chord chord, int millisecondsBetween)
         {
             Pitch previousNote = (Pitch)(-1);
             for (Pitch pitch = Pitch.A0; pitch < Pitch.C8; ++pitch)
             {
-                if (predicate(pitch))
+                if (chord.Contains(pitch))
                 {
                     if (previousNote != (Pitch)(-1))
                     {
@@ -132,20 +131,16 @@ namespace MidiExamples
 
             Console.WriteLine("Playing sustained chord runs up the keyboard...");
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
-            PlayRunUpKeyboard(outputDevice, note => (int)note % 12 == 0 || (int)note % 12 == 4 ||
-                (int)note % 12 == 7, 100);
+            PlayChordRun(outputDevice, new Chord("C"), 100);
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
-            PlayRunUpKeyboard(outputDevice, note => (int)note % 12 == 5 || (int)note % 12 == 9 ||
-                (int)note % 12 == 12, 100);
+            PlayChordRun(outputDevice, new Chord("F"), 100);
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
-            PlayRunUpKeyboard(outputDevice, note => (int)note % 12 == 7 || (int)note % 12 == 11 ||
-                (int)note % 12 == 14, 100);
+            PlayChordRun(outputDevice, new Chord("G"), 100);
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 127);
-            PlayRunUpKeyboard(outputDevice, note => (int)note % 12 == 0 || (int)note % 12 == 4 ||
-                (int)note % 12 == 7, 100);
+            PlayChordRun(outputDevice, new Chord("C"), 100);
             Thread.Sleep(2000);
             outputDevice.SendControlChange(Channel.Channel1, Control.SustainPedal, 0);
 

@@ -135,6 +135,7 @@ namespace MidiUnitTests
             Assert.AreEqual(new Chord("Fm/Ab").Name, "Fm/Ab");
             Assert.AreEqual(new Chord("Fm/Ab").Root, new Note('F'));
             Assert.AreEqual(new Chord("Fm/Ab").Bass, new Note('A', Note.Flat));
+            Assert.AreEqual(new Chord("Fm/Ab").Pattern, Chord.Minor);
         }
 
         [Test]
@@ -214,6 +215,41 @@ namespace MidiUnitTests
             Assert.AreEqual(SequenceString(new Chord("Abm")), "Ab, Cb, Eb");
             Assert.AreEqual(SequenceString(new Chord("Cdim")), "C, Eb, Gb");
             Assert.AreEqual(SequenceString(new Chord("Cdim/Eb")), "Eb, Gb, C");
+        }
+
+        [Test]
+        public void Contains()
+        {
+            Chord cmajor = new Chord("C");
+            Pitch[] cmajorPitches = new Pitch[] {
+                Pitch.C2, Pitch.E2, Pitch.G2 };
+            Pitch[] cmajorNotPitches = new Pitch[] {
+                Pitch.CSharp2, Pitch.D2, Pitch.DSharp2, Pitch.F2, Pitch.FSharp2, Pitch.GSharp2,
+                Pitch.A2, Pitch.ASharp2 };
+            foreach (Pitch p in cmajorPitches)
+            {
+                Assert.True(cmajor.Contains(p));
+            }
+            foreach (Pitch p in cmajorNotPitches)
+            {
+                Assert.False(cmajor.Contains(p));
+            }
+
+            Chord bbminor = new Chord("Bbm");
+            Pitch[] bbminorPitches = new Pitch[] {
+                Pitch.ASharp2, Pitch.CSharp3, Pitch.F3 };
+            Pitch[] bbminorNotPitches = new Pitch[] {
+                Pitch.B2, Pitch.C3, Pitch.D3, Pitch.DSharp3, Pitch.E3, Pitch.G3,  Pitch.FSharp3,
+                Pitch.GSharp3, Pitch.A3 };
+            foreach (Pitch p in bbminorPitches)
+            {
+                Assert.True(bbminor.Contains(p));
+            }
+            foreach (Pitch p in bbminorNotPitches)
+            {
+                Assert.False(bbminor.Contains(p));
+            }
+
         }
     }
 }
