@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using Midi;
 
-namespace MidiExamples
+namespace ConsoleDemo
 {
     /// <summary>
     /// Utility functions for MIDI examples.

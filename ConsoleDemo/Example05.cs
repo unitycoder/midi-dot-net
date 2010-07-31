@@ -27,7 +27,7 @@ using Midi;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace MidiExamples
+namespace ConsoleDemo
 {    
     public class Example05 : ExampleBase
     {

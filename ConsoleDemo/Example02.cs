@@ -26,7 +26,7 @@ using System;
 using Midi;
 using System.Threading;
 
-namespace MidiExamples
+namespace ConsoleDemo
 {
     /// <summary>
     /// Demonstrates simple single-threaded output.

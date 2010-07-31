@@ -27,7 +27,7 @@ using Midi;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace MidiExamples
+namespace ConsoleDemo
 {    
     /// <summary>
     /// Simple arpeggiator.

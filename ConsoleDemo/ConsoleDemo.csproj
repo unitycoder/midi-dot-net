@@ -8,8 +8,8 @@
     <ProjectGuid>{1A5F8ED9-D70D-4FF3-8153-72D9859FA89E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MidiExamples</RootNamespace>
-    <AssemblyName>MidiExamples</AssemblyName>
+    <RootNamespace>ConsoleDemo</RootNamespace>
+    <AssemblyName>ConsoleDemo</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MidiExamples
+namespace ConsoleDemo
 {
     /// <summary>
     /// Base class for examples that can be run by the MidiExamples program.
