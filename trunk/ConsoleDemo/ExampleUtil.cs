@@ -50,7 +50,8 @@ namespace MidiExamples
             Console.WriteLine("Output Devices:");
             for (int i = 0; i < OutputDevice.InstalledDevices.Count; ++i)
             {
-                Console.WriteLine("   {0}: {1}", i, OutputDevice.InstalledDevices[i].Name);
+                OutputDevice d = OutputDevice.InstalledDevices[i];
+                Console.WriteLine("   {0}: {1}", i, d.Spec);
             }
             Console.Write("Choose the id of an output device...");
             while (true)
@@ -82,7 +83,8 @@ namespace MidiExamples
             Console.WriteLine("Input Devices:");
             for (int i = 0; i < InputDevice.InstalledDevices.Count; ++i)
             {
-                Console.WriteLine("   {0}: {1}", i, InputDevice.InstalledDevices[i]);
+                InputDevice d = InputDevice.InstalledDevices[i];
+                Console.WriteLine("   {0}: {1}", i, d.Spec);
             }
             Console.Write("Choose the id of an input device...");
             while (true)
