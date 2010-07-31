@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading;
 using Midi;
 
-namespace MidiExamples
+namespace ConsoleDemo
 {
     class Program
     {

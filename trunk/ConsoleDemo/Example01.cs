@@ -25,7 +25,7 @@
 using System;
 using Midi;
 
-namespace MidiExamples
+namespace ConsoleDemo
 {
     /// <summary>
     /// Prints information about MIDI input and output devices.
