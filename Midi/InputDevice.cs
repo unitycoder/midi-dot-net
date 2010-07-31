@@ -147,6 +147,23 @@ namespace Midi
         }
 
         /// <summary>
+        /// Returns the installed input device with the given spec, or null.
+        /// </summary>
+        /// <param name="spec">The desired spec.</param>
+        /// <returns>The matching device, or null.</returns>        
+        public static InputDevice DeviceWithSpec(string spec)
+        {
+            foreach (InputDevice device in InstalledDevices)
+            {
+                if (device.Spec == spec)
+                {
+                    return device;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// True if this device has been successfully opened.
         /// </summary>
         public bool IsOpen
@@ -363,7 +380,7 @@ namespace Midi
         /// <param name="deviceId">Position of this device in the list of all devices.</param>
         /// <param name="caps">Win32 Struct with device metadata</param>
         private InputDevice(UIntPtr deviceId, Win32API.MIDIINCAPS caps)
-            : base(caps.szPname)
+            : base((UInt16)caps.wMid, (UInt16)caps.wPid, caps.szPname)
         {
             this.deviceId = deviceId;
             this.caps = caps;

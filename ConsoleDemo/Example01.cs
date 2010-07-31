@@ -48,7 +48,7 @@ namespace MidiExamples
                 Console.WriteLine("Input Devices:");
                 foreach (InputDevice device in InputDevice.InstalledDevices)
                 {
-                    Console.WriteLine("  {0}", device.Name);
+                    Console.WriteLine("  {0}", device.Spec);
                 }
             }
             Console.WriteLine();
@@ -63,7 +63,7 @@ namespace MidiExamples
                 Console.WriteLine("Output Devices:");
                 foreach (OutputDevice device in OutputDevice.InstalledDevices)
                 {
-                    Console.WriteLine("  {0}", device.Name);
+                    Console.WriteLine("  {0}", device.Spec);
                 }
             }
 

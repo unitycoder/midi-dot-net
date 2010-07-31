@@ -22,6 +22,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+using System;
 namespace Midi
 {
     /// <summary>
@@ -34,10 +35,36 @@ namespace Midi
         /// <summary>
         /// Protected constructor.
         /// </summary>
+        /// <param name="manufacturerId">The manufacturer id of this device.</param>
+        /// <param name="productId">The product id of this device.</param>
         /// <param name="name">The name of this device.</param>
-        protected DeviceBase(string name)
+        protected DeviceBase(UInt16 manufacturerId, UInt16 productId, string name)
         {
+            this.manufacturerId = manufacturerId;
+            this.productId = productId;
             this.name = name;
+        }
+
+        /// <summary>
+        /// The manufacturer id of this device.
+        /// </summary>
+        public UInt16 ManufacturerId
+        {
+            get
+            {
+                return manufacturerId;
+            }
+        }
+
+        /// <summary>
+        /// The product id of this device.
+        /// </summary>
+        public UInt16 ProductId
+        {
+            get
+            {
+                return productId;
+            }
         }
 
         /// <summary>
@@ -50,6 +77,20 @@ namespace Midi
                 return name;
             }
         }
+
+        /// <summary>
+        /// A string containing the name, manufacturer id, and product id of this device.
+        /// </summary>
+        public string Spec
+        {
+            get
+            {
+                return String.Format("{0} (manuf: {1} prod: {2})", name, manufacturerId, productId);
+            }
+        }
+
+        private UInt16 manufacturerId;
+        private UInt16 productId;
         private string name;
     }
 
